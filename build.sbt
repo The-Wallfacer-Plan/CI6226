@@ -4,7 +4,7 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
-lazy val root = project.in(file(".")).enablePlugins(PlayScala)
+lazy val `ci6226` = project.in(file(".")).enablePlugins(PlayScala)
 
 
 libraryDependencies += "com.google.guava" % "guava" % "18.0"

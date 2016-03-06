@@ -1,25 +1,14 @@
 @(title: String)
 
 @main("HSearch") {
-    @*<div class="jumbotron text-center">*@
-    @*<a href="/" class="stellar">*@
-    @*<img src="@routes.Assets.at("images/stellar.png")">*@
-    @*</a>*@
-    @*<div class="container">*@
-    @*<a type="button" class="btn btn-lg btn-default" href="https://stellar-public.slack.com/"><span class="glyphicon glyphicon-flash"></span>*@
-    @*Join Stellar Community</a>*@
-    @*<a type="button" class="btn btn-lg btn-primary" href="https://github.com/stellar"><span class="glyphicon glyphicon-download"></span>*@
-    @*Source on GitHub</a>*@
-    @*</div>*@
-    @*</div>*@
     <div class="container">
         @if(title != null) {
-            <div class="alert alert-success text-center" role="alert">
-            @title
-            </div>
+            @*<div class="alert alert-success text-center" role="alert">*@
+            @*@title*@
+            @*</div>*@
         }
         <div class="alert alert-info text-center" role="alert">
-            All Rights Reserved.
+        @dd()
         </div>
     </div>
 }

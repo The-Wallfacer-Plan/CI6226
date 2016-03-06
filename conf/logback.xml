@@ -1,0 +1,24 @@
+<configuration>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--<pattern>%date{HH:mm:ss} %-5level %logger{0} {%class %method} - %msg%n</pattern>-->
+            <pattern>%date{yyyy-MMM-dd; HH:mm:ss} - %level [%logger{0}:%line] - %msg%n%ex{1}</pattern>
+        </encoder>
+        <target>System.err</target>
+    </appender>
+
+    <!--<appender name="file" class="ch.qos.logback.core.FileAppender">-->
+    <!--<file>${log-file:-logging.log}</file>-->
+    <!--<encoder>-->
+    <!--&lt;!&ndash;<pattern>%date{HH:mm:ss} %-5level %logger{0} {%class %method} - %msg%n</pattern>&ndash;&gt;-->
+    <!--<pattern>[%date{dd MMM yyyy;HH:mm:ss.SSS,UTC}] - %level [%logger{0}:%line] - %msg%n%ex{1}</pattern>-->
+    <!--</encoder>-->
+    <!--</appender>-->
+
+    <root level="debug">
+        <appender-ref ref="console"/>
+        <!--<appender-ref ref="file"/>-->
+    </root>
+
+</configuration>

@@ -14,7 +14,7 @@ object ServerApp extends Controller {
     val b = request.body.validate[Book]
     b.fold(
       errors => {
-        BadRequest(Json.obj("status" -> "OK", "message" -> JsError.toFlatJson(errors)))
+        BadRequest(Json.obj("status" -> "OK", "message" -> JsError.toJson(errors)))
       },
       book => {
         addBook(book)

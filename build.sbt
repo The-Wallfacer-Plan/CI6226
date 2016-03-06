@@ -1,4 +1,4 @@
-name := """simple-rest-scala"""
+name := """ci6226"""
 
 version := "1.0-SNAPSHOT"
 
@@ -7,7 +7,7 @@ scalaVersion := "2.11.7"
 lazy val root = project.in(file(".")).enablePlugins(PlayScala)
 
 
-//libraryDependencies += "com.google.guava" % "guava" % "18.0"
+libraryDependencies += "com.google.guava" % "guava" % "18.0"
 
 libraryDependencies += "org.apache.lucene" % "lucene-analyzers-common" % "5.4.1"
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "5.4.1"

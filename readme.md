@@ -1,0 +1,5 @@
+- maybe original code is incomplete for a rest request ==> renderJSON
+- no response should be my fault because postman can get response
+- i need javascript if i wan't to use web page
+  - must also 2 programs? NO
+  - how to receive response?

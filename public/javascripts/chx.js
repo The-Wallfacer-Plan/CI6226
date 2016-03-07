@@ -1,45 +1,59 @@
 var myUrl = "http://localhost:9001/books";
-var representationOfDesiredState = "CHX";
 var outputID = "#text-date";
 
-function mytest() {
-    $(outputID).text("good");
+var myData = JSON.stringify({
+    "name": "TAOCP",
+    "author": "Knuth"
+});
 
-    var client = new XMLHttpRequest();
-    client.open("POST", url, false);
-    client.setRequestHeader("Content-Type", "application/json");
-    client.send(representationOfDesiredState);
-
-    $(outputID).text("lol");
-
-    if (client.status == 200) {
-        $(outputID).text("suc");
-    } else {
-        $(outputID).text("fail");
+function attrCollect() {
+    var ret = {};
+    var len = arguments.length;
+    for (var i = 0; i < len; i++) {
+        for (var p in arguments[i]) {
+            if (arguments[i].hasOwnProperty(p)) {
+                ret[p] = arguments[i][p];
+            }
+        }
     }
-
+    return ret;
 }
 
-function testalert() {
-    $(outputID).text("lol");
-    $.ajax({
-        timeout: 4000,
-        async: false,
-        type: "POST",
-        url: myUrl,
-        data: {
-            name: "hongxu",
-            author: "chx"
-        },
-        success: function (rsp) {
-            alert("succ " + rsp);
-        },
-        fail: function (rsp) {
-            alert("fail " + rsp);
-        },
-        always: function (rsp) {
-            alert("haha " + rsp);
-        }
-    });
-    $(outputID).text("=||=");
+var commonParam = {
+    "async": true,
+    "crossDomain": true,
+    "url": myUrl,
+    "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-cache"
+    },
+    "processData": false
+};
+
+function onDone(response) {
+    console.log(response);
+    $(outputID).text(JSON.stringify(response))
+}
+
+function onError(response, statusText, errorThrown) {
+    console.log(errorThrown);
+}
+
+function testPOST() {
+    console.log(myData);
+    var privateParam = {
+        "data": myData,
+        "method": "POST"
+    };
+    param = attrCollect(commonParam, privateParam);
+    $.ajax(param).done(onDone).error(onError);
+}
+
+function testGET() {
+    console.log("start");
+    var privateParam = {
+        "method": "GET"
+    };
+    var param = attrCollect(commonParam, privateParam);
+    $.ajax(param).done(onDone).error(onError);
 }

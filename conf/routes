@@ -3,7 +3,7 @@
 # ~~~~
 
 # Server
-GET         /books               controllers.ServerApp.listBooks
+GET         /books               controllers.ServerApp.listResult
 POST        /books               controllers.ServerApp.saveBook
 
 # Client

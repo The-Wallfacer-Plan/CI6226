@@ -1,8 +1,8 @@
-package models.xml;
+package ir.xml;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
-import models.utility.Config;
+import ir.utility.Config;
 
 import java.util.List;
 

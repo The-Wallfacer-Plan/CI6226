@@ -1,8 +1,9 @@
-package models.ui;
+package ir.ui;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import models.core.SearchWrapper;
+import ir.core.SearchWrapper;
+import ir.utility.Config;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -13,7 +14,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import models.utility.Config;
 
 import java.io.IOException;
 import java.util.List;

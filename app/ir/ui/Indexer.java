@@ -1,14 +1,14 @@
-package models.ui;
+package ir.ui;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import models.core.IndexWrapper;
+import ir.core.IndexWrapper;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-import models.utility.Config;
+import ir.utility.Config;
 
 public class Indexer {
 

@@ -1,7 +1,10 @@
-package models.core;
+package ir.core;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import ir.utility.Config;
+import ir.xml.PubHandler;
+import ir.xml.Publication;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.Document;
@@ -15,9 +18,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import models.utility.Config;
-import models.xml.PubHandler;
-import models.xml.Publication;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -35,7 +35,7 @@ public class IndexWrapper {
     List<Publication> publicationList;
 
     public IndexWrapper(String uri) {
-        logger.info("parsing");
+        logger.info("parsing {}", uri);
         try {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             SAXParser parser = parserFactory.newSAXParser();

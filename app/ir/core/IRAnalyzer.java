@@ -1,4 +1,4 @@
-package models.core;
+package ir.core;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;

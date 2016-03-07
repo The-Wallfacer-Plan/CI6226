@@ -6,6 +6,50 @@ var myData = JSON.stringify({
     "author": "Knuth"
 });
 
+var myList = [{"name": "abc", "age": 50},
+    {"age": "25", "hobby": "swimming"},
+    {"name": "xyz", "hobby": "programming"}];
+
+function buildHtmlTable(selector, listData) {
+    //reset
+    $(selector).html("");
+
+    var columns = addAllColumnHeaders(listData, selector);
+    for (var i = 0; i < listData.length; i++) {
+        var row$ = $('<tr/>');
+        for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+            var cellValue = listData[i][columns[colIndex]];
+
+            if (cellValue == null) {
+                cellValue = "";
+            }
+
+            row$.append($('<td/>').html(cellValue));
+        }
+        $(selector).append(row$);
+    }
+}
+
+// Adds a header row to the table and returns the set of columns.
+// Need to do union of keys from all records as some records may not contain
+// all records
+function addAllColumnHeaders(listData, selector) {
+    var columnSet = [];
+    var headerTr$ = $('<tr/>');
+    for (var i = 0; i < listData.length; i++) {
+        var rowHash = listData[i];
+        for (var key in rowHash) {
+            if ($.inArray(key, columnSet) == -1) {
+                columnSet.push(key);
+                headerTr$.append($('<th/>').html(key));
+            }
+        }
+    }
+    $(selector).append(headerTr$);
+
+    return columnSet;
+}
+
 function attrCollect() {
     var ret = {};
     var len = arguments.length;
@@ -39,6 +83,11 @@ function onError(response, statusText, errorThrown) {
     console.log(errorThrown);
 }
 
+function onGetDone(response) {
+    console.log(JSON.stringify(response));
+    buildHtmlTable("#excelDataTable", response);
+}
+
 function testPOST() {
     console.log(myData);
     var privateParam = {
@@ -55,5 +104,5 @@ function testGET() {
         "method": "GET"
     };
     var param = attrCollect(commonParam, privateParam);
-    $.ajax(param).done(onDone).error(onError);
+    $.ajax(param).done(onGetDone).error(onError);
 }

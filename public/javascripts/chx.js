@@ -1,4 +1,4 @@
-var myUrl = "http://localhost:9001/books";
+var myUrl = "http://localhost:9001/search";
 var outputID = "#text-date";
 
 var myData = JSON.stringify({

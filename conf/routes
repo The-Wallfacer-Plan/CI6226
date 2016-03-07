@@ -3,11 +3,15 @@
 # ~~~~
 
 # Server
-GET         /books               controllers.ServerApp.listResult
+GET         /books               controllers.ServerApp.listBooks
 POST        /books               controllers.ServerApp.saveBook
 
+GET         /search              controllers.ServerApp.rawSearchResult
+
 # Client
-GET         /query               controllers.ClientApp.index
+GET         /home                controllers.ClientApp.home
+
+GET         /                    controllers.ClientApp.index
 
 
 # Map static resources from the /public folder to the /assets URL path

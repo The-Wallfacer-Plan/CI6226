@@ -13,11 +13,7 @@ object ServerApp extends Controller {
 
   val logger = LoggerFactory.getLogger(getClass)
 
-  def listBooks = Action {
-    Ok(Json.toJson(books))
-  }
-
-  def listResult = Action {
+  def rawSearchResult = Action {
     val wrapper = new SearchWrapper()
     val fields = Lists.newArrayList("title", "venue")
     val matchedFieldsMap = wrapper.search(fields, "Integer")
@@ -39,6 +35,10 @@ object ServerApp extends Controller {
       }
     )
     Ok(Json.toJson(resList))
+  }
+
+  def listBooks = Action {
+    Ok(Json.toJson(books))
   }
 
   def saveBook = Action(BodyParsers.parse.json) { request =>

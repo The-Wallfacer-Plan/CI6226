@@ -1,0 +1,12 @@
+@(title: String)
+
+    @main("HSearch") {
+        <div class="container">
+            @if(title != null) {
+                @*@title*@
+            }
+            <div class="alert alert-info text-center" role="alert">
+            @queryUI()
+            </div>
+        </div>
+    }

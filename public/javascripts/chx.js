@@ -1,14 +1,11 @@
-var myUrl = "http://localhost:9001/search";
-var outputID = "#text-date";
+var hostUrl = "http://localhost:9001/";
+var queryUrl = hostUrl + "search";
+var testUrl = hostUrl + "test";
 
 var myData = JSON.stringify({
     "name": "TAOCP",
     "author": "Knuth"
 });
-
-var myList = [{"name": "abc", "age": 50},
-    {"age": "25", "hobby": "swimming"},
-    {"name": "xyz", "hobby": "programming"}];
 
 function buildHtmlTable(selector, listData) {
     //reset
@@ -30,9 +27,6 @@ function buildHtmlTable(selector, listData) {
     }
 }
 
-// Adds a header row to the table and returns the set of columns.
-// Need to do union of keys from all records as some records may not contain
-// all records
 function addAllColumnHeaders(listData, selector) {
     var columnSet = [];
     var headerTr$ = $('<tr/>');
@@ -46,7 +40,6 @@ function addAllColumnHeaders(listData, selector) {
         }
     }
     $(selector).append(headerTr$);
-
     return columnSet;
 }
 
@@ -66,7 +59,6 @@ function attrCollect() {
 var commonParam = {
     "async": true,
     "crossDomain": true,
-    "url": myUrl,
     "headers": {
         "content-type": "application/json",
         "cache-control": "no-cache"
@@ -76,16 +68,31 @@ var commonParam = {
 
 function onDone(response) {
     console.log(response);
-    $(outputID).text(JSON.stringify(response))
 }
 
 function onError(response, statusText, errorThrown) {
     console.log(errorThrown);
 }
 
-function onGetDone(response) {
+function listQueryResult(response) {
     console.log(JSON.stringify(response));
     buildHtmlTable("#excelDataTable", response);
+}
+
+function searchIt() {
+    console.log("start");
+    var privateParam = {
+        "method": "GET",
+        "url": testUrl
+    };
+    var param = attrCollect(commonParam, privateParam);
+    $.ajax(param).done(listQueryResult).error(onError);
+}
+
+//-----------------------------------------------------------
+
+function displayInText(response) {
+    $("#testText").text("res: " + response.toString())
 }
 
 function testPOST() {
@@ -98,11 +105,12 @@ function testPOST() {
     $.ajax(param).done(onDone).error(onError);
 }
 
-function testGET() {
+function testGet() {
     console.log("start");
     var privateParam = {
-        "method": "GET"
+        "method": "GET",
+        "url": testUrl
     };
     var param = attrCollect(commonParam, privateParam);
-    $.ajax(param).done(onGetDone).error(onError);
+    $.ajax(param).done(displayInText).error(onError);
 }

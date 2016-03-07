@@ -3,9 +3,8 @@
 # ~~~~
 
 # Server
-GET         /books               controllers.ServerApp.listBooks
-POST        /books               controllers.ServerApp.saveBook
-
+GET         /test                controllers.ServerApp.listBooks
+POST        /test                controllers.ServerApp.saveBook
 GET         /search              controllers.ServerApp.rawSearchResult
 
 # Client

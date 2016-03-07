@@ -37,8 +37,9 @@ object ServerApp extends Controller {
     Ok(Json.toJson(resList))
   }
 
-  def listBooks = Action {
-    Ok(Json.toJson(books))
+  def listBooks = Action { implicit request =>
+    //    Ok(Json.toJson(books))
+    Ok("Got " + request)
   }
 
   def saveBook = Action(BodyParsers.parse.json) { request =>

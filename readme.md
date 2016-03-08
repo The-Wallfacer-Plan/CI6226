@@ -4,3 +4,4 @@
   - must also 2 programs? NO
   - how to receive response?
 - generate dynamic search result with javascript (cannot use scala directly?)
+- get content of searchBox, process it, and pass it with GET

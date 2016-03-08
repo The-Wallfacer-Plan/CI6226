@@ -38,9 +38,14 @@ object ServerApp extends Controller {
   }
 
   def listBooks = Action { implicit request =>
-    val entries = request.queryString.entrySet()
-    val entryString = entries.toString
-    Ok("Got " + entryString)
+    val entries = request.queryString
+    val res = entries.map(
+      entry => {
+        s"entry: ${entry._1} => ${entry._2.get(0)}"
+      }
+    ).mkString("\n")
+    println(request.getQueryString("foo"))
+    Ok(res)
   }
 
   def saveBook = Action(BodyParsers.parse.json) { request =>

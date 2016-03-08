@@ -99,16 +99,22 @@ function testPOST() {
     console.log(myData);
     var privateParam = {
         "data": myData,
-        "method": "POST"
+        "method": "POST",
+        "url": testUrl
     };
     param = attrCollect(commonParam, privateParam);
     $.ajax(param).done(onDone).error(onError);
 }
 
 function testGet() {
+    var myParam = {
+        "foo": "3=g",
+        "bar": "32 gj"
+    };
     console.log("start");
     var privateParam = {
         "method": "GET",
+        "data": $.param(myParam),
         "url": testUrl
     };
     var param = attrCollect(commonParam, privateParam);

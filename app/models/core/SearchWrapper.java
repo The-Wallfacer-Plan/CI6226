@@ -1,4 +1,4 @@
-package ir.core;
+package models.core;
 
 import com.google.common.collect.Maps;
 import org.apache.lucene.analysis.Analyzer;
@@ -8,7 +8,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import ir.utility.Config;
+import models.utility.Config;
 
 import java.io.IOException;
 import java.nio.file.Paths;

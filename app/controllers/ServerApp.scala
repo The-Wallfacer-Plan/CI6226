@@ -1,7 +1,7 @@
 package controllers
 
-import ir.core.{IndexWrapper, SearchWrapper}
-import ir.utility.Config
+import models.core.{IndexWrapper, SearchWrapper}
+import models.utility.Config
 import org.slf4j.LoggerFactory
 import play.api.libs.json._
 import play.api.mvc._
@@ -20,14 +20,17 @@ object ServerApp extends Controller {
     request.body.asJson match {
       case None => BadRequest(badRequestMsg)
       case Some(body) => {
-        val fields = (body \ "content")
+        logger.info(s"$body")
+        val fields = (body \ "fields").as[JsArray].value.map(jsValue => {
+          jsValue.as[String]
+        })
         val content = (body \ "content").as[String]
 
-        logger.info(s"content=$content, fields=${fields.getClass}")
+        logger.info(s"content=$content, fields=${fields.mkString("(", ", ", ")")}")
 
         val wrapper = new SearchWrapper()
         val FFF = Config.defaultFields
-        val matchedFieldsMap = wrapper.search(FFF, content)
+        val matchedFieldsMap = wrapper.search(fields, content)
         val searcher = wrapper.getSearcher
 
         val resList = matchedFieldsMap.flatMap(

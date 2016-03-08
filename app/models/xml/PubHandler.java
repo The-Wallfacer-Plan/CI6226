@@ -1,4 +1,4 @@
-package ir.xml;
+package models.xml;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;

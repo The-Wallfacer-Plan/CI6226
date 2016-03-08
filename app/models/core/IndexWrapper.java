@@ -1,10 +1,10 @@
-package ir.core;
+package models.core;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import ir.utility.Config;
-import ir.xml.PubHandler;
-import ir.xml.Publication;
+import models.utility.Config;
+import models.xml.PubHandler;
+import models.xml.Publication;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.Document;

@@ -1,6 +1,6 @@
 @(title: String)
 
-    @main("HSearch") {
+    @main("LSearcher") {
         <div class="container">
             @if(title != null) {
                 @*@title*@
@@ -9,7 +9,12 @@
             @indexUI()
             </div>
             <div class="alert alert-info" role="alert">
-            @queryUI()
+            @searchUI()
+            </div>
+            <div class = "panel panel-default">
+                <div class = "panel-body" id="statusPanel">
+                    LSearcher
+                </div>
             </div>
         </div>
     }

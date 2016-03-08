@@ -15,7 +15,6 @@ object ServerApp extends Controller {
   val logger = LoggerFactory.getLogger(getClass)
 
   def searchDoc = Action { request => {
-    //    FIXME param should only be string
     //    TODO should add option for "exact match" phrase
     request.body.asJson match {
       case None => BadRequest(badRequestMsg)

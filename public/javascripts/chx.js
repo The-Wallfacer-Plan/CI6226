@@ -36,13 +36,14 @@ function addAllColumnHeaders(listData, selector) {
 }
 
 function onError(response, statusText, errorThrown) {
-    console.log(errorThrown);
+    var msg = "response " + response + "\tstatus " + statusText + "\terrorThrown " + errorThrown;
+    console.log(msg);
 }
 
 // -------------------------------------------------------------------------
 
 var hostUrl = "http://localhost:9001/";
-var hintTextSelector = "#testText";
+var hintTextSelector = "#statusPanel";
 var commonParam = {
     "async": true,
     "crossDomain": true,
@@ -59,10 +60,9 @@ function _getUrl(uri) {
 
 // --------------------------------------------------------------
 
-
 function indexDoneHint(response) {
     // timer here
-    $(hintTextSelector).text(response).show().delay(1000).fadeOut();
+    $(hintTextSelector).show().text(response).delay(2000).fadeOut();
     console.log(response);
 }
 

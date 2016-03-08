@@ -1,7 +1,5 @@
 package controllers
 
-import java.util
-
 import ir.core.{IndexWrapper, SearchWrapper}
 import ir.utility.Config
 import org.slf4j.LoggerFactory
@@ -12,42 +10,50 @@ import scala.collection.JavaConversions._
 
 object ServerApp extends Controller {
 
+  val badRequestMsg = "invalid request body, should be json"
+
   val logger = LoggerFactory.getLogger(getClass)
 
   def searchDoc = Action { request => {
     //    FIXME param should only be string
     //    TODO should add option for "exact match" phrase
-    val fields = request.getQueryString("fields").getOrElse(Config.defaultFields).asInstanceOf[util.List[String]]
-    val content = request.getQueryString("content").get
+    request.body.asJson match {
+      case None => BadRequest(badRequestMsg)
+      case Some(body) => {
+        val fields = (body \ "content")
+        val content = (body \ "content").as[String]
 
-    logger.info(s"content=$content, fields=${fields.toString}")
+        logger.info(s"content=$content, fields=${fields.getClass}")
 
-    val wrapper = new SearchWrapper()
-    val matchedFieldsMap = wrapper.search(fields, content)
-    val searcher = wrapper.getSearcher
+        val wrapper = new SearchWrapper()
+        val FFF = Config.defaultFields
+        val matchedFieldsMap = wrapper.search(FFF, content)
+        val searcher = wrapper.getSearcher
 
-    val resList = matchedFieldsMap.flatMap(
-      entry => {
-        entry._2.map(
-          hit => {
-            val hitDoc = searcher.doc(hit.doc)
-            val hitDocMap = hitDoc.getFields().map(
-              field => {
-                field.name() -> field.stringValue()
+        val resList = matchedFieldsMap.flatMap(
+          entry => {
+            entry._2.map(
+              hit => {
+                val hitDoc = searcher.doc(hit.doc)
+                val hitDocMap = hitDoc.getFields().map(
+                  field => {
+                    field.name() -> field.stringValue()
+                  }
+                ).toMap
+                Json.toJson(hitDocMap)
               }
-            ).toMap
-            Json.toJson(hitDocMap)
+            ).toList
           }
-        ).toList
+        )
+        Ok(Json.toJson(resList))
       }
-    )
-    Ok(Json.toJson(resList))
+    }
   }
   }
 
   def indexDoc = Action { request => {
     request.body.asJson match {
-      case None => BadRequest("invalid request body, should be json")
+      case None => BadRequest(badRequestMsg)
       case Some(body) => {
         val indexer = new IndexWrapper(Config.xmlFile)
         val stemming = (body \ "stem").as[Boolean]

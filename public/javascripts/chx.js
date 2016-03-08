@@ -122,14 +122,14 @@ function searchIt() {
         $(hintTextSelector).text("please input the search keywords");
         return;
     }
-    var myParam = {
+    var fullSearchData = {
         "content": searchContent
     };
-    $.extend(myParam, options);
-    console.log("passed params: " + myParam);
+    $.extend(fullSearchData, options);
+    console.log("passed data: " + fullSearchData);
     var privateParam = {
-        "method": "GET",
-        "data": $.param(myParam),
+        "method": "POST",
+        "data": JSON.stringify(fullSearchData),
         "url": _getUrl("searchDoc")
     };
     $.extend(privateParam, commonParam);

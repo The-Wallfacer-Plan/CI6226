@@ -53,7 +53,6 @@ object ServerApp extends Controller {
         s"entry: ${entry._1} => ${entry._2.get(0)}"
       }
     ).mkString("\n")
-    println(request.getQueryString("foo"))
     Ok(res)
   }
   }

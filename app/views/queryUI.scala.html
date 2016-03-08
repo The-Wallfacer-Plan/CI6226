@@ -1,10 +1,19 @@
-<div class="alert alert-info text-center" role="alert">
-    <div>
-        <input id="searchBox" class="check-box" type="text"/>
-        <button type="submit" id="getButton" onclick="testGet()">Search</button>
-    </div>
-    <br/>
-    <p id="testText"></p>
-    <table id="excelDataTable" border="1" class="table table-view"></table>
-
+@*<div class="alert alert-info text-center" role="alert">*@
+<fieldset class="scheduler-border">
+    <input id="checkbox-stem" class="checkbox-inline" type="checkbox" value="stem"> use stemming<br>
+    <input id="checkbox-ignoreCase" class="checkbox-inline" type="checkbox" value="ignore"> ignore case<br>
+    Stop Words Dictionary:
+    <select id="listbox-stopwords" class="form-control-static">
+        <option>None</option>
+        <option>Lucene</option>
+    </select>
+</fieldset>
+<br>
+<div>
+    <input id="searchBox" class="form-control-static" type="text"/>
+    <button type="submit" id="getButton" class="btn btn-primary" onclick="testGet()">Search</button>
 </div>
+<br/>
+<p id="testText"></p>
+<table id="excelDataTable" border="1" class="table table-view"></table>
+@*</div>*@

@@ -107,11 +107,14 @@ function testPOST() {
 }
 
 function testGet() {
+    var searchContent = $("#searchBox").val().trim();
+    if (searchContent.length == 0) {
+        $("#testText").text("please input the search keywords");
+        return
+    }
     var myParam = {
-        "foo": "3=g",
-        "bar": "32 gj"
+        "content": searchContent
     };
-    console.log("start");
     var privateParam = {
         "method": "GET",
         "data": $.param(myParam),

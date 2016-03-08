@@ -5,7 +5,8 @@
 # Server
 GET         /test                controllers.ServerApp.testGet
 POST        /test                controllers.ServerApp.testPost
-GET         /search              controllers.ServerApp.rawSearchResult
+GET         /searchDoc           controllers.ServerApp.searchDoc
+POST        /indexDoc            controllers.ServerApp.indexDoc
 
 # Client
 GET         /home                controllers.ClientApp.home

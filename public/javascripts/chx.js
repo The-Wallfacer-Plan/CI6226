@@ -35,10 +35,6 @@ function addAllColumnHeaders(listData, selector) {
     return columnSet;
 }
 
-function onDoneDebug(response) {
-    console.log(response);
-}
-
 function onError(response, statusText, errorThrown) {
     console.log(errorThrown);
 }
@@ -46,10 +42,7 @@ function onError(response, statusText, errorThrown) {
 // -------------------------------------------------------------------------
 
 var hostUrl = "http://localhost:9001/";
-var searchUrl = hostUrl + "search";
-var testUrl = hostUrl + "test";
 var hintTextSelector = "#testText";
-
 var commonParam = {
     "async": true,
     "crossDomain": true,
@@ -60,16 +53,49 @@ var commonParam = {
     "processData": false
 };
 
-function listQueryResult(response) {
+function _getUrl(uri) {
+    return hostUrl + uri;
+}
+
+// --------------------------------------------------------------
+
+
+function indexDoneHint(response) {
+    // timer here
+    $(hintTextSelector).text(response).show().delay(1000).fadeOut();
+    console.log(response);
+}
+
+function getIndexOptions() {
+    return {
+        "stem": $("#cb-index-stem").is(":checked"),
+        "ignore": $("#cb-index-ignore").is(":checked"),
+        "swDict": $("#lb-index-stopwords").val()
+    }
+}
+
+function indexIt() {
+    var indexOptions = getIndexOptions();
+    var privateParam = {
+        "method": "POST",
+        "url": _getUrl("indexDoc"),
+        "data": JSON.stringify(indexOptions)
+    };
+    $.extend(privateParam, commonParam);
+    $.ajax(privateParam).done(indexDoneHint).error(onError);
+}
+
+
+// --------------------------------------------------------------
+
+
+function listSearchResult(response) {
     console.log(JSON.stringify(response));
     buildHtmlTable("#excelDataTable", response);
 }
 
-function displayInText(response) {
-    $(hintTextSelector).text("res: " + response.toString())
-}
 
-function getOptions() {
+function getSearchOptions() {
     var selectedFieldsEle = $("input[name='field']:checked");
     var fields = [];
     $.each(selectedFieldsEle, function () {
@@ -77,14 +103,11 @@ function getOptions() {
     });
     console.log(fields);
     return {
-        "stem": $("#checkbox-stem").is(":checked"),
-        "ignore": $("#checkbox-ignoreCase").is(":checked"),
-        "swDict": $("#listbox-stopwords").val(),
         "fields": fields
     };
 }
 
-function parseQuery() {
+function getSearchContent() {
     var searchContent = $("#searchBox").val().trim();
     if (searchContent.length == 0) {
         return null
@@ -92,18 +115,9 @@ function parseQuery() {
     return searchContent;
 }
 
-function indexIt() {
-    var privateParam = {
-        "method": "POST",
-        "url": testUrl
-    };
-    $.extend(privateParam, commonParam);
-    $.ajax(privateParam).done(onDoneDebug).error(onError);
-}
-
 function searchIt() {
-    var options = getOptions();
-    var searchContent = parseQuery();
+    var options = getSearchOptions();
+    var searchContent = getSearchContent();
     if (searchContent == null) {
         $(hintTextSelector).text("please input the search keywords");
         return;
@@ -116,8 +130,12 @@ function searchIt() {
     var privateParam = {
         "method": "GET",
         "data": $.param(myParam),
-        "url": searchUrl
+        "url": _getUrl("searchDoc")
     };
     $.extend(privateParam, commonParam);
-    $.ajax(privateParam).done(listQueryResult).error(onError);
+
+    $.ajax(privateParam).done(listSearchResult).error(onError);
 }
+
+// ----------------------------------------------------------------------
+var testUrl = _getUrl("test");

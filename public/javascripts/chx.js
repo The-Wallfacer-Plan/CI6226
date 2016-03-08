@@ -1,16 +1,8 @@
-var hostUrl = "http://localhost:9001/";
-var queryUrl = hostUrl + "search";
-var testUrl = hostUrl + "test";
-
-var myData = JSON.stringify({
-    "name": "TAOCP",
-    "author": "Knuth"
-});
-
 function buildHtmlTable(selector, listData) {
     //reset
     $(selector).html("");
 
+    // build
     var columns = addAllColumnHeaders(listData, selector);
     for (var i = 0; i < listData.length; i++) {
         var row$ = $('<tr/>');
@@ -43,18 +35,20 @@ function addAllColumnHeaders(listData, selector) {
     return columnSet;
 }
 
-function attrCollect() {
-    var ret = {};
-    var len = arguments.length;
-    for (var i = 0; i < len; i++) {
-        for (var p in arguments[i]) {
-            if (arguments[i].hasOwnProperty(p)) {
-                ret[p] = arguments[i][p];
-            }
-        }
-    }
-    return ret;
+function onDoneDebug(response) {
+    console.log(response);
 }
+
+function onError(response, statusText, errorThrown) {
+    console.log(errorThrown);
+}
+
+// -------------------------------------------------------------------------
+
+var hostUrl = "http://localhost:9001/";
+var searchUrl = hostUrl + "search";
+var testUrl = hostUrl + "test";
+var hintTextSelector = "#testText";
 
 var commonParam = {
     "async": true,
@@ -66,60 +60,64 @@ var commonParam = {
     "processData": false
 };
 
-function onDone(response) {
-    console.log(response);
-}
-
-function onError(response, statusText, errorThrown) {
-    console.log(errorThrown);
-}
-
 function listQueryResult(response) {
     console.log(JSON.stringify(response));
     buildHtmlTable("#excelDataTable", response);
 }
 
-function searchIt() {
-    console.log("start");
-    var privateParam = {
-        "method": "GET",
-        "url": testUrl
-    };
-    var param = attrCollect(commonParam, privateParam);
-    $.ajax(param).done(listQueryResult).error(onError);
-}
-
-//-----------------------------------------------------------
-
 function displayInText(response) {
-    $("#testText").text("res: " + response.toString())
+    $(hintTextSelector).text("res: " + response.toString())
 }
 
-function testPOST() {
-    console.log(myData);
+function getOptions() {
+    var selectedFieldsEle = $("input[name='field']:checked");
+    var fields = [];
+    $.each(selectedFieldsEle, function () {
+        fields.push($(this).attr("value"));
+    });
+    console.log(fields);
+    return {
+        "stem": $("#checkbox-stem").is(":checked"),
+        "ignore": $("#checkbox-ignoreCase").is(":checked"),
+        "swDict": $("#listbox-stopwords").val(),
+        "fields": fields
+    };
+}
+
+function parseQuery() {
+    var searchContent = $("#searchBox").val().trim();
+    if (searchContent.length == 0) {
+        return null
+    }
+    return searchContent;
+}
+
+function indexIt() {
     var privateParam = {
-        "data": myData,
         "method": "POST",
         "url": testUrl
     };
-    param = attrCollect(commonParam, privateParam);
-    $.ajax(param).done(onDone).error(onError);
+    $.extend(privateParam, commonParam);
+    $.ajax(privateParam).done(onDoneDebug).error(onError);
 }
 
-function testGet() {
-    var searchContent = $("#searchBox").val().trim();
-    if (searchContent.length == 0) {
-        $("#testText").text("please input the search keywords");
-        return
+function searchIt() {
+    var options = getOptions();
+    var searchContent = parseQuery();
+    if (searchContent == null) {
+        $(hintTextSelector).text("please input the search keywords");
+        return;
     }
     var myParam = {
         "content": searchContent
     };
+    $.extend(myParam, options);
+    console.log("passed params: " + myParam);
     var privateParam = {
         "method": "GET",
         "data": $.param(myParam),
-        "url": testUrl
+        "url": searchUrl
     };
-    var param = attrCollect(commonParam, privateParam);
-    $.ajax(param).done(displayInText).error(onError);
+    $.extend(privateParam, commonParam);
+    $.ajax(privateParam).done(listQueryResult).error(onError);
 }

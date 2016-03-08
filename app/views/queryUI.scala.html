@@ -1,19 +1,37 @@
-@*<div class="alert alert-info text-center" role="alert">*@
-<fieldset class="scheduler-border">
-    <input id="checkbox-stem" class="checkbox-inline" type="checkbox" value="stem"> use stemming<br>
-    <input id="checkbox-ignoreCase" class="checkbox-inline" type="checkbox" value="ignore"> ignore case<br>
-    Stop Words Dictionary:
-    <select id="listbox-stopwords" class="form-control-static">
-        <option>None</option>
-        <option>Lucene</option>
-    </select>
-</fieldset>
+<form>
+
+    <fieldset>
+        <input id="checkbox-stem" class="checkbox-inline" type="checkbox" value="stem" > use stemming<br>
+        <input id="checkbox-ignoreCase" class="checkbox-inline" type="checkbox" value="ignore" checked="checked"> ignore case<br>
+        Stop Words Dictionary:
+        <select id="listbox-stopwords" class="form-control-static">
+            <option>None</option>
+            <option>Lucene</option>
+        </select>
+    </fieldset>
+
+    <fieldset>
+        <input id="cb-field-paperId" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="paperId">
+        paperid<br>
+        <input id="cb-field-title" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="title">
+        title<br>
+        <input id="cb-field-kind" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="kind">
+        kind<br>
+        <input id="cb-field-authors" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="authors">
+        authors<br>
+        <input id="cb-field-venue" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="venue">
+        venue<br>
+        <input id="cb-field-pubYear" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="pubYear">
+        pubyear<br>
+    </fieldset>
+
+</form>
+
 <br>
 <div>
-    <input id="searchBox" class="form-control-static" type="text"/>
-    <button type="submit" id="getButton" class="btn btn-primary" onclick="testGet()">Search</button>
+    <input id="searchBox" class="form-control-static" type="text" value="Integer"/>
+    <button type="submit" id="getButton" class="btn btn-primary" onclick="searchIt()">Search</button>
 </div>
 <br/>
 <p id="testText"></p>
 <table id="excelDataTable" border="1" class="table table-view"></table>
-@*</div>*@

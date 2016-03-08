@@ -2,7 +2,6 @@ package controllers
 
 import com.google.common.collect.Lists
 import ir.core.SearchWrapper
-import models.Book._
 import org.slf4j.LoggerFactory
 import play.api.libs.json._
 import play.api.mvc._
@@ -37,7 +36,17 @@ object ServerApp extends Controller {
     Ok(Json.toJson(resList))
   }
 
-  def listBooks = Action { implicit request =>
+  def testGet = Action { implicit request =>
+    val entries = request.queryString
+    val res = entries.map(
+      entry => {
+        s"${entry._1} => ${entry._2.get(0)}"
+      }
+    ).mkString("\n")
+    Ok(res)
+  }
+
+  def testPost = Action(BodyParsers.parse.json) { request => {
     val entries = request.queryString
     val res = entries.map(
       entry => {
@@ -47,17 +56,6 @@ object ServerApp extends Controller {
     println(request.getQueryString("foo"))
     Ok(res)
   }
-
-  def saveBook = Action(BodyParsers.parse.json) { request =>
-    val b = request.body.validate[Book]
-    b.fold(
-      errors => {
-        BadRequest(Json.obj("status" -> "OK", "message" -> JsError.toJson(errors)))
-      },
-      book => {
-        addBook(book)
-        Ok(Json.obj("status" -> "OK"))
-      }
-    )
   }
+
 }

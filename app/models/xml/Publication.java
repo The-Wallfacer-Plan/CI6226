@@ -3,6 +3,7 @@ package models.xml;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 import models.utility.Config;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class Publication {
         Preconditions.checkArgument(kind != null);
         Preconditions.checkArgument(authors.size() >= 0);
         Preconditions.checkArgument(venue != null);
-        Preconditions.checkArgument(pubYear != null);
+        Preconditions.checkArgument(pubYear != null && Ints.tryParse(pubYear) != null);
     }
 
     public Kind getKind() {

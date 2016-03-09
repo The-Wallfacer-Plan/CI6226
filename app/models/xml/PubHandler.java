@@ -2,7 +2,6 @@ package models.xml;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
 import models.core.LIndexer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,8 +115,6 @@ public class PubHandler extends DefaultHandler {
                 isAuthor = false;
             }
             if (isYear) {
-                Integer year = Ints.tryParse(value);
-                Preconditions.checkNotNull(year);
                 pub.setPubYear(value);
                 isYear = false;
             }

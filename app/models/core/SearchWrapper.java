@@ -26,9 +26,9 @@ public class SearchWrapper {
     private DirectoryReader reader;
 
     public SearchWrapper() {
-        analyzer = new IRAnalyzer();
+        analyzer = new LAnalyzer();
         try {
-            Directory directory = FSDirectory.open(Paths.get(Config.indexFold));
+            Directory directory = FSDirectory.open(Paths.get(Config.indexFolder));
             reader = DirectoryReader.open(directory);
             searcher = new IndexSearcher(reader);
         } catch (IOException e) {

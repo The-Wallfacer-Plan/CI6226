@@ -1,9 +1,9 @@
 package models.xml;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
+import models.core.LIndexer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -11,12 +11,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.List;
 import java.util.Set;
 
 public class PubHandler extends DefaultHandler {
 
-    List<Publication> publicationList = Lists.newArrayList();
+    private LIndexer indexer;
 
     private static final Logger logger = LoggerFactory.getLogger(PubHandler.class);
     public static final String ARTICLE = "article";
@@ -35,9 +34,8 @@ public class PubHandler extends DefaultHandler {
 
     Publication pub = null;
 
-
-    public List<Publication> getPublicationList() {
-        return publicationList;
+    public PubHandler(LIndexer indexer) {
+        this.indexer = indexer;
     }
 
     private boolean isInterestingEntry(String qName) {
@@ -98,7 +96,8 @@ public class PubHandler extends DefaultHandler {
                 isYear = false;
                 isVenue = false;
                 unknown = false;
-                publicationList.add(pub);
+//                TODO
+                indexer.index(pub);
                 pub = null;
             }
         }

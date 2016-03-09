@@ -14,25 +14,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.regex.Pattern;
 
-public class IRAnalyzer extends Analyzer {
-    private static final Logger logger = LoggerFactory.getLogger(IRAnalyzer.class);
+public class LAnalyzer extends Analyzer {
+    private static final Logger logger = LoggerFactory.getLogger(LAnalyzer.class);
 
-    private boolean stemming;
-    private boolean lowering;
-    private String stopWordsDict;
     private String patternString;
+    private LIndexOption option;
 
-    public IRAnalyzer(boolean lowering, boolean stemming, String stopWordsDict, String patternString) {
-        this.lowering = lowering;
-        this.stemming = stemming;
-        this.stopWordsDict = stopWordsDict;
+    public LAnalyzer(LIndexOption option, String patternString) {
+        this.option = option;
         this.patternString = patternString;
     }
 
-    public IRAnalyzer() {
-        this.lowering = false;
-        this.stemming = false;
-        this.stopWordsDict = "None";
+    public LAnalyzer() {
+        this.option = new LIndexOption(false, false, "None");
         this.patternString = null;
     }
 
@@ -48,17 +42,17 @@ public class IRAnalyzer extends Analyzer {
             tokenizer = new PatternTokenizer(pattern, -1);
         }
         TokenStream result = new EmptyStringTokenFilter(tokenizer);
-        if (lowering) {
+        if (option.ignoreCase) {
             logger.info("lower case filter");
             result = new LowerCaseFilter(result);
         }
-        if (stopWordsDict.equals("Lucene")) {
+        if (option.swDict.equals("Lucene")) {
             logger.info("Lucene stopWords filter");
             result = new StopFilter(result, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-        } else if (stopWordsDict.equals("None")) {
+        } else if (option.swDict.equals("None")) {
             logger.info("empty stopWords filter");
         }
-        if (stemming) {
+        if (option.stemming) {
             logger.info("stemming filter");
             result = new PorterStemFilter(result);
         }

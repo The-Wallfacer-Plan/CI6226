@@ -4,9 +4,13 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
+javaOptions += "-DentityExpansionLimit=1500000"
+
 lazy val `ci6226` = project.in(file(".")).enablePlugins(PlayScala)
 
 libraryDependencies += filters
+
+
 
 
 libraryDependencies += "com.google.guava" % "guava" % "18.0"

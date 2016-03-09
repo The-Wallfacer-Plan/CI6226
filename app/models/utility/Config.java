@@ -9,9 +9,9 @@ public class Config {
     public static final String homeDir = System.getProperty("user.home");
     public static final String tempDir = System.getProperty("java.io.tmpdir");
     public static final String rootDir = homeDir + File.separator + "Dropbox/PHDCourses/IR/assignment";
-    public static final String xmlFile = rootDir + File.separator + "sample.xml";
+    public static final String xmlFile = rootDir + File.separator + "dblp.xml";
     public static final String VALIDATION = "http://xml.org/sax/features/validation";
-    public static final String indexFold = tempDir + File.separator + "index";
+    public static final String indexFolder = tempDir + File.separator + "index";
     public static final String splitString = "; ";
 
     public static final String I_PAPER_ID = "paperId";

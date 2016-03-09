@@ -1,6 +1,6 @@
 package controllers
 
-import models.core.{IndexWrapper, SearchWrapper}
+import models.core.{LIndexDriver, LIndexOption, LIndexer, SearchWrapper}
 import models.utility.Config
 import org.slf4j.LoggerFactory
 import play.api.libs.json._
@@ -57,13 +57,14 @@ object ServerApp extends Controller {
     request.body.asJson match {
       case None => BadRequest(badRequestMsg)
       case Some(body) => {
-        val indexer = new IndexWrapper(Config.xmlFile)
+        val driver = new LIndexDriver(Config.xmlFile)
         val stemming = (body \ "stem").as[Boolean]
         val ignoreCase = (body \ "ignore").as[Boolean]
         val swDict = (body \ "swDict").as[String]
-        logger.info(s"stem=$stemming, ignoreCase=$ignoreCase, swDict=$swDict")
+        val indexOption = new LIndexOption(stemming, ignoreCase, swDict)
+        val indexer = new LIndexer(indexOption)
         val start = System.currentTimeMillis()
-        indexer.index(stemming, ignoreCase, swDict)
+        driver.run(indexer)
         val duration = System.currentTimeMillis() - start
         val msg = s"indexing cost $duration ms"
         Ok(msg)

@@ -5,3 +5,7 @@
   - how to receive response?
 - generate dynamic search result with javascript (cannot use scala directly?)
 - get content of searchBox, process it, and pass it with GET
+- use another stopword dictionary
+- calculate the statistics
+  - compute indexing time cost on server side
+  - compute size of title attribute???

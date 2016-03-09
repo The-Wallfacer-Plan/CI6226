@@ -1,20 +1,20 @@
 @(title: String)
 
     @main("LSearcher") {
-        <div class="container">
-            @if(title != null) {
-                @*@title*@
-            }
-            <div class="alert alert-info" role="alert">
-            @indexUI()
-            </div>
-            <div class="alert alert-info" role="alert">
-            @searchUI()
-            </div>
-            <div class = "panel panel-default">
-                <div class = "panel-body" id="statusPanel">
-                    LSearcher
+        <nav class="navbar navbar-default">
+
+            <div class="container">
+                @corner()
+                <div class="alert alert-info" role="alert">
+                @indexUI()
+                </div>
+                <div class="alert alert-info" role="alert">
+                @searchUI()
+                </div>
+                <div class = "panel panel-default">
+                    <div class = "panel-body" id="statusPanel">
+                        LSearcher
+                    </div>
                 </div>
             </div>
-        </div>
     }

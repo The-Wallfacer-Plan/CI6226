@@ -62,8 +62,11 @@ object ServerApp extends Controller {
         val ignoreCase = (body \ "ignore").as[Boolean]
         val swDict = (body \ "swDict").as[String]
         logger.info(s"stem=$stemming, ignoreCase=$ignoreCase, swDict=$swDict")
+        val start = System.currentTimeMillis()
         indexer.index(stemming, ignoreCase, swDict)
-        Ok("server index done")
+        val duration = System.currentTimeMillis() - start
+        val msg = s"indexing cost $duration ms"
+        Ok(msg)
       }
     }
   }

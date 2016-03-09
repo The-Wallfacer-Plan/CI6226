@@ -3,7 +3,7 @@
 <form>
 
     <fieldset>
-        <input id="cb-field-paperId" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="paperId">
+        <label><input id="cb-field-paperId" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="paperId"></label>
         paperid<br>
         <input id="cb-field-title" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="title">
         title<br>
@@ -21,7 +21,7 @@
 
 <br>
 <div>
-    <input id="searchBox" class="form-control-static" type="text" value="Integer"/>
+    <input id="searchBox" class="form-control-static" type="text" value="Integer" onkeypress="selectiveSearchIt(event)"/>
     <button type="submit" id="searchButton" class="btn btn-primary" onclick="searchIt()">Search</button>
 </div>
 <br/>

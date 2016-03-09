@@ -56,7 +56,7 @@ public class LIndexer {
             return;
         }
         try {
-//            publication.validate();
+            publication.validate();
             Document document = new Document();
 //        is the form of "xxx/xxx/xxx", use TextField
             addDocText("paperId", publication.getPaperId(), document);

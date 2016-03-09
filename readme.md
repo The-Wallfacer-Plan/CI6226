@@ -9,3 +9,5 @@
 - calculate the statistics
   - compute indexing time cost on server side
   - compute size of title attribute???
+- boolean retrieval model?
+  - LIMIT! /3 STATUTE ACTION /S FEDERAL /2 TORT /3 CLAIM

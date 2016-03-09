@@ -116,6 +116,12 @@ function getSearchContent() {
     return searchContent;
 }
 
+function selectiveSearchIt(e) {
+    if (e.keyCode == 13) {
+        searchIt()
+    }
+}
+
 function searchIt() {
     var options = getSearchOptions();
     var searchContent = getSearchContent();

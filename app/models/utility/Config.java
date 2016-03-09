@@ -25,4 +25,5 @@ public class Config {
 
     //    interface Configurable
     public static final int topN = 10;
+    public static final String DBLPNOTE = "dblpnote";
 }

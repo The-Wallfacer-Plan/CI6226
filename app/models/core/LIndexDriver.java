@@ -35,6 +35,7 @@ public class LIndexDriver {
             }
             PubHandler handler = new PubHandler(indexer);
             parser.parse(inputFile, handler);
+            indexer.writeBack();
         } catch (IOException e) {
             System.out.println("Error reading URI: " + e.getMessage());
         } catch (SAXException e) {

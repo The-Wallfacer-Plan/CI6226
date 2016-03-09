@@ -1,6 +1,7 @@
 package models.xml;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import models.utility.Config;
 
@@ -42,6 +43,15 @@ public class Publication {
                 .add(Config.I_VENUE, venue)
                 .add(Config.I_PUB_YEAR, pubYear)
                 .toString();
+    }
+
+    public void validate() {
+        Preconditions.checkArgument(paperId != null);
+        Preconditions.checkArgument(title != null);
+        Preconditions.checkArgument(kind != null);
+        Preconditions.checkArgument(authors.size() >= 0);
+        Preconditions.checkArgument(venue != null);
+        Preconditions.checkArgument(pubYear != null);
     }
 
     public Kind getKind() {

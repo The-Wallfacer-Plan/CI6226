@@ -62,7 +62,8 @@ function _getUrl(uri) {
 
 function indexDoneHint(response) {
     // timer here
-    $(hintTextSelector).show().text(response).delay(2000).fadeOut();
+    //$(hintTextSelector).show().text(response).delay(2000).fadeOut();
+    $(hintTextSelector).text(response);
     console.log(response);
 }
 

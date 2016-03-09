@@ -67,6 +67,7 @@ object ServerApp extends Controller {
         driver.run(indexer)
         val duration = System.currentTimeMillis() - start
         val msg = s"indexing cost $duration ms"
+        logger.info(msg)
         Ok(msg)
       }
     }

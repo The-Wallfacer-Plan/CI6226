@@ -5,12 +5,16 @@
 <html>
     <head>
         <title>@title</title>
-        <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/bootstrap.css")" />
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.4.js")"></script>
+        @*<link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/bootstrap.css")" />*@
+        @*<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.4.js")"></script>*@
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.at("bower_components/bootstrap/dist/css/bootstrap.css")" />
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.at("bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css")" />
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/jquery/dist/jquery.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/chx.js")"></script>
         <link rel="icon" href="@routes.Assets.at("images/favicon.ico")"/>
     </head>
     <body>
-        @content
+    @content
     </body>
 </html>

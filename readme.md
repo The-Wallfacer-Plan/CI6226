@@ -11,3 +11,6 @@
   - compute size of title attribute???
 - boolean retrieval model?
   - LIMIT! /3 STATUTE ACTION /S FEDERAL /2 TORT /3 CLAIM
+- effect of lowecasse/stemming/stopwords
+- "phrase query" should use different indexer!!!
+- tolerant retrieval

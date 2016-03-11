@@ -10,13 +10,14 @@ import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.FSDirectory
-import org.slf4j.LoggerFactory
-
-import scala.collection.JavaConversions._
+import play.api.Logger
 
 class LIndexer(writer: IndexWriter) {
 
-  def writeBack() = writer.close()
+  def writeBack() = {
+    Logger.info("write index done")
+    writer.close()
+  }
 
   def addDocText(key: String, value: String, document: Document) = {
     val field = new TextField(key, value, Field.Store.YES)
@@ -24,31 +25,35 @@ class LIndexer(writer: IndexWriter) {
   }
 
   def index(publication: Publication): Unit = {
-    if (publication.getPaperId().startsWith(Config.DBLPNOTE)) {
-      LIndexer.logger.warn("dblpnote entry, ignoring")
+    if (publication.paperId.startsWith(Config.DBLPNOTE)) {
+      Logger.warn("dblpnote entry, ignoring")
       return
     }
     publication.validate()
     val document = new Document()
-    //        is the form of "xxx/xxx/xxx", use TextField
-    addDocText("paperId", publication.getPaperId(), document)
-    //        TextField
-    addDocText("title", publication.getTitle(), document)
-    //        StringField
-    addDocText("kind", String.valueOf(publication.getKind()), document)
-    //        ???
-    addDocText("venue", publication.getVenue(), document)
-    //        StringField
-    addDocText("pubYear", publication.getPubYear(), document)
-    //        TextField (how to join/split author list ???)
-    val authorString = publication.getAuthors().mkString(Config.splitString)
-    addDocText("authors", authorString, document)
+    try {
+      //        is the form of "xxx/xxx/xxx", use TextField
+      addDocText("paperId", publication.paperId, document)
+      //        TextField
+      addDocText("title", publication.title, document)
+      //        StringField
+      addDocText("kind", publication.kind, document)
+      //        ???
+      addDocText("venue", publication.venue, document)
+      //        StringField
+      addDocText("pubYear", publication.pubYear, document)
+      //        TextField (how to join/split author list ???)
+      val authorString = publication.authors.mkString(Config.splitString)
+      addDocText("authors", authorString, document)
+    } catch {
+      case e: java.io.IOException => {
+        e.printStackTrace()
+      }
+    }
   }
-
 }
 
 object LIndexer {
-  val logger = LoggerFactory.getLogger(getClass)
 
   def apply(option: LIndexOption, indexFolderString: String): LIndexer = {
     val analyzerWrapper = {
@@ -62,10 +67,10 @@ object LIndexer {
     iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 
     val dir = {
-      logger.info(s"indexing folder: $indexFolderString")
+      Logger.info(s"indexing folder: $indexFolderString")
       val indexFolder = Paths.get(indexFolderString)
       if (Files.exists(indexFolder)) {
-        logger.info("indexing folder already exists, delete")
+        Logger.info("indexing folder already exists, delete")
         Helper.deleteFiles(indexFolder)
       }
       FSDirectory.open(indexFolder)

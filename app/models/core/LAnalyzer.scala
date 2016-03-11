@@ -8,11 +8,9 @@ import org.apache.lucene.analysis.en.PorterStemFilter
 import org.apache.lucene.analysis.pattern.PatternTokenizer
 import org.apache.lucene.analysis.standard.StandardTokenizer
 import org.apache.lucene.analysis.{Analyzer, TokenStream}
-import org.slf4j.LoggerFactory
+import play.api.Logger
 
 class LAnalyzer(option: LIndexOption, patternString: String) extends Analyzer {
-
-  val logger = LoggerFactory.getLogger(classOf[LAnalyzer])
 
   def this() = this(new LIndexOption(false, true, "None"), null)
 
@@ -28,17 +26,17 @@ class LAnalyzer(option: LIndexOption, patternString: String) extends Analyzer {
 
     var result: TokenStream = new EmptyStringTokenFilter(tokenizer)
     if (option.ignoreCase) {
-      logger.info("lower case filter")
+      Logger.info("lower case filter")
       result = new LowerCaseFilter(result)
     }
     if (option.swDict.equals("Lucene")) {
-      logger.info("Lucene stopWords filter")
+      Logger.info("Lucene stopWords filter")
       result = new StopFilter(result, StopAnalyzer.ENGLISH_STOP_WORDS_SET)
     } else if (option.swDict.equals("None")) {
-      logger.info("empty stopWords filter")
+      Logger.info("empty stopWords filter")
     }
     if (option.stemming) {
-      logger.info("porter stemming filter")
+      Logger.info("porter stemming filter")
       result = new PorterStemFilter(result)
     }
     new TokenStreamComponents(tokenizer, result)

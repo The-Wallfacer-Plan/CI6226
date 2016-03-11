@@ -58,12 +58,14 @@ function _getUrl(uri) {
     return hostUrl + uri;
 }
 
+function displayResponse(msg) {
+    $(hintTextSelector).show().text(msg).delay(1500).fadeOut();
+}
+
 // --------------------------------------------------------------
 
 function indexDoneHint(response) {
-    // timer here
-    //$(hintTextSelector).show().text(response).delay(2000).fadeOut();
-    $(hintTextSelector).text(response);
+    displayResponse(response);
     console.log(response);
 }
 
@@ -91,6 +93,10 @@ function indexIt() {
 
 
 function listSearchResult(response) {
+    if ($.isEmptyObject(response)) {
+        displayResponse("no result returned");
+        return
+    }
     console.log(JSON.stringify(response));
     buildHtmlTable("#excelDataTable", response);
 }
@@ -126,7 +132,7 @@ function searchIt() {
     var options = getSearchOptions();
     var searchContent = getSearchContent();
     if (searchContent == null) {
-        $(hintTextSelector).text("please input the search keywords");
+        displayResponse("please input the search keywords");
         return;
     }
     var fullSearchData = {

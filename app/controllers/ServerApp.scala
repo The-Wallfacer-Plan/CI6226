@@ -8,7 +8,7 @@ import play.api.mvc._
 
 import scala.collection.JavaConversions._
 
-object ServerApp extends Controller {
+class ServerApp extends Controller {
 
   val inputFile = Config.xmlFile
   val indexFolder = {

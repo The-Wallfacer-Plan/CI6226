@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc.{Action, Controller}
 
-object ClientApp extends Controller {
+class ClientApp extends Controller {
   def home = Action {
     Ok(views.html.home("testIT"))
   }

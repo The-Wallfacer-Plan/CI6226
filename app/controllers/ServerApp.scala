@@ -9,6 +9,11 @@ import play.api.mvc._
 import scala.collection.JavaConversions._
 
 object ServerApp extends Controller {
+  val inputFile = Config.xmlFile
+  val indexFolder = {
+    val fileName = inputFile.split(java.io.File.separator).last
+    Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
+  }
 
   val badRequestMsg = "invalid request body, should be json"
 
@@ -22,15 +27,15 @@ object ServerApp extends Controller {
         logger.info(s"$body")
         val fields = (body \ "fields").as[JsArray].value.map(jsValue => {
           jsValue.as[String]
-        })
+        }).toList
         val content = (body \ "content").as[String]
 
         logger.info(s"content=$content, fields=${fields.mkString("(", ", ", ")")}")
 
-        val wrapper = new LSearcher()
-        val FFF = Config.defaultFields
+        val wrapper = new LSearcher(indexFolder)
         val matchedFieldsMap = wrapper.search(fields, content)
-        val searcher = wrapper.getSearcher
+        wrapper.close()
+        val searcher = wrapper.searcher
 
         val resList = matchedFieldsMap.flatMap(
           entry => {
@@ -57,19 +62,16 @@ object ServerApp extends Controller {
     request.body.asJson match {
       case None => BadRequest(badRequestMsg)
       case Some(body) => {
-        val fileString = Config.xmlFile
-        val driver = new LIndexDriver(fileString)
-        val stemming = (body \ "stem").as[Boolean]
-        val ignoreCase = (body \ "ignore").as[Boolean]
-        val swDict = (body \ "swDict").as[String]
-        val indexOption = new LIndexOption(stemming, ignoreCase, swDict)
-
-        val indexFolder = {
-          val fileName = fileString.split(java.io.File.separator).last
-          Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
+        val driver = new LIndexDriver(inputFile)
+        val indexer = {
+          val indexOption = {
+            val stemming = (body \ "stem").as[Boolean]
+            val ignoreCase = (body \ "ignore").as[Boolean]
+            val swDict = (body \ "swDict").as[String]
+            new LIndexOption(stemming, ignoreCase, swDict)
+          }
+          LIndexer(indexOption, indexFolder)
         }
-
-        val indexer = LIndexer(indexOption, indexFolder)
         val start = System.currentTimeMillis()
         driver.run(indexer)
         val duration = System.currentTimeMillis() - start

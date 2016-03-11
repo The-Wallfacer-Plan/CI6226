@@ -69,7 +69,7 @@ object ServerApp extends Controller {
           Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
         }
 
-        val indexer = new LIndexer(indexOption, indexFolder)
+        val indexer = LIndexer(indexOption, indexFolder)
         val start = System.currentTimeMillis()
         driver.run(indexer)
         val duration = System.currentTimeMillis() - start

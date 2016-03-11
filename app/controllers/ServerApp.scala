@@ -9,6 +9,7 @@ import play.api.mvc._
 import scala.collection.JavaConversions._
 
 object ServerApp extends Controller {
+
   val inputFile = Config.xmlFile
   val indexFolder = {
     val fileName = inputFile.split(java.io.File.separator).last

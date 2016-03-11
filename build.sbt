@@ -12,7 +12,9 @@ libraryDependencies += filters
 
 libraryDependencies += "org.apache.lucene" % "lucene-analyzers-common" % "5.4.1"
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "5.4.1"
-//libraryDependencies += "com.google.guava" % "guava" % "18.0"
-//libraryDependencies += "ch.qos.logback" % "logback-core" % "1.1.5"
-//libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.5"
-//libraryDependencies += "net.sourceforge.argparse4j" % "argparse4j" % "0.7.0"
+
+libraryDependencies ++= Seq(
+  "org.webjars" %% "webjars-play" % "2.5.0",
+  "org.webjars" % "bootstrap" % "3.1.1-2",
+  "org.webjars" % "jquery" % "2.2.0"
+)

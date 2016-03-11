@@ -26,7 +26,7 @@ public class LAnalyzer extends Analyzer {
     }
 
     public LAnalyzer() {
-        this.option = new LIndexOption(false, false, "None");
+        this.option = new LIndexOption(false, true, "None");
         this.patternString = null;
     }
 
@@ -42,6 +42,11 @@ public class LAnalyzer extends Analyzer {
             tokenizer = new PatternTokenizer(pattern, -1);
         }
         TokenStream result = new EmptyStringTokenFilter(tokenizer);
+        {
+            if (patternString != null) {
+                logger.info(result.toString());
+            }
+        }
         if (option.ignoreCase) {
             logger.info("lower case filter");
             result = new LowerCaseFilter(result);
@@ -53,7 +58,7 @@ public class LAnalyzer extends Analyzer {
             logger.info("empty stopWords filter");
         }
         if (option.stemming) {
-            logger.info("stemming filter");
+            logger.info("porter stemming filter");
             result = new PorterStemFilter(result);
         }
         return new TokenStreamComponents(tokenizer, result);

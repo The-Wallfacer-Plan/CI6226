@@ -1,6 +1,7 @@
 package models.core;
 
 import com.google.common.collect.Maps;
+import models.utility.Config;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -8,14 +9,13 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import models.utility.Config;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-public class SearchWrapper {
+public class LSearcher {
 
     public IndexSearcher getSearcher() {
         return searcher;
@@ -25,10 +25,10 @@ public class SearchWrapper {
     private Analyzer analyzer;
     private DirectoryReader reader;
 
-    public SearchWrapper() {
+    public LSearcher() {
         analyzer = new LAnalyzer();
         try {
-            Directory directory = FSDirectory.open(Paths.get(Config.indexFolder));
+            Directory directory = FSDirectory.open(Paths.get(Config.indexRoot));
             reader = DirectoryReader.open(directory);
             searcher = new IndexSearcher(reader);
         } catch (IOException e) {

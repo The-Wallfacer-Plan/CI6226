@@ -29,17 +29,18 @@ public class LIndexer {
     private static final Logger logger = LoggerFactory.getLogger(LIndexer.class);
     private IndexWriter writer;
 
-    public LIndexer(LIndexOption option) throws IOException {
+    public LIndexer(LIndexOption option, String indexFolderString) throws IOException {
         Analyzer analyzer = new LAnalyzer(option, null);
         Analyzer listAnalyzer = new LAnalyzer(option, Config.splitString);
         Map<String, Analyzer> analyzerMap = Maps.newHashMap();
         analyzerMap.put(Config.I_AUTHORS, listAnalyzer);
         AnalyzerWrapper analyzerWrapper = new PerFieldAnalyzerWrapper(analyzer, analyzerMap);
-        Path indexRoot = Paths.get(Config.indexFolder);
-        if (Files.exists(indexRoot)) {
-            Helper.deleteFiles(indexRoot);
+        logger.info("indexing folder: {}", indexFolderString);
+        Path indexFolder = Paths.get(indexFolderString);
+        if (Files.exists(indexFolder)) {
+            Helper.deleteFiles(indexFolder);
         }
-        Directory dir = FSDirectory.open(indexRoot);
+        Directory dir = FSDirectory.open(indexFolder);
         IndexWriterConfig iwc = new IndexWriterConfig(analyzerWrapper);
         iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         writer = new IndexWriter(dir, iwc);

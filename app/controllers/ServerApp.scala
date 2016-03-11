@@ -1,6 +1,6 @@
 package controllers
 
-import models.core.{LIndexDriver, LIndexOption, LIndexer, SearchWrapper}
+import models.core.{LIndexDriver, LIndexOption, LIndexer, LSearcher}
 import models.utility.Config
 import org.slf4j.LoggerFactory
 import play.api.libs.json._
@@ -27,7 +27,7 @@ object ServerApp extends Controller {
 
         logger.info(s"content=$content, fields=${fields.mkString("(", ", ", ")")}")
 
-        val wrapper = new SearchWrapper()
+        val wrapper = new LSearcher()
         val FFF = Config.defaultFields
         val matchedFieldsMap = wrapper.search(fields, content)
         val searcher = wrapper.getSearcher
@@ -57,12 +57,19 @@ object ServerApp extends Controller {
     request.body.asJson match {
       case None => BadRequest(badRequestMsg)
       case Some(body) => {
-        val driver = new LIndexDriver(Config.xmlFile)
+        val fileString = Config.xmlFile
+        val driver = new LIndexDriver(fileString)
         val stemming = (body \ "stem").as[Boolean]
         val ignoreCase = (body \ "ignore").as[Boolean]
         val swDict = (body \ "swDict").as[String]
         val indexOption = new LIndexOption(stemming, ignoreCase, swDict)
-        val indexer = new LIndexer(indexOption)
+
+        val indexFolder = {
+          val fileName = fileString.split(java.io.File.separator).last
+          Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
+        }
+
+        val indexer = new LIndexer(indexOption, indexFolder)
         val start = System.currentTimeMillis()
         driver.run(indexer)
         val duration = System.currentTimeMillis() - start

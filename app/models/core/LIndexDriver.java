@@ -30,8 +30,8 @@ public class LIndexDriver {
             parser.getXMLReader().setFeature(Config.VALIDATION, true);
             File inputFile = new File(source);
             if (!inputFile.exists()) {
-                System.out.printf("%s doesn't exist\n", source);
-                System.exit(1);
+                String msg = source + " doesn't exist";
+                throw new RuntimeException(msg);
             }
             PubHandler handler = new PubHandler(indexer);
             parser.parse(inputFile, handler);

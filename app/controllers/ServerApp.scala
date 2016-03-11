@@ -20,7 +20,6 @@ object ServerApp extends Controller {
   val logger = LoggerFactory.getLogger(getClass)
 
   def searchDoc = Action { request => {
-    //    TODO should add option for "exact match" phrase
     request.body.asJson match {
       case None => BadRequest(badRequestMsg)
       case Some(body) => {
@@ -34,12 +33,12 @@ object ServerApp extends Controller {
 
         val wrapper = new LSearcher(indexFolder)
         val matchedFieldsMap = wrapper.search(fields, content)
-        wrapper.close()
         val searcher = wrapper.searcher
 
         val resList = matchedFieldsMap.flatMap(
           entry => {
-            entry._2.map(
+            val hits = entry._2
+            hits.map(
               hit => {
                 val hitDoc = searcher.doc(hit.doc)
                 val hitDocMap = hitDoc.getFields().map(
@@ -52,6 +51,7 @@ object ServerApp extends Controller {
             ).toList
           }
         )
+        wrapper.close()
         Ok(Json.toJson(resList))
       }
     }

@@ -45,6 +45,9 @@ class LIndexer(writer: IndexWriter) {
       //        TextField (how to join/split author list ???)
       val authorString = publication.authors.mkString(Config.splitString)
       addDocText("authors", authorString, document)
+      if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
+        writer.addDocument(document)
+      }
     } catch {
       case e: java.io.IOException => {
         e.printStackTrace()

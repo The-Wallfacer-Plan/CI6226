@@ -23,4 +23,5 @@ class Publication() {
     authors += author
   }
 
+  override def toString = s"Publication($paperId, $title, $kind, $venue, $authors, $pubYear)"
 }

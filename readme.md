@@ -1,3 +1,25 @@
+## design
+
+- requirements:
+  - stemming
+  - ignore case
+  - stopwords list
+- query categories (parsed in server side -- scala)
+  - free text: word "word" word ...
+  - attribute: <field>:"word word..." and/or <field>:"word" ...
+
+```
+Q := | [\epsilon]
+     | W Q
+     | "W" Q
+     | F:W L Q
+
+W := | ^[A-z0-9]+$
+
+L := | and | or
+```
+- search should be something like "https://github.com", the url has changed --> mostly scala
+
 ## BUGS
 - "xxx/yyy" error search
 - ignore case doesn't work? 
@@ -19,5 +41,5 @@
 
 
 ## notice:
-- modified dblp.xml for "author" attribute since it doesn't correspond to dtd
+- removed dblp.xml for "author" attribute (`aux`) since it doesn't correspond to dtd
 - ignored tags (i, sup, sub, tt) in xml

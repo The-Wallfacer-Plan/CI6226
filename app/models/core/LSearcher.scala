@@ -5,8 +5,11 @@ import java.nio.file.{Files, Paths}
 import models.utility.Config
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{BooleanClause, BooleanQuery, IndexSearcher, ScoreDoc}
+import org.apache.lucene.search.{BooleanClause, BooleanQuery, IndexSearcher}
 import org.apache.lucene.store.FSDirectory
+import play.api.libs.json.{JsValue, Json}
+
+import scala.collection.JavaConversions._
 
 class LSearcher(item: String) {
   val analyzer = new LAnalyzer()
@@ -18,8 +21,8 @@ class LSearcher(item: String) {
   }
   val searcher = new IndexSearcher(reader)
 
-  def search(fields: List[String], queryString: String): Map[String, Array[ScoreDoc]] = {
-    fields.map(field => {
+  def search(fields: List[String], queryString: String): JsValue = {
+    val raw = fields.map(field => {
       field -> {
         val parser = new QueryParser(field, analyzer)
         parser.setAllowLeadingWildcard(true)
@@ -29,7 +32,24 @@ class LSearcher(item: String) {
         topDocs.scoreDocs
       }
     }).toMap
-  }
 
-  def close() = reader.close()
+    val resList = raw.flatMap(
+      entry => {
+        val hits = entry._2
+        hits.map(
+          hit => {
+            val hitDoc = searcher.doc(hit.doc)
+            val hitDocMap = hitDoc.getFields().map(
+              field => {
+                field.name() -> field.stringValue()
+              }
+            ).toMap + ("No." -> hit.doc.toString())
+            Json.toJson(hitDocMap)
+          }
+        ).toList
+      }
+    )
+    reader.close()
+    Json.toJson(resList)
+  }
 }

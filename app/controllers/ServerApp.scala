@@ -6,7 +6,6 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 
-import scala.collection.JavaConversions._
 import scala.sys.process.Process
 
 class ServerApp extends Controller {
@@ -28,29 +27,10 @@ class ServerApp extends Controller {
     Logger.info(s"content=$content, fields=${fields.mkString("(", ", ", ")")}")
 
     val wrapper = new LSearcher(indexFolder)
-    val matchedFieldsMap = wrapper.search(fields, content)
-    val searcher = wrapper.searcher
-
-    val resList = matchedFieldsMap.flatMap(
-      entry => {
-        val hits = entry._2
-        hits.map(
-          hit => {
-            val hitDoc = searcher.doc(hit.doc)
-            val hitDocMap = hitDoc.getFields().map(
-              field => {
-                field.name() -> field.stringValue()
-              }
-            ).toMap + ("No." -> hit.doc.toString())
-            Json.toJson(hitDocMap)
-          }
-        ).toList
-      }
-    )
-    wrapper.close()
+    val returnContent = wrapper.search(fields, content)
     val res = JsObject(Seq(
       "status" -> JsString("OK"),
-      "result" -> Json.toJson(resList)
+      "result" -> returnContent
     ))
     Logger.info(s"$res")
     Ok(res)

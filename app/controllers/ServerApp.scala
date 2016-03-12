@@ -1,7 +1,10 @@
 package controllers
 
+import java.io.File
+
 import models.core.{LIndexDriver, LIndexOption, LIndexer, LSearcher}
 import models.utility.Config
+import org.apache.commons.io.FileUtils
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -40,15 +43,18 @@ class ServerApp extends Controller {
               field => {
                 field.name() -> field.stringValue()
               }
-            ).toMap
+            ).toMap + ("No." -> hit.doc.toString())
             Json.toJson(hitDocMap)
           }
         ).toList
       }
     )
     wrapper.close()
-    //    Logger.info(s"$resList")
-    val res = Json.toJson(resList)
+    val res = JsObject(Seq(
+      "status" -> JsString("OK"),
+      "result" -> Json.toJson(resList)
+    ))
+    Logger.info(s"$res")
     Ok(res)
   }
   }
@@ -68,9 +74,13 @@ class ServerApp extends Controller {
     val start = System.currentTimeMillis()
     driver.run(indexer)
     val duration = System.currentTimeMillis() - start
-    val msg = s"indexing cost $duration ms"
-    //    Logger.info(msg)
-    Ok(msg)
+    val sizeString = FileUtils.byteCountToDisplaySize(FileUtils.sizeOfDirectory(new File(indexFolder)))
+    val res = JsObject(Seq(
+      "status" -> JsString("OK"),
+      "time" -> JsString(duration.toString + "ms"),
+      "size" -> JsString(sizeString)
+    ))
+    Ok(res)
   }
   }
 

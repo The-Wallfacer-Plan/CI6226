@@ -2,6 +2,11 @@ function buildHtmlTable(selector, listData) {
     //reset
     $(selector).html("");
 
+    if ($.isEmptyObject(listData)) {
+        displayResponse("no result returned");
+        return
+    }
+
     // build
     var columns = addAllColumnHeaders(listData, selector);
     for (var i = 0; i < listData.length; i++) {
@@ -59,7 +64,8 @@ function _getUrl(uri) {
 }
 
 function displayResponse(msg) {
-    $(hintTextSelector).show().text(msg).delay(1500).fadeOut();
+    var shown = JSON.stringify(msg, null, 2);
+    $(hintTextSelector).show().text(shown).delay(1500).fadeOut();
 }
 
 // --------------------------------------------------------------
@@ -91,14 +97,11 @@ function indexIt() {
 
 // --------------------------------------------------------------
 
-
 function listSearchResult(response) {
-    if ($.isEmptyObject(response)) {
-        displayResponse("no result returned");
-        return
-    }
     console.log(JSON.stringify(response));
-    buildHtmlTable("#excelDataTable", response);
+    if (response.status == "OK") {
+        buildHtmlTable("#excelDataTable", response.result);
+    }
 }
 
 

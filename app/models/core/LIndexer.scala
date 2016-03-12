@@ -1,9 +1,11 @@
 package models.core
 
+import java.io.File
 import java.nio.file.{Files, Paths}
 
-import models.utility.{Config, Helper}
+import models.utility.Config
 import models.xml.Publication
+import org.apache.commons.io.FileUtils
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
@@ -69,7 +71,8 @@ object LIndexer {
       val indexFolder = Paths.get(indexFolderString)
       if (Files.exists(indexFolder)) {
         Logger.info("indexing folder already exists, delete")
-        Helper.deleteFiles(indexFolder)
+        //        Helper.deleteFiles(indexFolder)
+        FileUtils.deleteDirectory(new File(indexFolderString))
       }
       FSDirectory.open(indexFolder)
     }

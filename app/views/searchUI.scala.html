@@ -16,15 +16,21 @@
         <input id="cb-field-pubYear" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="pubYear">
         pubyear<br>
     </fieldset>
-    
+
 </form>
 
 <br>
 
-<div>
-    <input id="searchBox" class="form-control-static" type="text" value="Google" onkeypress="selectiveSearchIt(event)"/>
-    <button type="submit" id="searchButton" class="btn btn-primary" onclick="searchIt()">Search</button>
-</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="input-group">
+            <input type="text" id="searchBox" class="form-control" placeholder="Search for..." onkeypress="selectiveSearchIt(event)"/>
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="searchButton" onclick="searchIt()">Go!</button>
+            </span>
+        </div> <!-- /input-group -->
+    </div> <!-- /.col-lg-6 -->
+</div> <!-- /.row -->
 
 <br>
 

@@ -30,7 +30,7 @@ class LIndexer(writer: IndexWriter) {
       return
     }
     pub.validate()
-    //    Logger.info(s"=> $pub")
+    Logger.debug(s"=> $pub")
     val document = new Document()
     //        is the form of "xxx/xxx/xxx", use TextField
     addDocText("paperId", pub.paperId, document)

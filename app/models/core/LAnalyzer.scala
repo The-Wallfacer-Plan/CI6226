@@ -29,7 +29,7 @@ class LAnalyzer(option: LIndexOption, patternString: String) extends Analyzer {
       Logger.info("lower case filter")
       result = new LowerCaseFilter(result)
     }
-    if (option.swDict.equals("Lucene")) {
+    if (option.swDict.equalsIgnoreCase("Lucene")) {
       Logger.info("Lucene stopWords filter")
       result = new StopFilter(result, StopAnalyzer.ENGLISH_STOP_WORDS_SET)
     } else if (option.swDict.equals("None")) {

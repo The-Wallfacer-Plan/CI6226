@@ -1,16 +1,16 @@
 package models.core
 
 import java.nio.file.{Files, Paths}
-import java.util
 
 import models.utility.{Config, Helper}
 import models.xml.Publication
-import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
+
+import scala.collection.JavaConversions._
 
 class LIndexer(writer: IndexWriter) {
 
@@ -24,36 +24,34 @@ class LIndexer(writer: IndexWriter) {
     document.add(field)
   }
 
-  def index(publication: Publication): Unit = {
-    if (publication.paperId.startsWith(Config.DBLPNOTE)) {
+  def index(pub: Publication): Unit = {
+    if (pub.paperId.startsWith(Config.DBLPNOTE)) {
       Logger.warn("dblpnote entry, ignoring")
       return
     }
-    publication.validate()
+    pub.validate()
+    if (pub.title.contains("Google")) {
+      Logger.info(s"=> $pub")
+    }
     val document = new Document()
-    try {
-      //        is the form of "xxx/xxx/xxx", use TextField
-      addDocText("paperId", publication.paperId, document)
-      //        TextField
-      addDocText("title", publication.title, document)
-      //        StringField
-      addDocText("kind", publication.kind, document)
-      //        ???
-      addDocText("venue", publication.venue, document)
-      //        StringField
-      addDocText("pubYear", publication.pubYear, document)
-      //        TextField (how to join/split author list ???)
-      val authorString = publication.authors.mkString(Config.splitString)
-      addDocText("authors", authorString, document)
-      if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
-        writer.addDocument(document)
-      }
-    } catch {
-      case e: java.io.IOException => {
-        e.printStackTrace()
-      }
+    //        is the form of "xxx/xxx/xxx", use TextField
+    addDocText("paperId", pub.paperId, document)
+    //        TextField
+    addDocText("title", pub.title, document)
+    //        StringField
+    addDocText("kind", pub.kind, document)
+    //        ???
+    addDocText("venue", pub.venue, document)
+    //        StringField
+    addDocText("pubYear", pub.pubYear, document)
+    //        TextField (how to join/split author list ???)
+    val authorString = pub.authors.mkString(Config.splitString)
+    addDocText("authors", authorString, document)
+    if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
+      writer.addDocument(document)
     }
   }
+
 }
 
 object LIndexer {
@@ -62,8 +60,7 @@ object LIndexer {
     val analyzerWrapper = {
       val analyzer = new LAnalyzer(option, null)
       val listAnalyzer = new LAnalyzer(option, Config.splitString)
-      val analyzerMap = new util.HashMap[String, Analyzer]()
-      analyzerMap.put(Config.I_AUTHORS, listAnalyzer)
+      val analyzerMap = Map(Config.I_AUTHORS -> listAnalyzer)
       new PerFieldAnalyzerWrapper(analyzer, analyzerMap)
     }
     val iwc = new IndexWriterConfig(analyzerWrapper)

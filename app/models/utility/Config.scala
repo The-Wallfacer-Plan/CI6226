@@ -6,10 +6,10 @@ object Config {
   val homeDir = System.getProperty("user.home")
   val tempDir = System.getProperty("java.io.tmpdir")
   val rootDir = homeDir + File.separator + "Dropbox/PHDCourses/IR/assignment"
-  val xmlFile = rootDir + File.separator + "sample.xml"
   val VALIDATION = "http://xml.org/sax/features/validation"
   val indexRoot = tempDir + File.separator + "index"
   val splitString = "; "
+  val xmlFile = rootDir + File.separator + "sample.xml"
 
   val I_PAPER_ID = "paperId"
   val I_TITLE = "title"
@@ -22,5 +22,5 @@ object Config {
   val DBLPNOTE = "dblpnote"
 
   //    interface Configurable
-  val topN = 10
+  val topN = 20
 }

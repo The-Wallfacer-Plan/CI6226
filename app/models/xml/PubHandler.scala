@@ -4,6 +4,7 @@ import models.core.LIndexer
 import org.slf4j.LoggerFactory
 import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.{Attributes, SAXException, SAXParseException}
+import play.api.Logger
 
 class PubHandler(indexer: LIndexer) extends DefaultHandler {
 
@@ -21,10 +22,11 @@ class PubHandler(indexer: LIndexer) extends DefaultHandler {
   private var unknown = false
 
   var pub: Publication = null
+  var sb: StringBuilder = new StringBuilder()
 
-  def isInterestingEntry(qName: String) = List(ARTICLE, INPROCEEDINGS).contains(qName)
+  def isInterestingEntry(name: String) = List(ARTICLE, INPROCEEDINGS).contains(name)
 
-  def isVenueEntry(qName: String) = List(JOURNAL, BOOKTITLE).contains(qName)
+  def isVenueEntry(name: String) = List(JOURNAL, BOOKTITLE).contains(name)
 
   override def startElement(namespaceURI: String, localName: String, qName: String, attributes: Attributes): Unit = {
     unknown = false
@@ -62,63 +64,57 @@ class PubHandler(indexer: LIndexer) extends DefaultHandler {
   }
 
   override def endElement(namespaceURI: String, localName: String, qName: String): Unit = {
-    if (isInterestingEntry(qName)) {
+    val qLowerName = qName.toLowerCase
+    if (isInterestingEntry(qLowerName)) {
       if (inEntry) {
         inEntry = false
-        isTitle = false
-        isAuthor = false
-        isYear = false
-        isVenue = false
-        unknown = false
         indexer.index(pub)
         pub = null
+      }
+    } else {
+      val value = sb.toString()
+      Logger.info(s"isTitle=$isTitle, isAuthor=$isAuthor, isYear=$isYear, isVenue=$isVenue, unknown=$unknown\tvalue=$value")
+      sb.setLength(0)
+      if (isTitle) {
+        isTitle = false
+        pub.title = value
+      } else if (isAuthor) {
+        isAuthor = false
+        pub.addAuthor(value)
+      } else if (isYear) {
+        isYear = false
+        pub.pubYear = value
+      } else if (isVenue) {
+        isVenue = false
+        pub.venue = value
+      } else if (unknown) {
+        unknown = false
       }
     }
   }
 
   override def characters(ch: Array[Char], start: Int, length: Int): Unit = {
-    //        other venues might be not interesting
     if (inEntry) {
-      val value = new String(ch, start, length)
-      if (isTitle) {
-        pub.title = value
-        isTitle = false
-      }
-      if (isAuthor) {
-        pub.addAuthor(value)
-        isAuthor = false
-      }
-      if (isYear) {
-        pub.pubYear = value
-        isYear = false
-      }
-      if (isVenue) {
-        pub.venue = value
-        isVenue = false
-      }
-      if (unknown) {
-        unknown = false
-      }
+      sb.append(new String(ch, start, length))
     }
   }
 
-  private def Message(mode: String, exception: SAXParseException) {
-    System.out.println(mode + " Line: " + exception.getLineNumber()
-      + " URI: " + exception.getSystemId() + "\n" + " Message: " + exception.getMessage());
+  private def Message(mode: String, e: SAXParseException) {
+    Logger.info(s"$mode Line:${e.getLineNumber} URI: ${e.getSystemId} + ${e.getMessage}")
   }
 
-  override def warning(exception: SAXParseException): Unit = {
-    Message("**Parsing Warning**\n", exception)
+  override def warning(e: SAXParseException): Unit = {
+    Message("**Parsing Warning**\n", e)
     throw new SAXException("Warning encountered")
   }
 
-  override def error(exception: SAXParseException): Unit = {
-    Message("**Parsing Error**\n", exception)
+  override def error(e: SAXParseException): Unit = {
+    Message("**Parsing Error**\n", e)
     throw new SAXException("Error encountered")
   }
 
-  override def fatalError(exception: SAXParseException): Unit = {
-    Message("**Parsing Fatal Error**\n", exception)
+  override def fatalError(e: SAXParseException): Unit = {
+    Message("**Parsing Fatal Error**\n", e)
     throw new SAXException("Fatal Error encountered")
   }
 }

@@ -17,7 +17,7 @@ class ServerApp extends Controller {
     val fileName = inputFile.split(java.io.File.separator).last
     Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
   }
-  
+
   def searchDoc = Action(parse.json) { request => {
     val body = request.body
     Logger.info(s"$body")
@@ -47,7 +47,7 @@ class ServerApp extends Controller {
       }
     )
     wrapper.close()
-    Logger.info(s"$resList")
+    //    Logger.info(s"$resList")
     val res = Json.toJson(resList)
     Ok(res)
   }
@@ -69,7 +69,7 @@ class ServerApp extends Controller {
     driver.run(indexer)
     val duration = System.currentTimeMillis() - start
     val msg = s"indexing cost $duration ms"
-    Logger.info(msg)
+    //    Logger.info(msg)
     Ok(msg)
   }
   }

@@ -19,9 +19,7 @@ class Publication() {
     require(pubYear != null)
   }
 
-  def addAuthor(author: String): Unit = {
-    authors += author
-  }
+  def addAuthor(author: String): Unit = authors += author
 
   override def toString = s"Publication($paperId, $title, $kind, $venue, $authors, $pubYear)"
 }

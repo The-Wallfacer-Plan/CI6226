@@ -30,9 +30,7 @@ class LIndexer(writer: IndexWriter) {
       return
     }
     pub.validate()
-    if (pub.title.contains("Google")) {
-      Logger.info(s"=> $pub")
-    }
+    //    Logger.info(s"=> $pub")
     val document = new Document()
     //        is the form of "xxx/xxx/xxx", use TextField
     addDocText("paperId", pub.paperId, document)

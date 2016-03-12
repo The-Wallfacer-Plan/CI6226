@@ -1,15 +1,13 @@
 package controllers
 
-import java.io.File
-
 import models.core.{LIndexDriver, LIndexOption, LIndexer, LSearcher}
 import models.utility.Config
-import org.apache.commons.io.FileUtils
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 
 import scala.collection.JavaConversions._
+import scala.sys.process.Process
 
 class ServerApp extends Controller {
 
@@ -74,11 +72,13 @@ class ServerApp extends Controller {
     val start = System.currentTimeMillis()
     driver.run(indexer)
     val duration = System.currentTimeMillis() - start
-    val sizeString = FileUtils.byteCountToDisplaySize(FileUtils.sizeOfDirectory(new File(indexFolder)))
+    Logger.info(s"index took ${duration}ms")
+    //    val sizeString = FileUtils.byteCountToDisplaySize(FileUtils.sizeOfDirectory(new File(indexFolder)))
+    val size = Process(s"du -sk $indexFolder").!!.split("\\s+")(0)
     val res = JsObject(Seq(
       "status" -> JsString("OK"),
       "time" -> JsString(duration.toString + "ms"),
-      "size" -> JsString(sizeString)
+      "size" -> JsString(size.toString + "K")
     ))
     Ok(res)
   }

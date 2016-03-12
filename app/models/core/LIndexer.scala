@@ -1,11 +1,9 @@
 package models.core
 
-import java.io.File
 import java.nio.file.{Files, Paths}
 
 import models.utility.Config
 import models.xml.Publication
-import org.apache.commons.io.FileUtils
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
@@ -13,11 +11,11 @@ import org.apache.lucene.store.FSDirectory
 import play.api.Logger
 
 import scala.collection.JavaConversions._
+import scala.sys.process.Process
 
 class LIndexer(writer: IndexWriter) {
 
   def writeBack() = {
-    Logger.info("write index done")
     writer.close()
   }
 
@@ -71,8 +69,7 @@ object LIndexer {
       val indexFolder = Paths.get(indexFolderString)
       if (Files.exists(indexFolder)) {
         Logger.info("indexing folder already exists, delete")
-        //        Helper.deleteFiles(indexFolder)
-        FileUtils.deleteDirectory(new File(indexFolderString))
+        Process(s"rm -rf $indexFolderString").!!
       }
       FSDirectory.open(indexFolder)
     }

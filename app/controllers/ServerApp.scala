@@ -2,7 +2,7 @@ package controllers
 
 import models.core.{LIndexDriver, LIndexOption, LIndexer, LSearcher}
 import models.utility.Config
-import org.slf4j.LoggerFactory
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 
@@ -18,19 +18,17 @@ class ServerApp extends Controller {
 
   val badRequestMsg = "invalid request body, should be json"
 
-  val logger = LoggerFactory.getLogger(getClass)
-
   def searchDoc = Action { request => {
     request.body.asJson match {
       case None => BadRequest(badRequestMsg)
       case Some(body) => {
-        logger.info(s"$body")
+        Logger.info(s"$body")
         val fields = (body \ "fields").as[JsArray].value.map(jsValue => {
           jsValue.as[String]
         }).toList
         val content = (body \ "content").as[String]
 
-        logger.info(s"content=$content, fields=${fields.mkString("(", ", ", ")")}")
+        Logger.info(s"content=$content, fields=${fields.mkString("(", ", ", ")")}")
 
         val wrapper = new LSearcher(indexFolder)
         val matchedFieldsMap = wrapper.search(fields, content)
@@ -77,7 +75,7 @@ class ServerApp extends Controller {
         driver.run(indexer)
         val duration = System.currentTimeMillis() - start
         val msg = s"indexing cost $duration ms"
-        logger.info(msg)
+        Logger.info(msg)
         Ok(msg)
       }
     }

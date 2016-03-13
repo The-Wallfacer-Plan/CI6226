@@ -21,6 +21,9 @@ object Config {
   val defaultFields = List(I_PAPER_ID, I_TITLE, I_KIND, I_AUTHORS, I_VENUE, I_PUB_YEAR)
   val DBLPNOTE = "dblpnote"
 
+  val DEFAULT_CONJ = "NIL"
+  val COMBINED_FIELD = "ALL"
+
   //    interface Configurable
   val topN = 20
 }

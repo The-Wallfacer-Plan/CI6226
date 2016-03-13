@@ -16,6 +16,8 @@ libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "5.4.1"
 
 libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.5.0",
-  "org.webjars" % "bootstrap" % "3.1.1-2",
+  "org.webjars.bower" % "bootstrap" % "3.3.6",
+  "org.webjars.bower" % "font-awesome" % "4.5.0",
+  "org.webjars.bower" % "awesome-bootstrap-checkbox" % "0.3.7",
   "org.webjars" % "jquery" % "2.2.0"
 )

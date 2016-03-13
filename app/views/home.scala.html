@@ -1,10 +1,9 @@
-@import java.util.Date
 @(result: List[String])
 
 @main("LSearcher") {
-    @*<nav class="navbar navbar-default">*@
+    <nav class="navbar navbar-default"></nav>
     <div class="container">
-        <i class="icon-calendar">@(new Date())</i>
+        @*<i class="icon-calendar">@(new Date())</i>*@
         @corner()
         <div class="row container">
             <div class="col-lg-6">
@@ -20,5 +19,4 @@
             </div>
         </div>
     </div>
-    @*</nav>*@
 }

@@ -1,12 +1,29 @@
-<h1>Indexing</h1>
-<fieldset>
-    <input id="cb-index-stem" class="checkbox-inline" type="checkbox" value="stem" > use stemming<br>
-    <input id="cb-index-ignore" class="checkbox-inline" type="checkbox" value="ignore" checked="checked"> ignore case<br>
-    Stop Words Dictionary:
-    <select id="lb-index-stopwords" class="form-control-static">
-        <option>None</option>
-        <option selected="selected">Lucene</option>
-    </select>
-    <br>
-    <button type="submit" id="indexButton" class="btn btn-primary" onclick="indexIt()">Index</button>
-</fieldset>
+<form>
+    <fieldset>
+        <div class="row">
+            <div class="col-md-7">
+                <div class="checkbox">
+                    <input id="cb-index-stem" class="styled" type="checkbox">
+                    <label for="cb-index-stem"> Use Stemming</label>
+                </div>
+                <div class="checkbox">
+                    <input id="cb-index-ignore" class="checkbox-inline" type="checkbox" checked="checked">
+                    <label for="cb-index-ignore">Ignore Case</label>
+                </div>
+
+                <label for="lb-index-stopwords">Stop Directory</label>
+                <select id="lb-index-stopwords" class="form-control" style="width: 40%">
+                    <option>None</option>
+                    <option selected="selected">Lucene</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <br> <br>
+                <div>
+                    <button type="submit" style="width: 100%" id="indexButton" class="btn btn-primary" onclick="indexIt()">Index</button>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>

@@ -1,4 +1,4 @@
-<h1>Searching</h1>
+@(result: List[String])
 
 <form>
 
@@ -35,3 +35,9 @@
 <br>
 
 <table id="excelDataTable" border="1" class="table table-view"></table>
+
+<ul>
+    @for(s <- result) {
+        <li>@s</li>
+    }
+</ul>

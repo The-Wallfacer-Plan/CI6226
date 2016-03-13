@@ -1,6 +1,6 @@
 package controllers
 
-import models.core.{LIndexDriver, LIndexOption, LIndexer, LSearcher}
+import models.core.{LIndexDriver, LIndexOption, LIndexer}
 import models.utility.Config
 import play.api.Logger
 import play.api.libs.json._
@@ -18,26 +18,8 @@ class Application extends Controller {
     Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
   }
 
-  def home = Action {
-    Ok(views.html.home("testIT"))
-  }
-
-  def searchDoc = Action(parse.json) { request => {
-    val body = request.body
-    Logger.info(s"$body")
-    val fields = (body \ "fields").as[JsArray].value.map(jsValue => jsValue.as[String]).toList
-    val content = (body \ "content").as[String]
-
-    Logger.info(s"content=$content, fields=${fields.mkString("(", ", ", ")")}")
-
-    val wrapper = new LSearcher(indexFolder)
-    val returnContent = wrapper.search(fields, content)
-    val res = JsObject(Seq(
-      "status" -> JsString("OK"),
-      "result" -> returnContent
-    ))
-    Logger.info(s"$res")
-    Ok(res)
+  def searchDoc = Action { request => {
+    Ok(views.html.home(List("good", "morning")))
   }
   }
 
@@ -69,8 +51,15 @@ class Application extends Controller {
   }
 
   def testGet = Action {
-    implicit request =>
-      Ok("<h1>--testGet</h1>").as(HTML)
+    implicit request => {
+      request.getQueryString("content") match {
+        case Some(queryString) => {
+          Logger.info(s"[$queryString]")
+          Ok("response=" + queryString).as(HTML)
+        }
+        case None => BadRequest("no result")
+      }
+    }
   }
 
   def testPost = Action(BodyParsers.parse.json) {

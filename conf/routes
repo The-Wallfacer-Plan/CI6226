@@ -2,7 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /                    controllers.Application.home
+GET         /                    controllers.Application.searchDoc
 GET         /test                controllers.Application.testGet
 POST        /test                controllers.Application.testPost
 POST        /searchDoc           controllers.Application.searchDoc

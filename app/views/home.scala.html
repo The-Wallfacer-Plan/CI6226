@@ -1,4 +1,4 @@
-@(title: String)
+@(result: List[String])
 
     @main("LSearcher") {
         <nav class="navbar navbar-default">
@@ -9,7 +9,7 @@
                 @indexUI()
                 </div>
                 <div class="alert alert-info" role="alert">
-                @searchUI()
+                @searchUI(result)
                 </div>
                 <div class = "panel panel-default">
                     <div class = "panel-body" id="statusPanel">

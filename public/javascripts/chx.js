@@ -102,7 +102,6 @@ function listSearchResult(response) {
     if (response.status == "OK") {
         buildHtmlTable("#excelDataTable", response.result);
     }
-    location.href = "/test"
 }
 
 
@@ -160,25 +159,25 @@ var testUrl = _getUrl("test");
 
 function testIt() {
     function redirectTo(url) {
-        location.href = url
+        console.log("done it")
     }
 
     var searchContent = getSearchContent();
-    var param = encodeURIComponent(searchContent);
+    var param = $.param({
+        "content": searchContent
+    });
+    //var param = encodeURIComponent(searchContent);
     console.log(param);
     if (searchContent == null) {
         displayResponse("please input the search keywords");
         return;
     }
-    var fullSearchData = {
-        "content": searchContent
-    };
     var privateParam = {
         "method": "GET",
         "data": param,
         "url": _getUrl("test")
     };
     $.extend(privateParam, commonParam);
-    $.ajax(privateParam).done(redirectTo).error(onError);
-    redirectTo("/test")
+    $.ajax(privateParam).error(onError);
+    location.href = param
 }

@@ -24,6 +24,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
   def parse(queryString: String): Unit = {
   }
 
+
   def search(queryString: String) = {
     //    TODO
     //    val fields = Config.defaultFields

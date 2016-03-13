@@ -1,21 +1,23 @@
+@import java.util.Date
 @(result: List[String])
 
-    @main("LSearcher") {
-        <nav class="navbar navbar-default">
+@main("LSearcher") {
+    @*<nav class="navbar navbar-default">*@
+    <div class="container">
+        <i class="icon-calendar">@(new Date())</i>
 
-            <div class="container">
-                @corner()
-                <div class="alert alert-info" role="alert">
-                @indexUI()
-                </div>
-                <div class="alert alert-info" role="alert">
-                @searchUI(result)
-                </div>
-                <div class = "panel panel-default">
-                    <div class = "panel-body" id="statusPanel">
-                        LSearcher
-                    </div>
-                </div>
-            </div>
-        </nav>
-    }
+        @corner()
+        @*<div class="alert alert-info" role="alert">*@
+        @indexUI()
+        @*</div>*@
+        @*<div class="alert alert-info" role="alert">*@
+        @searchUI(result)
+        @*</div>*@
+        @*<div class = "panel panel-default">*@
+        @*<div class = "panel-body" id="statusPanel">*@
+        @*LSearcher*@
+        @*</div>*@
+        @*</div>*@
+    </div>
+    @*</nav>*@
+}

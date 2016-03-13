@@ -21,6 +21,10 @@ class LSearcher(item: String) {
   }
   val searcher = new IndexSearcher(reader)
 
+  def parse(queryString: String): Unit = {
+    val category = "ALL"
+  }
+
   def search(queryString: String) = {
     //    TODO
     val fields = Config.defaultFields
@@ -52,7 +56,6 @@ class LSearcher(item: String) {
       }
     )
     reader.close()
-    //    Json.toJson(resList)
     List(queryString, "good", "bad")
   }
 }

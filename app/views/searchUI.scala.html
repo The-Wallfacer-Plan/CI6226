@@ -1,28 +1,52 @@
 @(result: List[String])
+@*<div>*@
+@*<input type="checkbox" class="radio" value="1" name="searchType" id="s-freetext" />Free Text*@
+@*<input type="checkbox" class="radio" value="1" name="searchType" id="s-field" />Fields Specific*@
+@*</div>*@
 
-<form>
+@*<form>*@
 
-    <fieldset>
-        <label><input id="cb-field-paperId" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="paperId"></label>
-        paperid<br>
-        <input id="cb-field-title" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="title">
-        title<br>
-        <input id="cb-field-kind" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="kind">
-        kind<br>
-        <input id="cb-field-authors" class="checkbox-inline" name="field" type="checkbox" value="authors">
-        authors<br>
-        <input id="cb-field-venue" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="venue">
-        venue<br>
-        <input id="cb-field-pubYear" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="pubYear">
-        pubyear<br>
-    </fieldset>
+@*<fieldset>*@
+@*<label><input id="cb-field-paperId" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="paperId"></label>*@
+@*paperid<br>*@
+@*<input id="cb-field-title" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="title">*@
+@*title<br>*@
+@*<input id="cb-field-kind" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="kind">*@
+@*kind<br>*@
+@*<input id="cb-field-authors" class="checkbox-inline" name="field" type="checkbox" value="authors">*@
+@*authors<br>*@
+@*<input id="cb-field-venue" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="venue">*@
+@*venue<br>*@
+@*<input id="cb-field-pubYear" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="pubYear">*@
+@*pubyear<br>*@
+@*</fieldset>*@
 
-</form>
+@*</form>*@
+<br>
+
+
+<div class="row container">
+    <div class="col-lg-6">
+        <h3>Free Text Search</h3>
+        <td>
+            <li>search with >=1 word(s): <i>Google Rocks</i></li>
+            <li>phrase search: <i>"event detection"</i></li>
+        </td>
+    </div><!-- /.col-lg-6 -->
+    <div class="col-lg-6">
+        <h3>Field Sensitive Search</h3>
+        <td>
+            <li>Form: <i>field1:word1 <b>or</b>/<b>and</b> field2:"word2 word3"</i></li>
+            <li>Validate Fields: <code>paperId, title, kind, authors, venue, pubYear</code></li>
+            <li>Example: <i>authors:Maurizio or title:"Event Detection"</i></li>
+        </td>
+    </div><!-- /.col-lg-6 -->
+</div> <!-- /.row -->
 
 <br>
 
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-12">
         <div class="input-group">
             <input type="text" id="searchBox" class="form-control" placeholder="Search for..." onkeypress="selectiveSearchIt(event)"/>
             <span class="input-group-btn">
@@ -33,6 +57,7 @@
 </div> <!-- /.row -->
 
 <br>
+
 
 <table id="excelDataTable" border="1" class="table table-view"></table>
 

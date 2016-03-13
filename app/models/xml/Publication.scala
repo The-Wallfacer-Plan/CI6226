@@ -21,5 +21,7 @@ class Publication() {
 
   def addAuthor(author: String): Unit = authors += author
 
-  override def toString = s"Publication($paperId, $title, $kind, $venue, $authors, $pubYear)"
+  override def toString() = s"Publication($paperId, $title, $kind, $venue, $authors, $pubYear)"
+
+  def combinedString() = s"$paperId\n$title\n$kind\n$venue\n${authors.mkString(" ")}\n$pubYear"
 }

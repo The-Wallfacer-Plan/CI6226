@@ -2,6 +2,7 @@ package controllers
 
 import models.core.{LIndexDriver, LIndexer, LOption, LSearcher}
 import models.utility.Config
+import models.{LSearchResult, Stats}
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -28,11 +29,12 @@ class Application extends Controller {
           new LOption(stemming, ignoreCase, swDict)
         }
         val searcher = new LSearcher(searchOption, indexFolder)
-        val res = searcher.search(queryString)
+        val res = searcher.searchImp(queryString)
         Ok(views.html.home(res))
       }
       case None => {
-        Ok(views.html.home(List[String]()))
+        val result = new LSearchResult("OK", Stats(0), List.empty)
+        Ok(views.html.home(result))
       }
     }
   }

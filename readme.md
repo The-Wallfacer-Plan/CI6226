@@ -38,6 +38,7 @@ L := | and | or
 - "phrase query" should use different indexer!!!
 - tolerant retrieval
 - use a special field "ALL" to for "free text" search, others by combination ???
+- see whether can using "merge"
 
 
 ## notice:

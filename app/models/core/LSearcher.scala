@@ -3,12 +3,12 @@ package models.core
 import java.nio.file.{Files, Paths}
 
 import models.utility.Config
+import models.{LSearchResult, SearchPub, Stats}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{BooleanClause, BooleanQuery, IndexSearcher}
+import org.apache.lucene.search._
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
-import play.api.libs.json.Json
 
 import scala.collection.JavaConversions._
 
@@ -72,43 +72,66 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
   }
   val searcher = new IndexSearcher(reader)
 
-  def parse(queryString: String): Unit = {
+  private def searchOneField(s: String, f: String): TopDocs = {
+    val parser = new QueryParser(f, analyzer)
+    parser.setAllowLeadingWildcard(true)
+    val query = parser.parse(s)
+    val booleanQuery = new BooleanQuery.Builder().add(query, BooleanClause.Occur.MUST).build()
+    searcher.search(booleanQuery, Config.topN)
   }
 
+  def getSearchPub(topDocs: TopDocs, field: String): List[SearchPub] = {
+    topDocs.scoreDocs.toList map {
+      hit => {
+        val docID = hit.doc
+        val hitDoc = searcher.doc(docID)
+        val fieldValues = for (field <- hitDoc.getFields) yield field.stringValue()
+        new SearchPub(docID, fieldValues.toList)
+      }
+    }
+  }
 
-  def search(queryString: String) = {
+  def searchImp(queryString: String): LSearchResult = {
     val queryOption = QueryOption(queryString)
-    //    TODO
-    //    val fields = Config.defaultFields
-    val fields = List("ALL")
-    val raw = fields.map(field => {
-      field -> {
-        val parser = new QueryParser(field, analyzer)
-        parser.setAllowLeadingWildcard(true)
-        val query = parser.parse(queryString)
-        val booleanQuery = new BooleanQuery.Builder().add(query, BooleanClause.Occur.MUST).build()
-        val topDocs = searcher.search(booleanQuery, Config.topN)
-        topDocs.scoreDocs
-      }
-    }).toMap
-
-    val resList = raw.flatMap(
-      entry => {
-        val hits = entry._2
-        hits.map(
-          hit => {
-            val hitDoc = searcher.doc(hit.doc)
-            val hitDocMap = hitDoc.getFields().map(
-              field => {
-                field.name() -> field.stringValue()
-              }
-            ).toMap + ("No." -> hit.doc.toString())
-            Json.toJson(hitDocMap)
+    if (!queryOption.valid) {
+      val msg = s"invalid query string: $queryString"
+      new LSearchResult(msg, Stats(0), List.empty)
+    } else {
+      queryOption.conj match {
+        case Config.DEFAULT_CONJ => {
+          val fieldMap = queryOption.fieldMap
+          require(fieldMap.size == 1)
+          val (field, query) = fieldMap.head
+          val msg = s"query string: $queryString\n$field=>\t$query"
+          val timeStart = System.currentTimeMillis()
+          val topDocs = searchOneField(field, query)
+          val duration = System.currentTimeMillis() - timeStart
+          val searchPubs = getSearchPub(topDocs, field)
+          new LSearchResult(msg, Stats(duration), searchPubs)
+        }
+        case conj => {
+          val fieldMap = queryOption.fieldMap
+          val fieldQueryList = for ((f, q) <- fieldMap) yield s"$f=>\t$q"
+          val msg = s"query string: $queryString\nConjunction=$conj\n" +
+            s"${fieldQueryList.mkString("\n")}"
+          val timeStart = System.currentTimeMillis()
+          val fieldResultMap = for ((field, query) <- fieldMap) yield {
+            field -> searchOneField(query, field)
           }
-        ).toList
+          // TODO
+          conj match {
+            case "AND" => {
+              val duration = System.currentTimeMillis() - timeStart
+              new LSearchResult(msg, Stats(duration), List.empty)
+            }
+            case "OR" => {
+              val duration = System.currentTimeMillis() - timeStart
+              new LSearchResult(msg, Stats(duration), List.empty)
+            }
+          }
+        }
       }
-    )
-    reader.close()
-    List(queryString, "good", "bad")
+
+    }
   }
 }

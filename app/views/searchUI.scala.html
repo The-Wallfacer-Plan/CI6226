@@ -1,29 +1,6 @@
-@(result: List[String])
-@*<div>*@
-@*<input type="checkbox" class="radio" value="1" name="searchType" id="s-freetext" />Free Text*@
-@*<input type="checkbox" class="radio" value="1" name="searchType" id="s-field" />Fields Specific*@
-@*</div>*@
+@(results: List[SearchPub])
 
-@*<form>*@
-
-@*<fieldset>*@
-@*<label><input id="cb-field-paperId" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="paperId"></label>*@
-@*paperid<br>*@
-@*<input id="cb-field-title" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="title">*@
-@*title<br>*@
-@*<input id="cb-field-kind" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="kind">*@
-@*kind<br>*@
-@*<input id="cb-field-authors" class="checkbox-inline" name="field" type="checkbox" value="authors">*@
-@*authors<br>*@
-@*<input id="cb-field-venue" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="venue">*@
-@*venue<br>*@
-@*<input id="cb-field-pubYear" class="checkbox-inline" name="field" type="checkbox" checked="checked" value="pubYear">*@
-@*pubyear<br>*@
-@*</fieldset>*@
-
-@*</form>*@
 <br>
-
 <br>
 
 <div class="row">
@@ -37,12 +14,10 @@
 
 <br>
 
-
-
 <table id="excelDataTable" border="1" class="table table-view"></table>
 
 <ul>
-    @for(s <- result) {
+    @for(s <- results) {
         <li>@s</li>
     }
 </ul>

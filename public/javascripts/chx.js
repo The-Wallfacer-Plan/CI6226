@@ -61,6 +61,13 @@ function getSearchContent() {
     return searchContent;
 }
 
+function selectiveSearchIt(e) {
+    console.log(e.code);
+    if (e.code == "Enter") {
+        searchIt()
+    }
+}
+
 function searchIt() {
 
     var searchContent = getSearchContent();

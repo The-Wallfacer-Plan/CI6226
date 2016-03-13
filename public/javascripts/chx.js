@@ -1,51 +1,7 @@
-function buildHtmlTable(selector, listData) {
-    //reset
-    $(selector).html("");
-
-    if ($.isEmptyObject(listData)) {
-        displayResponse("no result returned");
-        return
-    }
-
-    // build
-    var columns = addAllColumnHeaders(listData, selector);
-    for (var i = 0; i < listData.length; i++) {
-        var row$ = $('<tr/>');
-        for (var colIndex = 0; colIndex < columns.length; colIndex++) {
-            var cellValue = listData[i][columns[colIndex]];
-
-            if (cellValue == null) {
-                cellValue = "";
-            }
-
-            row$.append($('<td/>').html(cellValue));
-        }
-        $(selector).append(row$);
-    }
-}
-
-function addAllColumnHeaders(listData, selector) {
-    var columnSet = [];
-    var headerTr$ = $('<tr/>');
-    for (var i = 0; i < listData.length; i++) {
-        var rowHash = listData[i];
-        for (var key in rowHash) {
-            if ($.inArray(key, columnSet) == -1) {
-                columnSet.push(key);
-                headerTr$.append($('<th/>').html(key));
-            }
-        }
-    }
-    $(selector).append(headerTr$);
-    return columnSet;
-}
-
 function onError(response, statusText, errorThrown) {
     var msg = "response " + response + "\tstatus " + statusText + "\terrorThrown " + errorThrown;
     console.log(msg);
 }
-
-// -------------------------------------------------------------------------
 
 var hostUrl = "http://localhost:9001/";
 var hintTextSelector = "#statusPanel";
@@ -63,12 +19,12 @@ function _getUrl(uri) {
     return hostUrl + uri;
 }
 
+// --------------------------------------------------------------
+
 function displayResponse(msg) {
     var shown = JSON.stringify(msg, null, 2);
     $(hintTextSelector).show().text(shown).delay(1500).fadeOut();
 }
-
-// --------------------------------------------------------------
 
 function indexDoneHint(response) {
     displayResponse(response);
@@ -97,26 +53,6 @@ function indexIt() {
 
 // --------------------------------------------------------------
 
-function listSearchResult(response) {
-    console.log(JSON.stringify(response));
-    if (response.status == "OK") {
-        buildHtmlTable("#excelDataTable", response.result);
-    }
-}
-
-
-function getSearchOptions() {
-    var selectedFieldsEle = $("input[name='field']:checked");
-    var fields = [];
-    $.each(selectedFieldsEle, function () {
-        fields.push($(this).attr("value"));
-    });
-    console.log(fields);
-    return {
-        "fields": fields
-    };
-}
-
 function getSearchContent() {
     var searchContent = $("#searchBox").val().trim();
     if (searchContent.length == 0) {
@@ -125,42 +61,7 @@ function getSearchContent() {
     return searchContent;
 }
 
-function selectiveSearchIt(e) {
-    if (e.keyCode == 13) {
-        searchIt()
-    }
-}
-
 function searchIt() {
-    var options = getSearchOptions();
-    var searchContent = getSearchContent();
-    if (searchContent == null) {
-        displayResponse("please input the search keywords");
-        return;
-    }
-    var fullSearchData = {
-        "content": searchContent
-    };
-    $.extend(fullSearchData, options);
-    console.log("passed data: " + fullSearchData);
-    var privateParam = {
-        "method": "POST",
-        "data": JSON.stringify(fullSearchData),
-        "url": _getUrl("searchDoc")
-    };
-    $.extend(privateParam, commonParam);
-
-    $.ajax(privateParam).done(listSearchResult).error(onError);
-}
-
-// ----------------------------------------------------------------------
-var testUrl = _getUrl("test");
-
-
-function testIt() {
-    function redirectTo(url) {
-        console.log("done it")
-    }
 
     var searchContent = getSearchContent();
     var param = $.param({
@@ -179,5 +80,5 @@ function testIt() {
     };
     $.extend(privateParam, commonParam);
     $.ajax(privateParam).error(onError);
-    location.href = param
+    location.href = "?" + param
 }

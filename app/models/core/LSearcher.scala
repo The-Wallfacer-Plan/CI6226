@@ -7,7 +7,7 @@ import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{BooleanClause, BooleanQuery, IndexSearcher}
 import org.apache.lucene.store.FSDirectory
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 
 import scala.collection.JavaConversions._
 
@@ -21,7 +21,9 @@ class LSearcher(item: String) {
   }
   val searcher = new IndexSearcher(reader)
 
-  def search(fields: List[String], queryString: String): JsValue = {
+  def search(queryString: String) = {
+    //    TODO
+    val fields = Config.defaultFields
     val raw = fields.map(field => {
       field -> {
         val parser = new QueryParser(field, analyzer)
@@ -50,6 +52,7 @@ class LSearcher(item: String) {
       }
     )
     reader.close()
-    Json.toJson(resList)
+    //    Json.toJson(resList)
+    List(queryString, "good", "bad")
   }
 }

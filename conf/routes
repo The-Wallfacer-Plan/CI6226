@@ -3,10 +3,9 @@
 # ~~~~
 
 GET         /                    controllers.Application.searchDoc
+POST        /indexDoc            controllers.Application.indexDoc
 GET         /test                controllers.Application.testGet
 POST        /test                controllers.Application.testPost
-POST        /searchDoc           controllers.Application.searchDoc
-POST        /indexDoc            controllers.Application.indexDoc
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.at(path="/public", file)

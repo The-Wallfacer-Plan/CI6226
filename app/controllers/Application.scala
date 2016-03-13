@@ -1,6 +1,6 @@
 package controllers
 
-import models.core.{LIndexDriver, LIndexOption, LIndexer}
+import models.core.{LIndexDriver, LIndexOption, LIndexer, LSearcher}
 import models.utility.Config
 import play.api.Logger
 import play.api.libs.json._
@@ -19,7 +19,16 @@ class Application extends Controller {
   }
 
   def searchDoc = Action { request => {
-    Ok(views.html.home(List("good", "morning")))
+    request.getQueryString("content") match {
+      case Some(queryString) => {
+        val searcher = new LSearcher(indexFolder)
+        val res = searcher.search(queryString)
+        Ok(views.html.home(res))
+      }
+      case None => {
+        Ok(views.html.home(List[String]()))
+      }
+    }
   }
   }
 

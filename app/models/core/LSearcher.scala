@@ -11,23 +11,23 @@ import play.api.libs.json.Json
 
 import scala.collection.JavaConversions._
 
-class LSearcher(item: String) {
-  val analyzer = new LAnalyzer()
+class LSearcher(lOption: LOption, indexFolderString: String) {
+  val analyzer = new LAnalyzer(lOption, null)
   val reader = {
-    val itemFolder = Paths.get(item)
-    require(Files.exists(itemFolder))
-    val directory = FSDirectory.open(itemFolder)
+    val indexFolder = Paths.get(indexFolderString)
+    require(Files.exists(indexFolder))
+    val directory = FSDirectory.open(indexFolder)
     DirectoryReader.open(directory)
   }
   val searcher = new IndexSearcher(reader)
 
   def parse(queryString: String): Unit = {
-    val category = "ALL"
   }
 
   def search(queryString: String) = {
     //    TODO
-    val fields = Config.defaultFields
+    //    val fields = Config.defaultFields
+    val fields = List("ALL")
     val raw = fields.map(field => {
       field -> {
         val parser = new QueryParser(field, analyzer)

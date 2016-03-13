@@ -31,7 +31,7 @@ function indexDoneHint(response) {
     console.log(response);
 }
 
-function getIndexOptions() {
+function getLOptions() {
     return {
         "stem": $("#cb-index-stem").is(":checked"),
         "ignore": $("#cb-index-ignore").is(":checked"),
@@ -40,7 +40,7 @@ function getIndexOptions() {
 }
 
 function indexIt() {
-    var indexOptions = getIndexOptions();
+    var indexOptions = getLOptions();
     var privateParam = {
         "method": "POST",
         "url": _getUrl("indexDoc"),
@@ -62,7 +62,6 @@ function getSearchContent() {
 }
 
 function selectiveSearchIt(e) {
-    console.log(e.code);
     if (e.code == "Enter") {
         searchIt()
     }
@@ -71,11 +70,12 @@ function selectiveSearchIt(e) {
 function searchIt() {
 
     var searchContent = getSearchContent();
-    var param = $.param({
+    var paramObj = {
         "content": searchContent
-    });
-    //var param = encodeURIComponent(searchContent);
-    console.log(param);
+    };
+    $.extend(paramObj, getLOptions());
+    var param = $.param(paramObj);
+    console.log("param: " + param);
     if (searchContent == null) {
         displayResponse("please input the search keywords");
         return;

@@ -10,9 +10,9 @@ import org.apache.lucene.analysis.standard.StandardTokenizer
 import org.apache.lucene.analysis.{Analyzer, TokenStream}
 import play.api.Logger
 
-class LAnalyzer(option: LIndexOption, patternString: String) extends Analyzer {
+class LAnalyzer(option: LOption, patternString: String) extends Analyzer {
 
-  def this() = this(new LIndexOption(false, true, "None"), null)
+  def this() = this(new LOption(stemming = false, ignoreCase = true, "None"), null)
 
   override def createComponents(fieldName: String): TokenStreamComponents = {
     val tokenizer = {

@@ -58,7 +58,7 @@ class LIndexer(writer: IndexWriter) {
 
 object LIndexer {
 
-  def apply(option: LIndexOption, indexFolderString: String): LIndexer = {
+  def apply(option: LOption, indexFolderString: String): LIndexer = {
     val analyzerWrapper = {
       val analyzer = new LAnalyzer(option, null)
       val listAnalyzer = new LAnalyzer(option, Config.splitString)

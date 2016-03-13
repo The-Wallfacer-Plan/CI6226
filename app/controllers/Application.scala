@@ -1,6 +1,6 @@
 package controllers
 
-import models.core.{LIndexDriver, LIndexOption, LIndexer, LSearcher}
+import models.core.{LIndexDriver, LIndexer, LOption, LSearcher}
 import models.utility.Config
 import play.api.Logger
 import play.api.libs.json._
@@ -21,7 +21,13 @@ class Application extends Controller {
   def searchDoc = Action { request => {
     request.getQueryString("content") match {
       case Some(queryString) => {
-        val searcher = new LSearcher(indexFolder)
+        val searchOption = {
+          val stemming = request.getQueryString("stem").get.equalsIgnoreCase("true")
+          val ignoreCase = request.getQueryString("ignore").get.equalsIgnoreCase("true")
+          val swDict = request.getQueryString("swDict").get
+          new LOption(stemming, ignoreCase, swDict)
+        }
+        val searcher = new LSearcher(searchOption, indexFolder)
         val res = searcher.search(queryString)
         Ok(views.html.home(res))
       }
@@ -40,7 +46,7 @@ class Application extends Controller {
         val stemming = (body \ "stem").as[Boolean]
         val ignoreCase = (body \ "ignore").as[Boolean]
         val swDict = (body \ "swDict").as[String]
-        new LIndexOption(stemming, ignoreCase, swDict)
+        new LOption(stemming, ignoreCase, swDict)
       }
       LIndexer(indexOption, indexFolder)
     }
@@ -48,7 +54,6 @@ class Application extends Controller {
     driver.run(indexer)
     val duration = System.currentTimeMillis() - start
     Logger.info(s"index took ${duration}ms")
-    //    val sizeString = FileUtils.byteCountToDisplaySize(FileUtils.sizeOfDirectory(new File(indexFolder)))
     val size = Process(s"du -sk $indexFolder").!!.split("\\s+")(0)
     val res = JsObject(Seq(
       "status" -> JsString("OK"),
@@ -58,6 +63,8 @@ class Application extends Controller {
     Ok(res)
   }
   }
+
+  ///////////////////////////////////////////////////////
 
   def testGet = Action {
     implicit request => {

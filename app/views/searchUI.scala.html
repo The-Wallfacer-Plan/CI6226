@@ -24,36 +24,15 @@
 @*</form>*@
 <br>
 
-
-<div class="row container">
-    <div class="col-lg-6">
-        <h3>Free Text Search</h3>
-        <td>
-            <li>search with >=1 word(s): <i>Google Rocks</i></li>
-            <li>phrase search: <i>"event detection"</i></li>
-        </td>
-    </div><!-- /.col-lg-6 -->
-    <div class="col-lg-6">
-        <h3>Field Sensitive Search</h3>
-        <td>
-            <li>Form: <i>field1:word1 <b>or</b>/<b>and</b> field2:"word2 word3"</i></li>
-            <li>Validate Fields: <code>paperId, title, kind, authors, venue, pubYear</code></li>
-            <li>Example: <i>authors:Maurizio or title:"Event Detection"</i></li>
-        </td>
-    </div><!-- /.col-lg-6 -->
-</div> <!-- /.row -->
-
 <br>
 
 <div class="row">
-    <div class="col-lg-12">
-        <div class="input-group">
-            <input type="text" id="searchBox" class="form-control" placeholder="Search for..." onkeydown="selectiveSearchIt(event)"/>
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="button" id="searchButton" onclick="searchIt()">Go!</button>
-            </span>
-        </div> <!-- /input-group -->
-    </div> <!-- /.col-lg-6 -->
+    <div class="input-group">
+        <input type="text" id="searchBox" class="form-control" placeholder="Search for..." onkeydown="selectiveSearchIt(event)"/>
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="searchButton" onclick="searchIt()">Go!</button>
+        </span>
+    </div> <!-- /input-group -->
 </div> <!-- /.row -->
 
 <br>

@@ -5,19 +5,20 @@
     @*<nav class="navbar navbar-default">*@
     <div class="container">
         <i class="icon-calendar">@(new Date())</i>
-
         @corner()
-        @*<div class="alert alert-info" role="alert">*@
-        @indexUI()
-        @*</div>*@
-        @*<div class="alert alert-info" role="alert">*@
-        @searchUI(result)
-        @*</div>*@
-        @*<div class = "panel panel-default">*@
-        @*<div class = "panel-body" id="statusPanel">*@
-        @*LSearcher*@
-        @*</div>*@
-        @*</div>*@
+        <div class="row container">
+            <div class="col-lg-6">
+                @*<div class="alert alert-info" role="alert">*@
+                @indexUI()
+                @*</div>*@
+                @*<div class="alert alert-info" role="alert">*@
+                @searchUI(result)
+                @*</div>*@
+            </div>
+            <div class="col-lg-6">
+            @infoUI()
+            </div>
+        </div>
     </div>
     @*</nav>*@
 }

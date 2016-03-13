@@ -2,17 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Server
-GET         /test                controllers.ServerApp.testGet
-POST        /test                controllers.ServerApp.testPost
-POST        /searchDoc           controllers.ServerApp.searchDoc
-POST        /indexDoc            controllers.ServerApp.indexDoc
-
-# Client
-GET         /home                controllers.ClientApp.home
-
-GET         /                    controllers.ClientApp.index
-
+GET         /                    controllers.Application.home
+GET         /test                controllers.Application.testGet
+POST        /test                controllers.Application.testPost
+POST        /searchDoc           controllers.Application.searchDoc
+POST        /indexDoc            controllers.Application.indexDoc
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.at(path="/public", file)

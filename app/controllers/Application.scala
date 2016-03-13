@@ -8,7 +8,7 @@ import play.api.mvc._
 
 import scala.sys.process.Process
 
-class ServerApp extends Controller {
+class Application extends Controller {
 
   implicit val LCharset = Codec.javaSupported("utf-8")
 
@@ -16,6 +16,10 @@ class ServerApp extends Controller {
   val indexFolder = {
     val fileName = inputFile.split(java.io.File.separator).last
     Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
+  }
+
+  def home = Action {
+    Ok(views.html.home("testIT"))
   }
 
   def searchDoc = Action(parse.json) { request => {
@@ -66,7 +70,7 @@ class ServerApp extends Controller {
 
   def testGet = Action {
     implicit request =>
-      Ok("testGet")
+      Ok("<h1>--testGet</h1>").as(HTML)
   }
 
   def testPost = Action(BodyParsers.parse.json) {

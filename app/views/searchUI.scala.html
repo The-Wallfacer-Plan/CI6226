@@ -18,6 +18,11 @@
 
 <ul>
     @for(s <- results) {
-        <li>@s</li>
+        <li class="tree-view">Document ID: @s.docID Score: @s.score</li>
+        <ul>
+        @for(entry <- s.info) {
+            <li>@entry</li>
+        }
+        </ul>
     }
 </ul>

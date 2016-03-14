@@ -81,7 +81,6 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
   }
 
   def getSearchPub(topDocs: TopDocs, field: String): List[SearchPub] = {
-    Logger.info(s"docs: ${topDocs.scoreDocs.size}")
     topDocs.scoreDocs.toList map {
       hit => {
         val docID = hit.doc

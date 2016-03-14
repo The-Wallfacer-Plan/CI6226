@@ -1,17 +1,16 @@
 package models.core
 
-import java.io.{File, IOException}
-import javax.xml.parsers.{ParserConfigurationException, SAXParserFactory}
+import java.io.File
+import javax.xml.parsers.SAXParserFactory
 
-import models.Stats
+import models.IndexStats
 import models.utility.Config
 import models.xml.PubHandler
-import org.xml.sax.SAXException
 import play.api.Logger
 
 class LIndexDriver(source: String) {
 
-  def run(indexer: LIndexer): Stats = {
+  def run(indexer: LIndexer): IndexStats = {
     try {
       val parserFactory = SAXParserFactory.newInstance()
       val parser = parserFactory.newSAXParser()
@@ -26,19 +25,11 @@ class LIndexDriver(source: String) {
       parser.parse(inputFile, handler)
       val duration = System.currentTimeMillis() - timeStart
       indexer.writeBack()
-      new Stats(duration)
+      new IndexStats(duration, source)
     } catch {
-      case e: IOException => {
-        Logger.error(s"error reading URI: $e")
-        Stats(0L)
-      }
-      case e: SAXException => {
-        Logger.error(s"error in parsing: $e")
-        Stats(0L)
-      }
-      case e: ParserConfigurationException => {
-        Logger.error(s"error in xml configuration: $e")
-        Stats(0L)
+      case e: Exception => {
+        Logger.error(s"exception: $e")
+        IndexStats(0L, source)
       }
     }
   }

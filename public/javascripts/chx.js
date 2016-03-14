@@ -50,7 +50,6 @@ function indexIt() {
     $.ajax(privateParam).done(indexDoneHint).error(onError);
 }
 
-
 // --------------------------------------------------------------
 
 function getSearchContent() {

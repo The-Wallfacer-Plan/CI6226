@@ -3,7 +3,7 @@ package models.core
 import java.nio.file.{Files, Paths}
 
 import models.utility.Config
-import models.{LSearchResult, SearchPub, Stats}
+import models.{LSearchResult, SearchPub, SearchStats}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
@@ -102,7 +102,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     val queryOption = QueryOption(queryString)
     if (!queryOption.valid) {
       val msg = s"invalid query string: $queryString"
-      new LSearchResult(msg, Stats(0), List.empty)
+      new LSearchResult(msg, SearchStats(0), List.empty)
     } else {
       queryOption.conj match {
         case Config.DEFAULT_CONJ => {
@@ -115,7 +115,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           val duration = System.currentTimeMillis() - timeStart
           val searchPubs = getSearchPub(topDocs, field)
           Logger.info(s"searchPub: $searchPubs")
-          new LSearchResult(msg, Stats(duration), searchPubs)
+          new LSearchResult(msg, SearchStats(duration), searchPubs)
         }
         case conj => {
           val fieldMap = queryOption.fieldMap
@@ -130,11 +130,11 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           conj match {
             case "AND" => {
               val duration = System.currentTimeMillis() - timeStart
-              new LSearchResult(msg, Stats(duration), List.empty)
+              new LSearchResult(msg, SearchStats(duration), List.empty)
             }
             case "OR" => {
               val duration = System.currentTimeMillis() - timeStart
-              new LSearchResult(msg, Stats(duration), List.empty)
+              new LSearchResult(msg, SearchStats(duration), List.empty)
             }
           }
         }

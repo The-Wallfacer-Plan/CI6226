@@ -2,7 +2,7 @@ package controllers
 
 import models.core.{LIndexDriver, LIndexer, LOption, LSearcher}
 import models.utility.Config
-import models.{LSearchResult, Stats}
+import models.{LSearchResult, SearchStats}
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -29,7 +29,7 @@ class Application extends Controller {
         Ok(views.html.home(res))
       }
       case None => {
-        val result = new LSearchResult("OK", Stats(0), List.empty)
+        val result = new LSearchResult("OK", SearchStats(0), List.empty)
         Ok(views.html.home(result))
       }
     }
@@ -39,19 +39,24 @@ class Application extends Controller {
   def indexDoc = Action(parse.json) { request => {
     val body = request.body
     val driver = new LIndexDriver(inputFile)
-    val indexer = {
-      val indexOption = {
-        val stemming = (body \ "stem").as[Boolean]
-        val ignoreCase = (body \ "ignore").as[Boolean]
-        val swDict = (body \ "swDict").as[String]
-        new LOption(stemming, ignoreCase, swDict)
-      }
-      LIndexer(indexOption, indexFolder)
+    val indexOption = {
+      val stemming = (body \ "stem").as[Boolean]
+      val ignoreCase = (body \ "ignore").as[Boolean]
+      val swDict = (body \ "swDict").as[String]
+      new LOption(stemming, ignoreCase, swDict)
     }
+    val indexer = LIndexer(indexOption, indexFolder)
+
     val stats = driver.run(indexer)
     val res = JsObject(Seq(
       "status" -> JsString("OK"),
-      "time" -> JsString(stats.time + "ms")
+      "index time" -> JsString(stats.time + "ms"),
+      "index file" -> JsString(stats.source),
+      "options" -> JsObject(Seq(
+        "stem" -> JsBoolean(indexOption.stemming),
+        "ignoreCase" -> JsBoolean(indexOption.ignoreCase),
+        "stopWords" -> JsString(indexOption.swDict)
+      ))
     ))
     Logger.info(s"info: $res")
     Ok(res)

@@ -1,7 +1,7 @@
 <form>
-    <fieldset>
-        <div class="row">
-            <div class="col-md-7">
+    <div class="row">
+        <div class="col-md-7">
+            <fieldset>
                 <div class="checkbox">
                     <input id="cb-index-stem" class="styled" type="checkbox">
                     <label for="cb-index-stem"> Use Stemming</label>
@@ -16,14 +16,11 @@
                     <option>None</option>
                     <option selected="selected">Lucene</option>
                 </select>
-            </div>
-
-            <div class="col-md-3">
-                <br> <br>
-                <div>
-                    <button type="submit" style="width: 100%" id="indexButton" class="btn btn-primary" onclick="indexIt()">Index</button>
-                </div>
-            </div>
+            </fieldset>
         </div>
-    </fieldset>
+
+        <div class="col-md-3">
+            <button type="submit" style="width: 100%" id="indexButton" class="btn btn-primary" onclick="indexIt()">Index</button>
+        </div>
+    </div>
 </form>

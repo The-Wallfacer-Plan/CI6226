@@ -27,8 +27,8 @@ function displayResponse(msg) {
 }
 
 function indexDoneHint(response) {
+    console.log(JSON.stringify(response));
     displayResponse(response);
-    console.log(response);
 }
 
 function getLOptions() {

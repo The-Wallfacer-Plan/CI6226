@@ -71,7 +71,7 @@ object LIndexer {
       val indexFolder = Paths.get(indexFolderString)
       if (Files.exists(indexFolder)) {
         Logger.info("indexing folder already exists, delete")
-        Process(s"rm -rf $indexFolderString").!!
+        Process(s"rm -rf $indexFolderString").!
       }
       FSDirectory.open(indexFolder)
     }

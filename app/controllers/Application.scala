@@ -55,6 +55,7 @@ class Application extends Controller {
       "status" -> JsString("OK"),
       "time" -> JsString(stats.time + "ms")
     ))
+    Logger.info(s"info: $res")
     Ok(res)
   }
   }

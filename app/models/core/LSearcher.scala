@@ -89,8 +89,11 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
         val fieldValues = for {
           field <- hitDoc.getFields
           if field.name() != Config.COMBINED_FIELD
-        } yield field.stringValue()
-        new SearchPub(docID, score, fieldValues.toList)
+        } yield {
+          field.name() -> field.stringValue()
+        }
+        val fieldDocMap = Map(fieldValues: _*)
+        new SearchPub(docID, score, fieldDocMap)
       }
     }
   }

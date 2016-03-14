@@ -75,17 +75,8 @@ function searchIt() {
     };
     $.extend(paramObj, getLOptions());
     var param = $.param(paramObj);
-    console.log("param: " + param);
     if (searchContent == null) {
-        displayResponse("please input the search keywords");
         return;
     }
-    var privateParam = {
-        "method": "GET",
-        "data": param,
-        "url": _getUrl("test")
-    };
-    $.extend(privateParam, commonParam);
-    $.ajax(privateParam).error(onError);
     location.href = "?" + param
 }

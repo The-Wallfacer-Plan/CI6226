@@ -9,8 +9,6 @@ import play.api.mvc._
 
 class Application extends Controller {
 
-  implicit val LCharset = Codec.javaSupported("utf-8")
-
   val inputFile = Config.xmlFile
   val indexFolder = {
     val fileName = inputFile.split(java.io.File.separator).last

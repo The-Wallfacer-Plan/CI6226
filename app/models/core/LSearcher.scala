@@ -72,7 +72,8 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
   }
   val searcher = new IndexSearcher(reader)
 
-  private def searchOneField(s: String, f: String): TopDocs = {
+  private def searchOneField(f: String, s: String): TopDocs = {
+    Logger.info(s"search $s on field $f")
     val parser = new QueryParser(f, analyzer)
     parser.setAllowLeadingWildcard(true)
     val query = parser.parse(s)
@@ -81,6 +82,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
   }
 
   def getSearchPub(topDocs: TopDocs, field: String): List[SearchPub] = {
+    Logger.info(s"docs: ${topDocs.scoreDocs.size}")
     topDocs.scoreDocs.toList map {
       hit => {
         val docID = hit.doc
@@ -117,7 +119,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
             s"${fieldQueryList.mkString("\n")}"
           val timeStart = System.currentTimeMillis()
           val fieldResultMap = for ((field, query) <- fieldMap) yield {
-            field -> searchOneField(query, field)
+            field -> searchOneField(field, query)
           }
           // TODO
           conj match {

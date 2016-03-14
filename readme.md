@@ -4,6 +4,7 @@
   - stemming
   - ignore case
   - stopwords list
+  
 - query categories (parsed in server side -- scala)
   - free text: word "word" word ...
   - attribute: <field>:"word word..." and/or <field>:"word" ...
@@ -16,28 +17,30 @@ Q := | [\epsilon]
 
 W := | ^[A-z0-9]+$
 
-L := | and | or
+L := | AND | OR
 ```
-- search should be something like "https://github.com", the url has changed --> mostly scala
+- "index" should be totally from client side (jquery POST), response changes statsUI
+- "search" is mainly from server side, jquery only jumps to required uri (with params), no GET
+
 
 ## BUGS
 - "xxx/yyy" error search
-- ignore case doesn't work? 
+- ignore case doesn't work?
 
 ## TODO
 
 [x] maybe original code is incomplete for a rest request ==> renderJSON
 [x] no response should be my fault because postman can get response
-[x] generate dynamic search result with javascript (cannot use scala directly?)
 [x] get content of searchBox, process it, and pass it with POST
 [x] use another stopword dictionary
-- add "HIGHLIGHT" is necessary
+[x] search should be something like "https://github.com", the url has changed --> mostly scala
+- add "HIGHLIGHT"
 - boolean retrieval model?
   - LIMIT! /3 STATUTE ACTION /S FEDERAL /2 TORT /3 CLAIM
 - effect of lowecasse/stemming/stopwords
 - "phrase query" should use different indexer!!!
 - tolerant retrieval
-- use a special field "ALL" to for "free text" search, others by combination ???
+- use a special field "ALL" to for "free text" search, others by combination
 - see whether can using "merge"
 
 

@@ -15,9 +15,7 @@ import scala.sys.process.Process
 
 class LIndexer(writer: IndexWriter) {
 
-  def writeBack() = {
-    writer.close()
-  }
+  def writeBack() = writer.close()
 
   def addDocText(key: String, value: String, document: Document) = {
     val field = new TextField(key, value, Field.Store.YES)

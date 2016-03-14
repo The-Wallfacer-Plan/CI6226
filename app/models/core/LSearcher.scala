@@ -107,6 +107,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           val topDocs = searchOneField(field, query)
           val duration = System.currentTimeMillis() - timeStart
           val searchPubs = getSearchPub(topDocs, field)
+          Logger.info(s"searchPub: $searchPubs")
           new LSearchResult(msg, Stats(duration), searchPubs)
         }
         case conj => {

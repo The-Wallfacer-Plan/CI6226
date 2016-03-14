@@ -4,7 +4,7 @@ function onError(response, statusText, errorThrown) {
 }
 
 var hostUrl = "http://localhost:9001/";
-var hintTextSelector = "#statusPanel";
+var hintTextSelector = "#infoBox";
 var commonParam = {
     "async": true,
     "crossDomain": true,
@@ -23,7 +23,7 @@ function _getUrl(uri) {
 
 function displayResponse(msg) {
     var shown = JSON.stringify(msg, null, 2);
-    $(hintTextSelector).show().text(shown).delay(1500).fadeOut();
+    $(hintTextSelector).text(shown);
 }
 
 function indexDoneHint(response) {

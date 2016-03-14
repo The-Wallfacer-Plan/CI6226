@@ -7,8 +7,6 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 
-import scala.sys.process.Process
-
 class Application extends Controller {
 
   implicit val LCharset = Codec.javaSupported("utf-8")
@@ -52,15 +50,10 @@ class Application extends Controller {
       }
       LIndexer(indexOption, indexFolder)
     }
-    val start = System.currentTimeMillis()
-    driver.run(indexer)
-    val duration = System.currentTimeMillis() - start
-    Logger.info(s"index took ${duration}ms")
-    val size = Process(s"du -sk $indexFolder").!!.split("\\s+")(0)
+    val stats = driver.run(indexer)
     val res = JsObject(Seq(
       "status" -> JsString("OK"),
-      "time" -> JsString(duration.toString + "ms"),
-      "size" -> JsString(size.toString + "K")
+      "time" -> JsString(stats.time + "ms")
     ))
     Ok(res)
   }

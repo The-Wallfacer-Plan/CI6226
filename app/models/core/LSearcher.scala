@@ -72,11 +72,10 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
   }
   val searcher = new IndexSearcher(reader)
 
-  private def searchOneField(f: String, s: String): TopDocs = {
-    Logger.info(s"search $s on field $f")
-    val parser = new QueryParser(f, analyzer)
+  private def searchOneField(field: String, string: String): TopDocs = {
+    val parser = new QueryParser(field, analyzer)
     parser.setAllowLeadingWildcard(true)
-    val query = parser.parse(s)
+    val query = parser.parse(string)
     val booleanQuery = new BooleanQuery.Builder().add(query, BooleanClause.Occur.MUST).build()
     searcher.search(booleanQuery, Config.topN)
   }
@@ -86,9 +85,13 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     topDocs.scoreDocs.toList map {
       hit => {
         val docID = hit.doc
+        val score = hit.score
         val hitDoc = searcher.doc(docID)
-        val fieldValues = for (field <- hitDoc.getFields) yield field.stringValue()
-        new SearchPub(docID, fieldValues.toList)
+        val fieldValues = for {
+          field <- hitDoc.getFields
+          if field.name() != Config.COMBINED_FIELD
+        } yield field.stringValue()
+        new SearchPub(docID, score, fieldValues.toList)
       }
     }
   }

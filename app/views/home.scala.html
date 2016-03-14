@@ -2,20 +2,15 @@
 
 @main("LSearcher") {
     <nav class="navbar navbar-default"></nav>
+    @corner()
     <div class="container">
-        @*<i class="icon-calendar">@(new Date())</i>*@
-        @corner()
-        <div class="row container">
-            <div class="col-lg-6">
-                @*<div class="alert alert-info" role="alert">*@
-                @indexUI(result.stats)
-                @*</div>*@
-                @*<div class="alert alert-info" role="alert">*@
-                @searchUI(result.pubs)
-                @*</div>*@
+        <div class="row container-fluid">
+            <div class="col-lg-5">
+                @workUI()
+                @statsUI(result.stats)
             </div>
-            <div class="col-lg-6">
-            @infoUI()
+            <div class="col-lg-7">
+            @resultUI(result.pubs)
             </div>
         </div>
     </div>

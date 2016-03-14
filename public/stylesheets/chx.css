@@ -1,22 +1,3 @@
-.textarea {
-    width: 200px;
-    min-width: 200px;
-    max-width: 800px;
-
-    height: 200px;
-    min-height: 200px;
-    max-height: 800px;
-}
-
-.wrapper {
-    text-align: center;
-}
-
-.button {
-    margin: auto;
-    display: block;
-}
-
 .container {
     margin-top: 20px;
 }

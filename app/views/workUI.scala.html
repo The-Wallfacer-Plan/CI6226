@@ -1,0 +1,60 @@
+<div class="container">
+
+    <form class="form-inline">
+
+        <div class="input-group">
+            <input id="cb-index-stem" class="checkbox-inline" type="checkbox">
+            <label for="cb-index-stem" class="font-weight-bold"> Use Stemming</label>
+        </div>
+
+        <div class="input-group pull-right">
+            <input id="cb-index-ignore" class="checkbox-inline" type="checkbox" checked="checked">
+            <label for="cb-index-ignore" class="font-weight-bold"> Ignore Case</label>
+        </div>
+
+        <div class="checkbox">
+            <label for="lb-index-stopwords">StopWords</label>
+            <select id="lb-index-stopwords" class="form-control">
+                <option>None</option>
+                <option selected="selected">Lucene</option>
+            </select>
+        </div>
+
+        <button type="button" id="indexButton" class="btn btn-primary pull-right" onclick="indexIt()">Index</button>
+    </form>
+
+</div>
+
+<div class="container">
+
+    <div class="input-group">
+        <input type="text" id="searchBox" class="form-control" placeholder="Search for..." onkeypress="selectiveSearchIt(event)"/>
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="searchButton" onclick="searchIt()">Go!</button>
+            <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#hiddenHelp">Help</button>
+        </span>
+    </div>
+
+
+    <div class="collapse" id="hiddenHelp">
+        <div class="alert alert-info" role="alert">
+            <div class="container">
+                <h3>Free Text Search</h3>
+                <ul>
+                    <li>search with >=1 word(s): <i>Google Rocks</i></li>
+                    <li>phrase search: <i>"event detection"</i></li>
+                </ul>
+
+                <h3>Field Sensitive Search</h3>
+                <ul>
+                    <li>Form: <i>field1:word1 <b>OR</b>/<b>AND</b> field2:"word2 word3"</i></li>
+                    <li>Validate Fields: <code>paperId</code>, <code>title</code>, <code>kind</code>, <code>authors</code>
+                        , <code>
+                venue</code>
+                        , <code>pubYear</code></li>
+                    <li>Example: <i>authors:Maurizio or title:"Event Detection"</i></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

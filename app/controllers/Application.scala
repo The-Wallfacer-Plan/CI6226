@@ -1,8 +1,8 @@
 package controllers
 
-import models.core.{LIndexDriver, LIndexer, LOption, LSearcher}
+import models.core._
 import models.utility.Config
-import models.{LSearchResult, SearchStats}
+import models.{LSearchResult, LSearchStats}
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -29,7 +29,8 @@ class Application extends Controller {
         Ok(views.html.home(res))
       }
       case None => {
-        val result = new LSearchResult(SearchStats(0, "ok"), List.empty)
+        val queryOption = LQueryOption(valid = false, Map.empty, Config.DEFAULT_CONJ)
+        val result = new LSearchResult(LSearchStats(0, queryOption), List.empty)
         Ok(views.html.home(result))
       }
     }

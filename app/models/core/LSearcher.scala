@@ -1,31 +1,37 @@
 package models.core
 
-import java.io.StringReader
 import java.nio.file.{Files, Paths}
 
 import models.utility.Config
-import models.{LSearchResult, SearchPub, SearchStats}
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute
+import models.{LSearchPub, LSearchResult, LSearchStats}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
+import play.api.libs.json.{JsBoolean, JsObject, JsString, Json}
 
 import scala.collection.JavaConversions._
 
+case class LQueryOption(valid: Boolean, fieldMap: Map[String, String] = Map.empty, conj: String = Config.DEFAULT_CONJ) {
+  Logger.info(s"query: ${this}")
+
+  def jsonify(): JsObject = {
+    JsObject(Seq(
+      "valid" -> JsBoolean(valid),
+      "conjunctor" -> JsString(conj),
+      "field-query" -> Json.toJson(fieldMap)
+    ))
+  }
+}
 
 object LQueryOption {
-
-  case class QueryOption(valid: Boolean, fieldMap: Map[String, String] = Map.empty, conj: String = Config.DEFAULT_CONJ) {
-    Logger.info(s"query: ${this}")
-  }
 
   val PatternField = "(paperId|title|kind|authors|venue|pubYear):\"([\\w\\s]+)\"".r
   val conjunctions = ("AND", "OR")
 
   // queryString should be trimmed firstly
-  def apply(queryString: String): QueryOption = {
+  def apply(queryString: String): LQueryOption = {
     try {
       val conj = {
         if (queryString.contains(conjunctions._1)) {
@@ -56,9 +62,9 @@ object LQueryOption {
           }).toMap
         }
       }
-      new QueryOption(true, fieldMap, conj)
+      LQueryOption(valid = true, fieldMap, conj)
     } catch {
-      case e: IllegalArgumentException => new QueryOption(false)
+      case e: IllegalArgumentException => new LQueryOption(false)
     }
   }
 }
@@ -72,14 +78,14 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     val directory = FSDirectory.open(indexFolder)
     DirectoryReader.open(directory)
   }
-  {
-    val tokenStream = analyzer.tokenStream("authors", new StringReader("text here"))
-    val offsetAt = tokenStream.addAttribute(classOf[OffsetAttribute])
-    tokenStream.reset()
-    while (tokenStream.incrementToken()) {
-      Logger.info(s"===>${tokenStream.reflectAsString(false)}")
-    }
-  }
+  //  {
+  //    val tokenStream = analyzer.tokenStream("authors", new StringReader("text here"))
+  //    val offsetAt = tokenStream.addAttribute(classOf[OffsetAttribute])
+  //    tokenStream.reset()
+  //    while (tokenStream.incrementToken()) {
+  //      Logger.info(s"===>${tokenStream.reflectAsString(false)}")
+  //    }
+  //  }
   val searcher = new IndexSearcher(reader)
 
   private def searchOneField(field: String, string: String): TopDocs = {
@@ -90,7 +96,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     searcher.search(booleanQuery, Config.topN)
   }
 
-  def getSearchPub(topDocs: TopDocs, field: String): List[SearchPub] = {
+  def getSearchPub(topDocs: TopDocs, field: String): List[LSearchPub] = {
     topDocs.scoreDocs.toList map {
       hit => {
         val docID = hit.doc
@@ -104,7 +110,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           field.name() -> field.stringValue()
         }
         val fieldDocMap = Map(fieldValues: _*)
-        new SearchPub(docID, score, fieldDocMap)
+        new LSearchPub(docID, score, fieldDocMap)
       }
     }
   }
@@ -112,27 +118,27 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
   def searchImp(queryString: String): LSearchResult = {
     val queryOption = LQueryOption(queryString)
     if (!queryOption.valid) {
-      val msg = s"invalid query string: $queryString"
-      new LSearchResult(SearchStats(0, msg), List.empty)
+      Logger.info(s"invalid query string: $queryString")
+      LSearchResult(LSearchStats(0, queryOption), List.empty)
     } else {
       queryOption.conj match {
         case Config.DEFAULT_CONJ => {
           val fieldMap = queryOption.fieldMap
           require(fieldMap.size == 1)
           val (field, query) = fieldMap.head
-          val msg = s"query string: $queryString\n$field=>\t$query"
+          Logger.info(s"query string: $queryString\n$field=>\t$query")
           val timeStart = System.currentTimeMillis()
           val topDocs = searchOneField(field, query)
           val duration = System.currentTimeMillis() - timeStart
           val searchPubs = getSearchPub(topDocs, field)
           Logger.info(s"searchPub: $searchPubs")
-          new LSearchResult(SearchStats(duration, msg), searchPubs)
+          LSearchResult(LSearchStats(duration, queryOption), searchPubs)
         }
         case conj => {
           val fieldMap = queryOption.fieldMap
           val fieldQueryList = for ((f, q) <- fieldMap) yield s"$f=>\t$q"
-          val msg = s"query string: $queryString\nConjunction=$conj\n" +
-            s"${fieldQueryList.mkString("\n")}"
+          Logger.info(s"query string: $queryString\nConjunction=$conj\n" +
+            s"${fieldQueryList.mkString("\n")}")
           val timeStart = System.currentTimeMillis()
           val fieldResultMap = for ((field, query) <- fieldMap) yield {
             field -> searchOneField(field, query)
@@ -141,11 +147,11 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           conj match {
             case "AND" => {
               val duration = System.currentTimeMillis() - timeStart
-              new LSearchResult(SearchStats(duration, msg), List.empty)
+              LSearchResult(LSearchStats(duration, queryOption), List.empty)
             }
             case "OR" => {
               val duration = System.currentTimeMillis() - timeStart
-              new LSearchResult(SearchStats(duration, msg), List.empty)
+              LSearchResult(LSearchStats(duration, queryOption), List.empty)
             }
           }
         }

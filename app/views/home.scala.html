@@ -1,17 +1,17 @@
 @(result: LSearchResult)
 
-@main("LSearcher") {
-    <nav class="navbar navbar-default"></nav>
-    @corner()
-    <div class="container">
-        <div class="row container-fluid">
-            <div class="col-lg-5">
-                @workUI()
-                @statsUI(result.stats)
-            </div>
-            <div class="col-lg-7">
-            @resultUI(result.pubs)
+    @main("LSearcher") {
+        <nav class="navbar navbar-default"></nav>
+        @corner()
+        <div class="container">
+            <div class="row container-fluid">
+                <div class="col-lg-5">
+                    @workUI()
+                    @statsUI(result)
+                </div>
+                <div class="col-lg-7">
+                @resultUI(result.pubs)
+                </div>
             </div>
         </div>
-    </div>
-}
+    }

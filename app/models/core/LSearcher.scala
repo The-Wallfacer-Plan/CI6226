@@ -1,9 +1,11 @@
 package models.core
 
+import java.io.StringReader
 import java.nio.file.{Files, Paths}
 
 import models.utility.Config
 import models.{LSearchResult, SearchPub, SearchStats}
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
@@ -13,7 +15,7 @@ import play.api.Logger
 import scala.collection.JavaConversions._
 
 
-object QueryOption {
+object LQueryOption {
 
   case class QueryOption(valid: Boolean, fieldMap: Map[String, String] = Map.empty, conj: String = Config.DEFAULT_CONJ) {
     Logger.info(s"query: ${this}")
@@ -70,6 +72,14 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     val directory = FSDirectory.open(indexFolder)
     DirectoryReader.open(directory)
   }
+  {
+    val tokenStream = analyzer.tokenStream("authors", new StringReader("text here"))
+    val offsetAt = tokenStream.addAttribute(classOf[OffsetAttribute])
+    tokenStream.reset()
+    while (tokenStream.incrementToken()) {
+      Logger.info(s"===>${tokenStream.reflectAsString(false)}")
+    }
+  }
   val searcher = new IndexSearcher(reader)
 
   private def searchOneField(field: String, string: String): TopDocs = {
@@ -86,6 +96,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
         val docID = hit.doc
         val score = hit.score
         val hitDoc = searcher.doc(docID)
+        Logger.info(s"${hitDoc.getField(field)}")
         val fieldValues = for {
           field <- hitDoc.getFields
           if field.name() != Config.COMBINED_FIELD
@@ -99,7 +110,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
   }
 
   def searchImp(queryString: String): LSearchResult = {
-    val queryOption = QueryOption(queryString)
+    val queryOption = LQueryOption(queryString)
     if (!queryOption.valid) {
       val msg = s"invalid query string: $queryString"
       new LSearchResult(SearchStats(0, msg), List.empty)

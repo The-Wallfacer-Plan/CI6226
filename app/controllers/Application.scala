@@ -29,7 +29,7 @@ class Application extends Controller {
         Ok(views.html.home(res))
       }
       case None => {
-        val result = new LSearchResult("OK", SearchStats(0), List.empty)
+        val result = new LSearchResult(SearchStats(0, "ok"), List.empty)
         Ok(views.html.home(result))
       }
     }

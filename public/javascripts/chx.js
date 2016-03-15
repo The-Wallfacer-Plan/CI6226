@@ -19,6 +19,14 @@ function _getUrl(uri) {
     return hostUrl + uri;
 }
 
+function getLOptions() {
+    return {
+        "stem": $("#cb-index-stem").is(":checked"),
+        "ignore": $("#cb-index-ignore").is(":checked"),
+        "swDict": $("#lb-index-stopwords").val()
+    }
+}
+
 // --------------------------------------------------------------
 
 function displayResponse(msg) {
@@ -29,14 +37,6 @@ function displayResponse(msg) {
 function indexDoneHint(response) {
     console.log(JSON.stringify(response));
     displayResponse(response);
-}
-
-function getLOptions() {
-    return {
-        "stem": $("#cb-index-stem").is(":checked"),
-        "ignore": $("#cb-index-ignore").is(":checked"),
-        "swDict": $("#lb-index-stopwords").val()
-    }
 }
 
 function indexIt() {
@@ -67,7 +67,6 @@ function selectiveSearchIt(e) {
 }
 
 function searchIt() {
-
     var searchContent = getSearchContent();
     var paramObj = {
         "content": searchContent

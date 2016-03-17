@@ -1,12 +1,15 @@
 package models.core
 
+import java.io.StringReader
 import java.nio.file.{Files, Paths}
 
 import models.utility.Config
 import models.{LSearchPub, LSearchResult, LSearchStats}
+import org.apache.lucene.analysis.tokenattributes.{CharTermAttribute, OffsetAttribute}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
+import org.apache.lucene.search.similarities.BM25Similarity
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
 import play.api.libs.json.{JsBoolean, JsObject, JsString, Json}
@@ -78,15 +81,13 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     val directory = FSDirectory.open(indexFolder)
     DirectoryReader.open(directory)
   }
-  //  {
-  //    val tokenStream = analyzer.tokenStream("authors", new StringReader("text here"))
-  //    val offsetAt = tokenStream.addAttribute(classOf[OffsetAttribute])
-  //    tokenStream.reset()
-  //    while (tokenStream.incrementToken()) {
-  //      Logger.info(s"===>${tokenStream.reflectAsString(false)}")
-  //    }
-  //  }
-  val searcher = new IndexSearcher(reader)
+
+  val searcher = {
+    val s = new IndexSearcher(reader)
+    val similarity = new BM25Similarity()
+    s.setSimilarity(similarity)
+    s
+  }
 
   private def searchOneField(field: String, string: String): TopDocs = {
     val parser = new QueryParser(field, analyzer)
@@ -96,13 +97,26 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     searcher.search(booleanQuery, Config.topN)
   }
 
+  def testIt() = {
+    val tokenStream = analyzer.tokenStream("authors", new StringReader("good bad"))
+    tokenStream.reset()
+    val offsetAttribute = tokenStream.addAttribute(classOf[OffsetAttribute])
+    val charAttribute = tokenStream.addAttribute(classOf[CharTermAttribute])
+    while (tokenStream.incrementToken()) {
+      Logger.info(tokenStream.reflectAsString(false))
+      val startOffset = offsetAttribute.startOffset()
+      val endOffset = offsetAttribute.endOffset()
+      Logger.info(charAttribute.toString)
+    }
+  }
+
   def getSearchPub(topDocs: TopDocs, field: String): List[LSearchPub] = {
     topDocs.scoreDocs.toList map {
       hit => {
         val docID = hit.doc
         val score = hit.score
         val hitDoc = searcher.doc(docID)
-        Logger.info(s"${hitDoc.getField(field)}")
+        //        Logger.info(s"${hitDoc.getField(field)}")
         val fieldValues = for {
           field <- hitDoc.getFields
           if field.name() != Config.COMBINED_FIELD
@@ -130,6 +144,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           val timeStart = System.currentTimeMillis()
           val topDocs = searchOneField(field, query)
           val duration = System.currentTimeMillis() - timeStart
+          //          testIt()
           val searchPubs = getSearchPub(topDocs, field)
           Logger.info(s"searchPub: $searchPubs")
           LSearchResult(LSearchStats(duration, queryOption), searchPubs)

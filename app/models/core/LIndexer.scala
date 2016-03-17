@@ -4,21 +4,29 @@ import java.nio.file.{Files, Paths}
 
 import models.utility.Config
 import models.xml.Publication
-import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
 
-import scala.collection.JavaConversions._
 import scala.sys.process.Process
 
-class LIndexer(writer: IndexWriter) {
+class LIndexer(val writer: IndexWriter) {
 
-  def writeBack() = writer.close()
+  def writeBack() = {
+    writeStats()
+    writer.close()
+  }
+
+  def writeStats() = {
+    val num = writer.numDocs()
+    val deleted = writer.hasDeletions
+    Logger.info(s"num=$num, hasDeletions=$deleted")
+  }
 
   def addDocText(key: String, value: String, document: Document) = {
     val field = new TextField(key, value, Field.Store.YES)
+
     document.add(field)
   }
 
@@ -43,6 +51,7 @@ class LIndexer(writer: IndexWriter) {
     //        TextField (how to join/split author list ???)
     val authorString = pub.authors.mkString(Config.splitString)
     addDocText("authors", authorString, document)
+    //    pub.authors.foreach(author => addDocText("authors", author, document))
 
     // for free text search
     addDocText("ALL", pub.combinedString(), document)
@@ -58,10 +67,11 @@ object LIndexer {
 
   def apply(option: LOption, indexFolderString: String): LIndexer = {
     val analyzerWrapper = {
-      val analyzer = new LAnalyzer(option, null)
-      val listAnalyzer = new LAnalyzer(option, Config.splitString)
-      val analyzerMap = Map(Config.I_AUTHORS -> listAnalyzer)
-      new PerFieldAnalyzerWrapper(analyzer, analyzerMap)
+      //      val analyzer = new LAnalyzer(option, null)
+      //      val listAnalyzer = new LAnalyzer(option, Config.splitString)
+      //      val analyzerMap = Map(Config.I_AUTHORS -> listAnalyzer)
+      //      new PerFieldAnalyzerWrapper(analyzer, analyzerMap)
+      new LAnalyzer(option, null)
     }
     val iwc = new IndexWriterConfig(analyzerWrapper)
     iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)

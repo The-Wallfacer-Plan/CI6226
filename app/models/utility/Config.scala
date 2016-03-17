@@ -26,4 +26,6 @@ object Config {
 
   //    interface Configurable
   val topN = 20
+
+  val defaultSearchString = "title:\"Google\" authors:\"Thilo Weichert\""
 }

@@ -42,6 +42,8 @@ L := | AND | OR
 - tolerant retrieval
 - use a special field "ALL" to for "free text" search, others by combination
 - see whether can using "merge"
+- authors indexed with same field
+- reopen directory reader
 
 
 ## notice:

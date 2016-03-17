@@ -118,7 +118,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     val queryOption = LQueryInfo(queryString)
     if (!queryOption.valid) {
       Logger.info(s"invalid query string: $queryString")
-      new LSearchResult(LSearchStats(0, queryOption), lOption, List.empty)
+      new LSearchResult(LSearchStats(0, queryOption), Some(lOption), List.empty)
     } else {
       queryOption.conj match {
         case Config.DEFAULT_CONJ => {
@@ -132,7 +132,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           //          testIt()
           val searchPubs = getSearchPub(topDocs, field)
           Logger.info(s"searchPub: $searchPubs")
-          new LSearchResult(LSearchStats(duration, queryOption), lOption, searchPubs)
+          new LSearchResult(LSearchStats(duration, queryOption), Some(lOption), searchPubs)
         }
         case conj => {
           val fieldMap = queryOption.fieldMap
@@ -147,11 +147,11 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           conj match {
             case "AND" => {
               val duration = System.currentTimeMillis() - timeStart
-              new LSearchResult(LSearchStats(duration, queryOption), lOption, List.empty)
+              new LSearchResult(LSearchStats(duration, queryOption), Some(lOption), List.empty)
             }
             case "OR" => {
               val duration = System.currentTimeMillis() - timeStart
-              new LSearchResult(LSearchStats(duration, queryOption), lOption, List.empty)
+              new LSearchResult(LSearchStats(duration, queryOption), Some(lOption), List.empty)
             }
           }
         }

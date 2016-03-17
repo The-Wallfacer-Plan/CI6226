@@ -39,9 +39,7 @@ class LAnalyzer(option: LOption, patternString: String) extends Analyzer {
       Logger.info("porter stemming filter")
       result = new PorterStemFilter(result)
     }
-    Logger.info(s"-->${result}")
     val tokenStreamComponents = new TokenStreamComponents(tokenizer, result)
-    Logger.info(s"===tokenizer: ${tokenStreamComponents.getTokenizer}")
     tokenStreamComponents
 
   }

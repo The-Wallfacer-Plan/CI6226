@@ -49,10 +49,13 @@ class Application extends Controller {
     val indexer = LIndexer(indexOption, indexFolder)
 
     val stats = driver.run(indexer)
+    val statistics = new LIndexStats(indexFolder)
+    val fieldStats = statistics.getFieldStats("title")
     val res = JsObject(Seq(
       "status" -> JsString("OK"),
       "index time" -> JsString(stats.time + "ms"),
       "index file" -> JsString(stats.source),
+      "stats" -> fieldStats,
       "options" -> JsObject(Seq(
         "stem" -> JsBoolean(indexOption.stemming),
         "ignoreCase" -> JsBoolean(indexOption.ignoreCase),
@@ -60,8 +63,6 @@ class Application extends Controller {
       ))
     ))
     Logger.info(s"info: $res")
-    val statistics = new LStatistics(indexFolder)
-    statistics.analyze("title")
     Ok(res)
   }
   }

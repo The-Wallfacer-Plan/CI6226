@@ -29,8 +29,8 @@ class Application extends Controller {
         Ok(views.html.home(res))
       }
       case None => {
-        val queryOption = LQueryOption(valid = false, Map.empty, Config.DEFAULT_CONJ)
-        val result = new LSearchResult(LSearchStats(0, queryOption), List.empty)
+        val queryOption = LQueryInfo(valid = false, Map.empty, Config.DEFAULT_CONJ)
+        val result = new LSearchResult(LSearchStats(0, queryOption), null, List.empty)
         Ok(views.html.home(result))
       }
     }
@@ -56,11 +56,7 @@ class Application extends Controller {
       "index time" -> JsString(stats.time + "ms"),
       "index file" -> JsString(stats.source),
       "stats" -> fieldStats,
-      "options" -> JsObject(Seq(
-        "stem" -> JsBoolean(indexOption.stemming),
-        "ignoreCase" -> JsBoolean(indexOption.ignoreCase),
-        "stopWords" -> JsString(indexOption.swDict)
-      ))
+      "options" -> indexOption.toJson()
     ))
     Logger.info(s"info: $res")
     Ok(res)

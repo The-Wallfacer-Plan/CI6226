@@ -13,16 +13,8 @@ import scala.sys.process.Process
 
 class LIndexer(val writer: IndexWriter) {
 
-  def writeBack() = {
-    writeStats()
-    writer.close()
-  }
+  def writeBack() = writer.close()
 
-  def writeStats() = {
-    val num = writer.numDocs()
-    val deleted = writer.hasDeletions
-    Logger.info(s"num=$num, hasDeletions=$deleted")
-  }
 
   private def addDocText(key: String, value: String, document: Document) = {
     val field = new TextField(key, value, Field.Store.YES)

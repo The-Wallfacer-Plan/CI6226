@@ -20,6 +20,7 @@ class LIndexStats(indexFolderString: String) {
     val stats = searcher.collectionStatistics(field)
     JsObject(Seq(
       "doc Count" -> JsNumber(stats.docCount()),
+      "max doc" -> JsNumber(stats.maxDoc()),
       "posting number" -> JsNumber(stats.sumDocFreq()),
       "tokens number" -> JsNumber(stats.sumTotalTermFreq())
     ))

@@ -1,19 +1,22 @@
 function onError(response, statusText, errorThrown) {
-    var msg = "response " + response + "\tstatus " + statusText + "\terrorThrown " + errorThrown;
+    var msg = "response " + JSON.stringify(response) + "\tstatus " + statusText + "\terrorThrown " + errorThrown;
     console.log(msg);
 }
 
-var hostUrl = "http://localhost:9001/";
+var hostUrl = location.origin + "/";
+
 var hintTextSelector = "#infoBox";
 var commonParam = {
     "async": true,
-    "crossDomain": true,
+    //"crossDomain": true,
     "headers": {
         "content-type": "application/json",
         "cache-control": "no-cache"
     },
     "processData": false
 };
+
+$.support.cors = true;
 
 function _getUrl(uri) {
     return hostUrl + uri;

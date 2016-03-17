@@ -71,7 +71,7 @@ object LQueryInfo {
 }
 
 
-class LSearcher(lOption: LOption, indexFolderString: String) {
+class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   val analyzer = new LAnalyzer(lOption, null)
   val reader = {
     val indexFolder = Paths.get(indexFolderString)
@@ -92,7 +92,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
     parser.setAllowLeadingWildcard(true)
     val query = parser.parse(string)
     val booleanQuery = new BooleanQuery.Builder().add(query, BooleanClause.Occur.MUST).build()
-    searcher.search(booleanQuery, Config.topN)
+    searcher.search(booleanQuery, topN)
   }
 
   def getSearchPub(topDocs: TopDocs, field: String): List[LSearchPub] = {
@@ -131,7 +131,7 @@ class LSearcher(lOption: LOption, indexFolderString: String) {
           val duration = System.currentTimeMillis() - timeStart
           //          testIt()
           val searchPubs = getSearchPub(topDocs, field)
-          Logger.info(s"searchPub: $searchPubs")
+          Logger.debug(s"searchPub: $searchPubs")
           new LSearchResult(LSearchStats(duration, queryOption), Some(lOption), searchPubs)
         }
         case conj => {

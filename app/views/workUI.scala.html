@@ -20,6 +20,15 @@
             </select>
         </div>
 
+        <div class="checkbox">
+            <label for="topNSelect"><p class="font-weight-bold text-info">topN</p></label>
+            <select id="topNSelect" class="form-control">
+            @for(i <- 1 until 100) {
+                <option value="@i">@i</option>
+            }
+            </select>
+        </div>
+
         <button type="button" id="indexButton" class="btn btn-primary pull-right" onclick="indexIt()">Index</button>
     </form>
 

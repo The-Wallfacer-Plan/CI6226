@@ -71,8 +71,10 @@ function selectiveSearchIt(e) {
 
 function searchIt() {
     var searchContent = getSearchContent();
+    var topN = $("#topNSelect").val();
     var paramObj = {
-        "content": searchContent
+        "content": searchContent,
+        "topN": topN
     };
     $.extend(paramObj, getLOptions());
     var param = $.param(paramObj);

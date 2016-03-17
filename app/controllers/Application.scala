@@ -24,7 +24,8 @@ class Application extends Controller {
           val swDict = request.getQueryString("swDict").get
           new LOption(stemming, ignoreCase, swDict)
         }
-        val searcher = new LSearcher(searchOption, indexFolder)
+        val topN = request.getQueryString("topN").get.toInt
+        val searcher = new LSearcher(searchOption, indexFolder, topN)
         val res = searcher.searchImp(queryString)
         Ok(views.html.home(res))
       }

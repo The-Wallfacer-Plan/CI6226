@@ -6,7 +6,7 @@ import org.apache.lucene.analysis.Analyzer.TokenStreamComponents
 import org.apache.lucene.analysis.core.{LowerCaseFilter, StopAnalyzer, StopFilter}
 import org.apache.lucene.analysis.en.PorterStemFilter
 import org.apache.lucene.analysis.pattern.PatternTokenizer
-import org.apache.lucene.analysis.standard.StandardTokenizer
+import org.apache.lucene.analysis.standard.{StandardFilter, StandardTokenizer}
 import org.apache.lucene.analysis.{Analyzer, TokenStream}
 import play.api.Logger
 
@@ -24,7 +24,7 @@ class LAnalyzer(option: LOption, patternString: String) extends Analyzer {
       }
     }
 
-    var result: TokenStream = new EmptyStringTokenFilter(tokenizer)
+    var result: TokenStream = new StandardFilter(tokenizer)
     if (option.ignoreCase) {
       Logger.info("lower case filter")
       result = new LowerCaseFilter(result)

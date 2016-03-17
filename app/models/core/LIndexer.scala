@@ -24,9 +24,8 @@ class LIndexer(val writer: IndexWriter) {
     Logger.info(s"num=$num, hasDeletions=$deleted")
   }
 
-  def addDocText(key: String, value: String, document: Document) = {
+  private def addDocText(key: String, value: String, document: Document) = {
     val field = new TextField(key, value, Field.Store.YES)
-
     document.add(field)
   }
 

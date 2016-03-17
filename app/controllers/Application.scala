@@ -60,6 +60,8 @@ class Application extends Controller {
       ))
     ))
     Logger.info(s"info: $res")
+    val statistics = new LStatistics(indexFolder)
+    statistics.analyze("title")
     Ok(res)
   }
   }

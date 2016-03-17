@@ -66,24 +66,4 @@ class Application extends Controller {
   }
   }
 
-  ///////////////////////////////////////////////////////
-
-  def testGet = Action {
-    implicit request => {
-      request.getQueryString("content") match {
-        case Some(queryString) => {
-          Logger.info(s"[$queryString]")
-          Ok("response=" + queryString).as(HTML)
-        }
-        case None => BadRequest("no result")
-      }
-    }
-  }
-
-  def testPost = Action(BodyParsers.parse.json) {
-    request => {
-      Ok("testPost")
-    }
-  }
-
 }

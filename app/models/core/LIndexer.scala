@@ -18,6 +18,13 @@ object LIndex {
   ft1.setStored(true)
   ft1.setStoreTermVectors(true)
   ft1.freeze()
+
+  val ft2 = new FieldType()
+  ft2.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+  ft2.setTokenized(true)
+  ft2.setStored(true)
+  ft2.setStoreTermVectors(false)
+  ft2.freeze()
 }
 
 class LIndexer(val writer: IndexWriter) {

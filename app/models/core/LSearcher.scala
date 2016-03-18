@@ -7,7 +7,6 @@ import models.{LSearchPub, LSearchResult, LSearchStats}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
-import org.apache.lucene.search.similarities.BM25Similarity
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
 
@@ -24,8 +23,8 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
 
   val searcher = {
     val s = new IndexSearcher(reader)
-    val similarity = new BM25Similarity()
-    s.setSimilarity(similarity)
+    //    val similarity = new BM25Similarity()
+    //    s.setSimilarity(similarity)
     s
   }
 
@@ -44,19 +43,19 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
     val topDocs = searcher.search(query, topN)
 
     val duration = System.currentTimeMillis() - startTime
-    val foundPubs = getSearchPub(topDocs)
+    val foundPubs = getSearchPub(topDocs, query)
     reader.close()
     val searchStats = LSearchStats(duration, query.toString())
     new LSearchResult(searchStats, Some(lOption), foundPubs)
   }
 
-  def getSearchPub(topDocs: TopDocs): List[LSearchPub] = {
+  def getSearchPub(topDocs: TopDocs, query: Query): List[LSearchPub] = {
     topDocs.scoreDocs.toList map {
       hit => {
         val docID = hit.doc
         val score = hit.score
         val hitDoc = searcher.doc(docID)
-        //        Logger.info(s"${hitDoc.getField(field)}")
+        Logger.info(s"Explain: ${searcher.explain(query, docID)}")
         val fieldValues = for {
           field <- hitDoc.getFields
           if field.name() != Config.COMBINED_FIELD
@@ -68,4 +67,5 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
       }
     }
   }
+
 }

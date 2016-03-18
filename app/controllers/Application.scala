@@ -30,8 +30,7 @@ class Application extends Controller {
         Ok(views.html.home(res))
       }
       case None => {
-        val queryOption = LQueryInfo(valid = false, Map.empty, Config.DEFAULT_CONJ)
-        val result = new LSearchResult(LSearchStats(0, queryOption), None, List.empty)
+        val result = new LSearchResult(LSearchStats(0, ""), None, List.empty)
         Ok(views.html.home(result))
       }
     }

@@ -10,66 +10,8 @@ import org.apache.lucene.search._
 import org.apache.lucene.search.similarities.BM25Similarity
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
-import play.api.libs.json.{JsBoolean, JsObject, JsString, Json}
 
 import scala.collection.JavaConversions._
-
-case class LQueryInfo(valid: Boolean, fieldMap: Map[String, String] = Map.empty, conj: String = Config.DEFAULT_CONJ) {
-  Logger.info(s"query: ${this}")
-
-  def toJson(): JsObject = {
-    JsObject(Seq(
-      "valid" -> JsBoolean(valid),
-      "conjunctor" -> JsString(conj),
-      "field-query" -> Json.toJson(fieldMap)
-    ))
-  }
-}
-
-object LQueryInfo {
-
-  val PatternField = "(paperId|title|kind|authors|venue|pubYear):\"([\\w\\s]+)\"".r
-  val conjunctions = ("AND", "OR")
-
-  // queryString should be trimmed firstly
-  def apply(queryString: String): LQueryInfo = {
-    try {
-      val conj = {
-        if (queryString.contains(conjunctions._1)) {
-          require(!queryString.contains(conjunctions._2))
-          conjunctions._1
-        } else if (queryString.contains(conjunctions._2)) {
-          require(!queryString.contains(conjunctions._1))
-          conjunctions._2
-        } else {
-          Config.DEFAULT_CONJ
-        }
-      }
-      val fieldMap: Map[String, String] = {
-        if (conj.equals(Config.DEFAULT_CONJ)) {
-          queryString match {
-            case PatternField(field, content) => Map(field -> content)
-            case _ => Map(Config.COMBINED_FIELD -> queryString)
-          }
-        } else {
-          queryString.split(conj).map(entry => {
-            entry.trim() match {
-              case PatternField(field, content) => field -> content
-              case _ => {
-                new IllegalArgumentException
-                Config.COMBINED_FIELD -> queryString
-              }
-            }
-          }).toMap
-        }
-      }
-      LQueryInfo(valid = true, fieldMap, conj)
-    } catch {
-      case e: IllegalArgumentException => new LQueryInfo(false)
-    }
-  }
-}
-
 
 class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   val analyzer = new LAnalyzer(lOption, null)
@@ -87,15 +29,27 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
     s
   }
 
-  private def searchOneField(field: String, string: String): TopDocs = {
-    val parser = new QueryParser(field, analyzer)
-    parser.setAllowLeadingWildcard(true)
-    val query = parser.parse(string)
-    val booleanQuery = new BooleanQuery.Builder().add(query, BooleanClause.Occur.MUST).build()
-    searcher.search(booleanQuery, topN)
+  private def validate(queryString: String): Unit = {
   }
 
-  def getSearchPub(topDocs: TopDocs, field: String): List[LSearchPub] = {
+  def searchImp(queryString: String): LSearchResult = {
+    validate(queryString)
+    val startTime = System.currentTimeMillis()
+    val query = {
+      val parser = new QueryParser(Config.COMBINED_FIELD, analyzer)
+      parser.setAllowLeadingWildcard(true)
+      parser.parse(queryString)
+    }
+    Logger.info(s"string=$queryString, query=$query")
+    val topDocs = searcher.search(query, topN)
+    val duration = System.currentTimeMillis() - startTime
+    val foundPubs = getSearchPub(topDocs)
+    reader.close()
+    val searchStats = LSearchStats(duration, query.toString())
+    new LSearchResult(searchStats, Some(lOption), foundPubs)
+  }
+
+  def getSearchPub(topDocs: TopDocs): List[LSearchPub] = {
     topDocs.scoreDocs.toList map {
       hit => {
         val docID = hit.doc
@@ -111,52 +65,6 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
         val fieldDocMap = Map(fieldValues: _*)
         new LSearchPub(docID, score, fieldDocMap)
       }
-    }
-  }
-
-  def searchImp(queryString: String): LSearchResult = {
-    val queryOption = LQueryInfo(queryString)
-    if (!queryOption.valid) {
-      Logger.info(s"invalid query string: $queryString")
-      new LSearchResult(LSearchStats(0, queryOption), Some(lOption), List.empty)
-    } else {
-      queryOption.conj match {
-        case Config.DEFAULT_CONJ => {
-          val fieldMap = queryOption.fieldMap
-          require(fieldMap.size == 1)
-          val (field, query) = fieldMap.head
-          Logger.info(s"query string: $queryString\n$field=>\t$query")
-          val timeStart = System.currentTimeMillis()
-          val topDocs = searchOneField(field, query)
-          val duration = System.currentTimeMillis() - timeStart
-          //          testIt()
-          val searchPubs = getSearchPub(topDocs, field)
-          Logger.debug(s"searchPub: $searchPubs")
-          new LSearchResult(LSearchStats(duration, queryOption), Some(lOption), searchPubs)
-        }
-        case conj => {
-          val fieldMap = queryOption.fieldMap
-          val fieldQueryList = for ((f, q) <- fieldMap) yield s"$f=>\t$q"
-          Logger.info(s"query string: $queryString\nConjunction=$conj\n" +
-            s"${fieldQueryList.mkString("\n")}")
-          val timeStart = System.currentTimeMillis()
-          val fieldResultMap = for ((field, query) <- fieldMap) yield {
-            field -> searchOneField(field, query)
-          }
-          // TODO
-          conj match {
-            case "AND" => {
-              val duration = System.currentTimeMillis() - timeStart
-              new LSearchResult(LSearchStats(duration, queryOption), Some(lOption), List.empty)
-            }
-            case "OR" => {
-              val duration = System.currentTimeMillis() - timeStart
-              new LSearchResult(LSearchStats(duration, queryOption), Some(lOption), List.empty)
-            }
-          }
-        }
-      }
-
     }
   }
 }

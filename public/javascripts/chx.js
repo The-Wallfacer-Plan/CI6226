@@ -83,3 +83,13 @@ function searchIt() {
     }
     location.href = "?" + param
 }
+
+//------------------------------------------------
+function readTheDocs() {
+    var form = document.createElement("form");
+    form.method = "GET";
+    form.action = "http://lucene.apache.org/core/5_5_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Overview";
+    form.target = "_blank";
+    document.body.appendChild(form);
+    form.submit();
+}

@@ -4,20 +4,31 @@ import java.nio.file.{Files, Paths}
 
 import models.utility.Config
 import models.xml.Publication
-import org.apache.lucene.document.{Document, Field, TextField}
-import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
+import org.apache.lucene.document.{Document, Field, FieldType}
+import org.apache.lucene.index.{IndexOptions, IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
 
 import scala.sys.process.Process
 
+object LIndex {
+  val ft1 = new FieldType()
+  ft1.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+  ft1.setTokenized(true)
+  ft1.setStored(true)
+  ft1.setStoreTermVectors(true)
+  ft1.freeze()
+}
+
 class LIndexer(val writer: IndexWriter) {
+
+  import LIndex._
 
   def writeBack() = writer.close()
 
 
   private def addDocText(key: String, value: String, document: Document) = {
-    val field = new TextField(key, value, Field.Store.YES)
+    val field = new Field(key, value, ft1)
     document.add(field)
   }
 
@@ -29,6 +40,7 @@ class LIndexer(val writer: IndexWriter) {
     pub.validate()
     Logger.debug(s"=> $pub")
     val document = new Document()
+
     //        is the form of "xxx/xxx/xxx", use TextField
     addDocText("paperId", pub.paperId, document)
     //        TextField

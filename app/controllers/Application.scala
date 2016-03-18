@@ -60,6 +60,8 @@ class Application extends Controller {
       "options" -> indexOption.toJson()
     ))
     Logger.info(s"info: $res")
+    val misc = new MISC(indexFolder)
+    misc.analyze("title")
     Ok(res)
   }
   }

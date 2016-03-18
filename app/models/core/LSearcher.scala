@@ -42,6 +42,7 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
     }
     Logger.info(s"string=$queryString, query=$query")
     val topDocs = searcher.search(query, topN)
+
     val duration = System.currentTimeMillis() - startTime
     val foundPubs = getSearchPub(topDocs)
     reader.close()

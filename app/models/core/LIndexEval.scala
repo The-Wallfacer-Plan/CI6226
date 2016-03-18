@@ -7,7 +7,7 @@ import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.store.FSDirectory
 import play.api.libs.json.{JsNumber, JsObject}
 
-class LIndexStats(indexFolderString: String) {
+class LIndexEval(indexFolderString: String) {
   val reader: IndexReader = {
     val indexFolder = Paths.get(indexFolderString)
     require(Files.exists(indexFolder))

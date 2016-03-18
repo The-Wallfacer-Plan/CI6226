@@ -3,7 +3,7 @@ package models
 import models.core.LOption
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 
-case class IndexStats(time: Long, source: String)
+case class LIndexStats(time: Long, source: String)
 
 case class LSearchPub(docID: Int, score: Double, info: Map[String, String])
 

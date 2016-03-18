@@ -3,14 +3,14 @@ package models.core
 import java.io.File
 import javax.xml.parsers.SAXParserFactory
 
-import models.IndexStats
+import models.LIndexStats
 import models.utility.Config
 import models.xml.PubHandler
 import play.api.Logger
 
 class LIndexDriver(source: String) {
 
-  def run(indexer: LIndexer): IndexStats = {
+  def run(indexer: LIndexer): LIndexStats = {
     try {
       val parserFactory = SAXParserFactory.newInstance()
       val parser = parserFactory.newSAXParser()
@@ -25,11 +25,11 @@ class LIndexDriver(source: String) {
       parser.parse(inputFile, handler)
       val duration = System.currentTimeMillis() - timeStart
       indexer.writeBack()
-      new IndexStats(duration, source)
+      new LIndexStats(duration, source)
     } catch {
       case e: Exception => {
         Logger.error(s"exception: $e")
-        IndexStats(0L, source)
+        LIndexStats(0L, source)
       }
     }
   }

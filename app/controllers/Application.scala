@@ -49,7 +49,7 @@ class Application extends Controller {
     val indexer = LIndexer(indexOption, indexFolder)
 
     val stats = driver.run(indexer)
-    val statistics = new LIndexStats(indexFolder)
+    val statistics = new LIndexEval(indexFolder)
     val fieldStats = statistics.getFieldStats("title")
     val res = JsObject(Seq(
       "status" -> JsString("OK"),

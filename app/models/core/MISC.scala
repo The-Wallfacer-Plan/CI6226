@@ -15,7 +15,7 @@ class MISC(indexFolderString: String) {
   }
 
   def analyze(fieldName: String) = {
-    val terms = reader.getTermVector(1, fieldName)
+    val terms = reader.getTermVector(2, fieldName)
     val itr = terms.iterator()
     var term: BytesRef = itr.next()
     while (term != null) {

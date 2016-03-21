@@ -13,7 +13,7 @@ import play.api.Logger
 import scala.collection.JavaConversions._
 
 class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
-  val analyzer = new LAnalyzer(lOption, null)
+  val analyzer = new LAnalyzer(lOption, None)
   val reader = {
     val indexFolder = Paths.get(indexFolderString)
     require(Files.exists(indexFolder))

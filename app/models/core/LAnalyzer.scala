@@ -10,16 +10,16 @@ import org.apache.lucene.analysis.standard.{StandardFilter, StandardTokenizer}
 import org.apache.lucene.analysis.{Analyzer, TokenStream}
 import play.api.Logger
 
-class LAnalyzer(option: LOption, patternString: String) extends Analyzer {
+class LAnalyzer(option: LOption, patternString: Option[String]) extends Analyzer {
 
-  def this() = this(new LOption(stemming = false, ignoreCase = true, "None"), null)
+  def this() = this(new LOption(stemming = false, ignoreCase = true, "None"), None)
 
   override def createComponents(fieldName: String): TokenStreamComponents = {
     val tokenizer = {
       patternString match {
-        case null => new StandardTokenizer()
-        case _ => {
-          val pattern = Pattern.compile(patternString)
+        case None => new StandardTokenizer()
+        case Some(s) => {
+          val pattern = Pattern.compile(s)
           new PatternTokenizer(pattern, -1)
         }
       }

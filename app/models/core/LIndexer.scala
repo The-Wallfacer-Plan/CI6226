@@ -77,11 +77,11 @@ object LIndexer {
 
   def apply(option: LOption, indexFolderString: String): LIndexer = {
     val analyzerWrapper = {
-      //      val analyzer = new LAnalyzer(option, null)
+      //      val analyzer = new LAnalyzer(option, None)
       //      val listAnalyzer = new LAnalyzer(option, Config.splitString)
       //      val analyzerMap = Map(Config.I_AUTHORS -> listAnalyzer)
       //      new PerFieldAnalyzerWrapper(analyzer, analyzerMap)
-      new LAnalyzer(option, null)
+      new LAnalyzer(option, None)
     }
     val iwc = new IndexWriterConfig(analyzerWrapper)
     iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)

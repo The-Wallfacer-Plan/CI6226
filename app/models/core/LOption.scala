@@ -6,14 +6,15 @@ case class LOption(stemming: Boolean, ignoreCase: Boolean, swDict: String) {
   def this() = this(true, true, "None")
 
   def toJson(): JsValue = {
-    if (this == null) {
-      JsString("")
-    } else {
-      JsObject(Seq(
-        "stemming" -> JsBoolean(stemming),
-        "ignoreCase" -> JsBoolean(ignoreCase),
-        "swDict" -> JsString(swDict)
-      ))
+    this match {
+      case null => JsNull
+      case _ => {
+        JsObject(Seq(
+          "stemming" -> JsBoolean(stemming),
+          "ignoreCase" -> JsBoolean(ignoreCase),
+          "swDict" -> JsString(swDict)
+        ))
+      }
     }
   }
 }

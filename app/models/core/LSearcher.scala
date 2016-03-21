@@ -49,22 +49,17 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
     new LSearchResult(searchStats, Some(lOption), foundPubs)
   }
 
-  def getSearchPub(topDocs: TopDocs, query: Query): List[LSearchPub] = {
-    topDocs.scoreDocs.toList map {
-      hit => {
-        val docID = hit.doc
-        val score = hit.score
-        val hitDoc = searcher.doc(docID)
-        Logger.info(s"Explain: ${searcher.explain(query, docID)}")
-        val fieldValues = for {
-          field <- hitDoc.getFields
-          if field.name() != Config.COMBINED_FIELD
-        } yield {
-          field.name() -> field.stringValue()
-        }
-        val fieldDocMap = Map(fieldValues: _*)
-        new LSearchPub(docID, score, fieldDocMap)
-      }
+  def getSearchPub(topDocs: TopDocs, query: Query): Array[LSearchPub] = {
+    for (hit <- topDocs.scoreDocs) yield {
+      val (docID, score) = (hit.doc, hit.score)
+      val hitDoc = searcher.doc(docID)
+      Logger.info(s"Explain: ${searcher.explain(query, docID)}")
+      val fieldValues = for {
+        field <- hitDoc.getFields
+        if field.name() != Config.COMBINED_FIELD
+      } yield field.name() -> field.stringValue()
+      val fieldDocMap = Map(fieldValues: _*)
+      new LSearchPub(docID, score, fieldDocMap)
     }
   }
 

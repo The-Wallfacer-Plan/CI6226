@@ -9,7 +9,7 @@ case class LSearchPub(docID: Int, score: Double, info: Map[String, String])
 
 case class LSearchStats(time: Long, queryString: String)
 
-class LSearchResult(stats: LSearchStats, lOption: Option[LOption], val pubs: List[LSearchPub]) {
+class LSearchResult(stats: LSearchStats, lOption: Option[LOption], val pubs: Array[LSearchPub]) {
   def statsString(): String = {
     val lOptionJson = {
       lOption match {
@@ -20,7 +20,7 @@ class LSearchResult(stats: LSearchStats, lOption: Option[LOption], val pubs: Lis
     val js = JsObject(Seq(
       "time" -> JsString(stats.time.toString + "ms"),
       "queryString" -> JsString(stats.queryString),
-      "found" -> JsNumber(pubs.size),
+      "found" -> JsNumber(pubs.length),
       "searchOption" -> lOptionJson
     ))
     Json.prettyPrint(js)

@@ -16,11 +16,12 @@ class LAnalyzer(option: LOption, patternString: String) extends Analyzer {
 
   override def createComponents(fieldName: String): TokenStreamComponents = {
     val tokenizer = {
-      if (patternString == null) {
-        new StandardTokenizer()
-      } else {
-        val pattern = Pattern.compile(patternString)
-        new PatternTokenizer(pattern, -1)
+      patternString match {
+        case null => new StandardTokenizer()
+        case _ => {
+          val pattern = Pattern.compile(patternString)
+          new PatternTokenizer(pattern, -1)
+        }
       }
     }
 

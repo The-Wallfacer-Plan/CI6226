@@ -1,12 +1,12 @@
 package models.xml
 
-import models.core.LIndexer
+import models.index.LIndexWorker
 import org.slf4j.LoggerFactory
 import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.{Attributes, SAXException, SAXParseException}
 import play.api.Logger
 
-class PubHandler(indexer: LIndexer) extends DefaultHandler {
+class PubHandler(indexer: LIndexWorker) extends DefaultHandler {
 
   val logger = LoggerFactory.getLogger(classOf[PubHandler])
   private val ARTICLE = "article"

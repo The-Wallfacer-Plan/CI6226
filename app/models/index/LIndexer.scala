@@ -1,15 +1,16 @@
-package models.core
+package models.index
 
 import java.io.File
 import javax.xml.parsers.SAXParserFactory
 
-import models.LIndexStats
-import models.utility.Config
+import models.common.Config
 import models.xml.PubHandler
 
-class LIndexDriver(source: String) {
+case class LIndexStats(time: Long, source: String)
 
-  def run(indexer: LIndexer): LIndexStats = {
+class LIndexer(source: String) {
+
+  def run(indexer: LIndexWorker): LIndexStats = {
     val parserFactory = SAXParserFactory.newInstance()
     val parser = parserFactory.newSAXParser()
     parser.getXMLReader().setFeature(Config.VALIDATION, true)

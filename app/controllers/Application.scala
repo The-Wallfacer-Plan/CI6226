@@ -1,8 +1,8 @@
 package controllers
 
-import models.core._
-import models.utility.Config
-import models.{LSearchResult, LSearchStats}
+import models.common.{Config, LOption}
+import models.index._
+import models.search.{LSearchResult, LSearchStats, LSearcher}
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -39,14 +39,14 @@ class Application extends Controller {
 
   def indexDoc = Action(parse.json) { request => {
     val body = request.body
-    val driver = new LIndexDriver(inputFile)
+    val driver = new LIndexer(inputFile)
     val indexOption = {
       val stemming = (body \ "stem").as[Boolean]
       val ignoreCase = (body \ "ignore").as[Boolean]
       val swDict = (body \ "swDict").as[String]
       new LOption(stemming, ignoreCase, swDict)
     }
-    val indexer = LIndexer(indexOption, indexFolder)
+    val indexer = LIndexWorker(indexOption, indexFolder)
 
     val stats = driver.run(indexer)
     val statistics = new LIndexEval(indexFolder)
@@ -59,8 +59,6 @@ class Application extends Controller {
       "options" -> indexOption.toJson()
     ))
     Logger.info(s"info: $res")
-    val misc = new MISC(indexFolder)
-    misc.analyze("title")
     Ok(res)
   }
   }

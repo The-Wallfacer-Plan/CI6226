@@ -1,8 +1,8 @@
-package models.core
+package models.index
 
 import java.nio.file.{Files, Paths}
 
-import models.utility.Config
+import models.common.{Config, LAnalyzer, LOption}
 import models.xml.Publication
 import org.apache.lucene.document.{Document, Field, FieldType}
 import org.apache.lucene.index.{IndexOptions, IndexWriter, IndexWriterConfig}
@@ -11,25 +11,58 @@ import play.api.Logger
 
 import scala.sys.process.Process
 
-object LIndex {
-  val ft1 = new FieldType()
-  ft1.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
-  ft1.setTokenized(true)
-  ft1.setStored(true)
-  ft1.setStoreTermVectors(true)
-  ft1.freeze()
 
-  val ft2 = new FieldType()
-  ft2.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
-  ft2.setTokenized(true)
-  ft2.setStored(true)
-  ft2.setStoreTermVectors(false)
-  ft2.freeze()
+object LIndexWorker {
+
+  val ft1 = {
+    val ft = new FieldType()
+    ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+    ft.setTokenized(true)
+    ft.setStored(true)
+    ft.setStoreTermVectors(true)
+    ft.freeze()
+    ft
+  }
+
+  val ft2 = {
+    val ft = new FieldType()
+    ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+    ft.setTokenized(true)
+    ft.setStored(true)
+    ft.setStoreTermVectors(false)
+    ft.freeze()
+    ft
+  }
+
+  def apply(option: LOption, indexFolderString: String): LIndexWorker = {
+    val analyzerWrapper = {
+      //      val analyzer = new LAnalyzer(option, None)
+      //      val listAnalyzer = new LAnalyzer(option, Config.splitString)
+      //      val analyzerMap = Map(Config.I_AUTHORS -> listAnalyzer)
+      //      new PerFieldAnalyzerWrapper(analyzer, analyzerMap)
+      new LAnalyzer(option, None)
+    }
+    val iwc = new IndexWriterConfig(analyzerWrapper)
+    iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
+
+    val dir = {
+      Logger.info(s"indexing folder: $indexFolderString")
+      val indexFolder = Paths.get(indexFolderString)
+      if (Files.exists(indexFolder)) {
+        Logger.info("indexing folder already exists, delete")
+        Process(s"rm -rf $indexFolderString").!
+      }
+      FSDirectory.open(indexFolder)
+    }
+
+    val writer = new IndexWriter(dir, iwc)
+    new LIndexWorker(writer)
+  }
 }
 
-class LIndexer(val writer: IndexWriter) {
+class LIndexWorker(val writer: IndexWriter) {
 
-  import LIndex._
+  import LIndexWorker._
 
   def writeBack() = writer.close()
 
@@ -73,30 +106,3 @@ class LIndexer(val writer: IndexWriter) {
 
 }
 
-object LIndexer {
-
-  def apply(option: LOption, indexFolderString: String): LIndexer = {
-    val analyzerWrapper = {
-      //      val analyzer = new LAnalyzer(option, None)
-      //      val listAnalyzer = new LAnalyzer(option, Config.splitString)
-      //      val analyzerMap = Map(Config.I_AUTHORS -> listAnalyzer)
-      //      new PerFieldAnalyzerWrapper(analyzer, analyzerMap)
-      new LAnalyzer(option, None)
-    }
-    val iwc = new IndexWriterConfig(analyzerWrapper)
-    iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
-
-    val dir = {
-      Logger.info(s"indexing folder: $indexFolderString")
-      val indexFolder = Paths.get(indexFolderString)
-      if (Files.exists(indexFolder)) {
-        Logger.info("indexing folder already exists, delete")
-        Process(s"rm -rf $indexFolderString").!
-      }
-      FSDirectory.open(indexFolder)
-    }
-
-    val writer = new IndexWriter(dir, iwc)
-    new LIndexer(writer)
-  }
-}

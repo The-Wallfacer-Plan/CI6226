@@ -1,4 +1,4 @@
-package models.core
+package models.index
 
 import java.nio.file.{Files, Paths}
 

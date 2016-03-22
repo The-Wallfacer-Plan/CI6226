@@ -1,4 +1,4 @@
-package models.utility
+package models.common
 
 import java.io.File
 

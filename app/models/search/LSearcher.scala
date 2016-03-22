@@ -1,16 +1,39 @@
-package models.core
+package models.search
 
 import java.nio.file.{Files, Paths}
 
-import models.utility.Config
-import models.{LSearchPub, LSearchResult, LSearchStats}
+import models.common.{Config, LAnalyzer, LOption}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
+import play.api.libs.json._
 
 import scala.collection.JavaConversions._
+
+
+case class LSearchPub(docID: Int, score: Double, info: Map[String, String])
+
+case class LSearchStats(time: Long, queryString: String)
+
+class LSearchResult(stats: LSearchStats, lOption: Option[LOption], val pubs: Array[LSearchPub]) {
+  def statsString(): String = {
+    val lOptionJson = {
+      lOption match {
+        case Some(l) => l.toJson()
+        case None => JsNull
+      }
+    }
+    val js = JsObject(Seq(
+      "time" -> JsString(stats.time.toString + "ms"),
+      "queryString" -> JsString(stats.queryString),
+      "found" -> JsNumber(pubs.length),
+      "searchOption" -> lOptionJson
+    ))
+    Json.prettyPrint(js)
+  }
+}
 
 class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   val analyzer = new LAnalyzer(lOption, None)

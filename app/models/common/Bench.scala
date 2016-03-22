@@ -1,9 +1,8 @@
-package models.core
+package models.common
 
 import java.io.{BufferedReader, File, FileReader, PrintWriter}
 import java.nio.file.Paths
 
-import models.utility.Config
 import org.apache.lucene.benchmark.quality.trec.{TrecJudge, TrecTopicsReader}
 import org.apache.lucene.benchmark.quality.utils.{SimpleQQParser, SubmissionReport}
 import org.apache.lucene.benchmark.quality.{QualityBenchmark, QualityQuery, QualityStats}

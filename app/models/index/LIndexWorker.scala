@@ -66,7 +66,6 @@ class LIndexWorker(val writer: IndexWriter) {
 
   def writeBack() = writer.close()
 
-
   private def addDocText(key: String, value: String, document: Document) = {
     val field = new Field(key, value, ft1)
     document.add(field)

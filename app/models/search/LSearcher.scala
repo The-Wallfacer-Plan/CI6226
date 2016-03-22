@@ -15,23 +15,39 @@ import scala.collection.JavaConversions._
 
 case class LSearchPub(docID: Int, score: Double, info: Map[String, String])
 
-case class LSearchStats(time: Long, queryString: String)
+case class LSearchStats(time: Long, queryString: String, query: Option[Query]) {
+  def toJson(): JsValue = {
+    val parsedQuery = {
+      query match {
+        case Some(q) => JsString(q.toString())
+        case None => JsNull
+      }
+    }
+    JsObject(Seq(
+      "time" -> JsString(time.toString + "ms"),
+      "queryString" -> JsString(queryString),
+      "parsedQuery" -> parsedQuery
+    ))
+  }
+}
 
 class LSearchResult(stats: LSearchStats, lOption: Option[LOption], val pubs: Array[LSearchPub]) {
-  def statsString(): String = {
+  def toJson(): JsValue = {
     val lOptionJson = {
       lOption match {
         case Some(l) => l.toJson()
         case None => JsNull
       }
     }
-    val js = JsObject(Seq(
-      "time" -> JsString(stats.time.toString + "ms"),
-      "queryString" -> JsString(stats.queryString),
+    JsObject(Seq(
+      "stats" -> stats.toJson(),
       "found" -> JsNumber(pubs.length),
       "searchOption" -> lOptionJson
     ))
-    Json.prettyPrint(js)
+  }
+
+  def toJsonString(): String = {
+    Json.prettyPrint(toJson())
   }
 }
 
@@ -54,7 +70,7 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   private def validate(queryString: String): Unit = {
   }
 
-  def searchImp(queryString: String): LSearchResult = {
+  def search(queryString: String): LSearchResult = {
     validate(queryString)
     val startTime = System.currentTimeMillis()
     val query = {
@@ -68,7 +84,7 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
     val duration = System.currentTimeMillis() - startTime
     val foundPubs = getSearchPub(topDocs, query)
     reader.close()
-    val searchStats = LSearchStats(duration, query.toString())
+    val searchStats = LSearchStats(duration, query.toString(), Some(query))
     new LSearchResult(searchStats, Some(lOption), foundPubs)
   }
 

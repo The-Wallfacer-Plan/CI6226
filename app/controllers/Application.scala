@@ -26,11 +26,11 @@ class Application extends Controller {
         }
         val topN = request.getQueryString("topN").get.toInt
         val searcher = new LSearcher(searchOption, indexFolder, topN)
-        val res = searcher.searchImp(queryString)
+        val res = searcher.search(queryString)
         Ok(views.html.home(res))
       }
       case None => {
-        val result = new LSearchResult(LSearchStats(0, ""), None, Array())
+        val result = new LSearchResult(LSearchStats(0, "", None), None, Array())
         Ok(views.html.home(result))
       }
     }
@@ -39,23 +39,21 @@ class Application extends Controller {
 
   def indexDoc = Action(parse.json) { request => {
     val body = request.body
-    val driver = new LIndexer(inputFile)
+    val indexer = new LIndexer(inputFile)
     val indexOption = {
       val stemming = (body \ "stem").as[Boolean]
       val ignoreCase = (body \ "ignore").as[Boolean]
       val swDict = (body \ "swDict").as[String]
       new LOption(stemming, ignoreCase, swDict)
     }
-    val indexer = LIndexWorker(indexOption, indexFolder)
+    val worker = LIndexWorker(indexOption, indexFolder)
 
-    val stats = driver.run(indexer)
-    val statistics = new LIndexEval(indexFolder)
-    val fieldStats = statistics.getFieldStats("title")
+    val stats = indexer.run(worker)
+    val indexInfo = new LDocInfo(indexFolder)
+    val fieldInfo = indexInfo.getFieldInfo("title")
     val res = JsObject(Seq(
-      "status" -> JsString("OK"),
-      "index time" -> JsString(stats.time + "ms"),
-      "index file" -> JsString(stats.source),
-      "stats" -> fieldStats,
+      "stats" -> stats.toJson(),
+      "docInfo" -> fieldInfo,
       "options" -> indexOption.toJson()
     ))
     Logger.info(s"info: $res")

@@ -5,8 +5,16 @@ import javax.xml.parsers.SAXParserFactory
 
 import models.common.Config
 import models.xml.PubHandler
+import play.api.libs.json.{JsObject, JsString, JsValue}
 
-case class LIndexStats(time: Long, source: String)
+case class LIndexStats(time: Long, source: String) {
+  def toJson(): JsValue = {
+    JsObject(Seq(
+      "time" -> JsString(time.toString + "ms"),
+      "source" -> JsString(source.toString)
+    ))
+  }
+}
 
 class LIndexer(source: String) {
 

@@ -25,17 +25,17 @@ class LAnalyzer(option: LOption, patternString: Option[String]) extends Analyzer
 
     var result: TokenStream = new StandardFilter(tokenizer)
     if (option.ignoreCase) {
-      Logger.info("lower case filter")
+      Logger.debug("lower case filter")
       result = new LowerCaseFilter(result)
     }
     if (option.swDict.equalsIgnoreCase("Lucene")) {
       Logger.info("Lucene stopWords filter")
       result = new StopFilter(result, StopAnalyzer.ENGLISH_STOP_WORDS_SET)
     } else if (option.swDict.equals("None")) {
-      Logger.info("empty stopWords filter")
+      Logger.debug("empty stopWords filter")
     }
     if (option.stemming) {
-      Logger.info("porter stemming filter")
+      Logger.debug("porter stemming filter")
       result = new PorterStemFilter(result)
     }
     val tokenStreamComponents = new TokenStreamComponents(tokenizer, result)

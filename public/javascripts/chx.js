@@ -43,6 +43,8 @@ function indexDoneHint(response) {
 }
 
 function indexIt() {
+    $("#topNSelect").val(topN);
+
     var indexOptions = getLOptions();
     var privateParam = {
         "method": "POST",
@@ -57,9 +59,9 @@ function indexIt() {
 
 function getSearchContent() {
     var searchContent = $("#searchBox").val().trim();
-    if (searchContent.length == 0) {
-        return null
-    }
+    //if (searchContent.length == 0) {
+    //    return null
+    //}
     return searchContent;
 }
 
@@ -78,10 +80,12 @@ function searchIt() {
     };
     $.extend(paramObj, getLOptions());
     var param = $.param(paramObj);
-    if (searchContent == null) {
-        return;
-    }
-    location.href = "?" + param
+    //if (searchContent == null) {
+    //    return;
+    //}
+    location.href = "?" + param;
+    console.log(location.href);
+    //$("#topNSelect").val(topN)
 }
 
 //------------------------------------------------

@@ -61,7 +61,7 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   }
 
   val searcher = {
-    val s = new IndexSearcher(reader)//  def this() = this(new LOption(stemming = false, ignoreCase = true, "None"), None)
+    val s = new IndexSearcher(reader) //  def this() = this(new LOption(stemming = false, ignoreCase = true, "None"), None)
 
     //    val similarity = new BM25Similarity()
     //    s.setSimilarity(similarity)
@@ -100,7 +100,7 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
     for (hit <- topDocs.scoreDocs) yield {
       val (docID, score) = (hit.doc, hit.score)
       val hitDoc = searcher.doc(docID)
-      Logger.info(s"Explain: ${searcher.explain(query, docID)}")
+      //      Logger.info(s"Explain: ${searcher.explain(query, docID)}")
       val fieldValues = for {
         field <- hitDoc.getFields
         if field.name() != Config.COMBINED_FIELD

@@ -20,7 +20,6 @@ class LDocInfoReader(indexFolderString: String) {
     searcher.collectionStatistics(field)
   }
 
-
 }
 
 object LDocInfoReader {

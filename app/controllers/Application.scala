@@ -1,6 +1,6 @@
 package controllers
 
-import models.common.{Config, LOption}
+import models.common.{Config, LOption, MISC}
 import models.index._
 import models.search.{LSearchResult, LSearchStats, LSearcher}
 import play.api.Logger
@@ -17,7 +17,7 @@ class Application extends Controller {
 
   def searchDoc = Action { request => {
     request.getQueryString("content") match {
-      case Some(queryString) => {
+      case Some(queryString) if queryString.length != 0 => {
         val searchOption = {
           val stemming = request.getQueryString("stem").get.equalsIgnoreCase("true")
           val ignoreCase = request.getQueryString("ignore").get.equalsIgnoreCase("true")
@@ -26,10 +26,11 @@ class Application extends Controller {
         }
         val topN = request.getQueryString("topN").get.toInt
         val searcher = new LSearcher(searchOption, indexFolder, topN)
+        Logger.info(s"queryString=${queryString.length}")
         val res = searcher.search(queryString)
         Ok(views.html.home(res))
       }
-      case None => {
+      case _ => {
         val result = new LSearchResult(LSearchStats(0, "", None), None, Array())
         Ok(views.html.home(result))
       }
@@ -51,12 +52,16 @@ class Application extends Controller {
     val stats = indexer.run(worker)
     val indexInfo = new LDocInfoReader(indexFolder)
     val fieldInfo = indexInfo.getFieldInfo("title")
+    ///
+    val misc = new MISC(indexFolder)
+    misc.analyze("title")
+    ///
     val res = JsObject(Seq(
       "stats" -> stats.toJson(),
       "docInfo" -> LDocInfoReader.toJson(fieldInfo),
       "options" -> indexOption.toJson()
     ))
-    Logger.info(s"info: $res")
+    Logger.debug(s"info: $res")
     Ok(res)
   }
   }

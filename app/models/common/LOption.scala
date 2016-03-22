@@ -2,7 +2,7 @@ package models.common
 
 import play.api.libs.json._
 
-case class LOption(stemming: Boolean, ignoreCase: Boolean, swDict: String) {
+case class LOption(stemming: Boolean, ignoreCase: Boolean, swDict: String, evaluate: Boolean) {
 
   def toJson(): JsValue = {
     this match {
@@ -11,7 +11,8 @@ case class LOption(stemming: Boolean, ignoreCase: Boolean, swDict: String) {
         JsObject(Seq(
           "stemming" -> JsBoolean(stemming),
           "lowerCase" -> JsBoolean(ignoreCase),
-          "swDict" -> JsString(swDict)
+          "swDict" -> JsString(swDict),
+          "evaluate" -> JsBoolean(evaluate)
         ))
       }
     }

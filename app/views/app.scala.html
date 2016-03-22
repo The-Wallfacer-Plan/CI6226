@@ -1,0 +1,26 @@
+@selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
+    <div class="checkbox">
+        <label for="lb-@(attribute)"><b>@attribute</b></label>
+        <select id="lb-@(attribute)" class="form-control">
+        @for(c <- candidates) {
+            @if(defaultVal == c) {
+                <option selected="selected" value="@(c)">@c</option>
+            } else {
+                <option value="@(c)">@c</option>
+            }
+        }
+        </select>
+    </div>
+}
+
+
+
+@main("App") {
+    <nav class="navbar navbar-default"></nav>
+    @corner()
+    <div class="container">
+    @selectIt("year", "2015", Array.range(1970, 2016).map(_.toString))
+
+
+    </div>
+}

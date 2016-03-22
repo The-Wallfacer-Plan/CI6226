@@ -2,7 +2,10 @@ package models.common
 
 import java.io.File
 
+import scala.io.Source
+
 object Config {
+
   val homeDir = System.getProperty("user.home")
   val tempDir = System.getProperty("java.io.tmpdir")
   val rootDir = homeDir + File.separator + "Dropbox/PHDCourses/IR/assignment"
@@ -11,6 +14,13 @@ object Config {
   val splitString = "; "
   //  val xmlFile = rootDir + File.separator + "dblp.xml"
   val xmlFile = rootDir + File.separator + "sample.xml"
+
+  val ignoredTerms = {
+    val filterFileName = rootDir + File.separator + "topics_filter"
+    val ignored = Source.fromFile(filterFileName).getLines().toSet
+    require(ignored.nonEmpty)
+    ignored
+  }
 
 
   val I_PAPER_ID = "paperId"

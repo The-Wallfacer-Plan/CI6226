@@ -1,6 +1,6 @@
 package controllers
 
-import models.common.{Config, LOption, MISC}
+import models.common.{Config, LOption, TopFreq}
 import models.index._
 import models.search.{LSearchResult, LSearchStats, LSearcher}
 import play.api.Logger
@@ -15,14 +15,23 @@ class Application extends Controller {
     Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
   }
 
+  @inline
+  private def getAsBoolean(option: Option[String], defaultB: Boolean): Boolean = {
+    option match {
+      case Some(arg) => arg.equalsIgnoreCase("true")
+      case None => defaultB
+    }
+  }
+
   def searchDoc = Action { request => {
     request.getQueryString("content") match {
       case Some(queryString) if queryString.length != 0 => {
         val searchOption = {
-          val stemming = request.getQueryString("stem").get.equalsIgnoreCase("true")
-          val ignoreCase = request.getQueryString("ignore").get.equalsIgnoreCase("true")
+          val stemming = getAsBoolean(request.getQueryString("stem"), defaultB = true)
+          val ignoreCase = getAsBoolean(request.getQueryString("ignore"), defaultB = true)
+          val isEval = getAsBoolean(request.getQueryString("isEval"), defaultB = false)
           val swDict = request.getQueryString("swDict").get
-          new LOption(stemming, ignoreCase, swDict)
+          new LOption(stemming, ignoreCase, swDict, isEval)
         }
         val topN = request.getQueryString("topN").get.toInt
         val searcher = new LSearcher(searchOption, indexFolder, topN)
@@ -45,7 +54,7 @@ class Application extends Controller {
       val stemming = (body \ "stem").as[Boolean]
       val ignoreCase = (body \ "ignore").as[Boolean]
       val swDict = (body \ "swDict").as[String]
-      new LOption(stemming, ignoreCase, swDict)
+      new LOption(stemming, ignoreCase, swDict, false)
     }
     val worker = LIndexWorker(indexOption, indexFolder)
 
@@ -53,7 +62,7 @@ class Application extends Controller {
     val indexInfo = new LDocInfoReader(indexFolder)
     val fieldInfo = indexInfo.getFieldInfo("title")
     ///
-    val misc = new MISC(indexFolder)
+    val misc = new TopFreq(indexFolder)
     misc.analyze("title")
     ///
     val res = JsObject(Seq(
@@ -65,5 +74,11 @@ class Application extends Controller {
     Ok(res)
   }
   }
+
+  def app1 = Action { request => {
+    Ok(views.html.app())
+  }
+  }
+
 
 }

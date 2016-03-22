@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
 
 case class LSearchPub(docID: Int, score: Double, info: Map[String, String])
 
-case class LSearchStats(time: Long, queryString: String, query: Option[Query]) {
+case class LSearchStats(timecode: Long, queryString: String, query: Option[Query]) {
   def toJson(): JsValue = {
     val parsedQuery = {
       query match {
@@ -61,7 +61,7 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   }
 
   val searcher = {
-    val s = new IndexSearcher(reader) //  def this() = this(new LOption(stemming = false, ignoreCase = true, "None"), None)
+    val s = new IndexSearcher(reader)
 
     //    val similarity = new BM25Similarity()
     //    s.setSimilarity(similarity)
@@ -71,9 +71,30 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   private def validate(queryString: String): Unit = {
   }
 
+  def getTopFreq(topDocs: TopDocs): List[(String, Long)] = {
+    List.empty
+  }
+
+  def evaluate(queryString: String): List[(String, Long)] = {
+    val queryOrNone = Option {
+      val parser = new QueryParser(Config.I_PUB_YEAR, analyzer)
+      parser.setAllowLeadingWildcard(false)
+      parser.parse(queryString)
+    }
+    Logger.info(s"string=$queryString, query=$queryOrNone")
+    queryOrNone match {
+      case None => List.empty
+      case Some(query) => {
+        val collector = new TotalHitCountCollector()
+        val result = searcher.search(query, collector.getTotalHits)
+        getTopFreq(result)
+      }
+    }
+  }
+
   def search(queryString: String): LSearchResult = {
-    validate(queryString)
     val startTime = System.currentTimeMillis()
+    validate(queryString)
     val queryOrNone = Option {
       val parser = new QueryParser(Config.COMBINED_FIELD, analyzer)
       parser.setAllowLeadingWildcard(true)

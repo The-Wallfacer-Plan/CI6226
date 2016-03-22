@@ -4,6 +4,7 @@ function onError(response, statusText, errorThrown) {
 }
 
 var hostUrl = location.origin + "/";
+var appUrl = hostUrl + "app";
 
 var hintTextSelector = "#infoBox";
 var commonParam = {
@@ -43,8 +44,6 @@ function indexDoneHint(response) {
 }
 
 function indexIt() {
-    $("#topNSelect").val(topN);
-
     var indexOptions = getLOptions();
     var privateParam = {
         "method": "POST",
@@ -97,3 +96,6 @@ function readTheDocs() {
     document.body.appendChild(form);
     form.submit();
 }
+
+// ------------------------------------------------
+

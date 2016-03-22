@@ -61,7 +61,8 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   }
 
   val searcher = {
-    val s = new IndexSearcher(reader)
+    val s = new IndexSearcher(reader)//  def this() = this(new LOption(stemming = false, ignoreCase = true, "None"), None)
+
     //    val similarity = new BM25Similarity()
     //    s.setSimilarity(similarity)
     s

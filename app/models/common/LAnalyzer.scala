@@ -12,8 +12,6 @@ import play.api.Logger
 
 class LAnalyzer(option: LOption, patternString: Option[String]) extends Analyzer {
 
-  def this() = this(new LOption(stemming = false, ignoreCase = true, "None"), None)
-
   override def createComponents(fieldName: String): TokenStreamComponents = {
     val tokenizer = {
       patternString match {

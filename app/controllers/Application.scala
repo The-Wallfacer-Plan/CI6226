@@ -53,7 +53,7 @@ class Application extends Controller {
     val fieldInfo = indexInfo.getFieldInfo("title")
     val res = JsObject(Seq(
       "stats" -> stats.toJson(),
-      "docInfo" -> fieldInfo,
+      "docInfo" -> LDocInfoReader.toJson(fieldInfo),
       "options" -> indexOption.toJson()
     ))
     Logger.info(s"info: $res")

@@ -49,7 +49,7 @@ class Application extends Controller {
     val worker = LIndexWorker(indexOption, indexFolder)
 
     val stats = indexer.run(worker)
-    val indexInfo = new LDocInfo(indexFolder)
+    val indexInfo = new LDocInfoReader(indexFolder)
     val fieldInfo = indexInfo.getFieldInfo("title")
     val res = JsObject(Seq(
       "stats" -> stats.toJson(),

@@ -11,7 +11,7 @@ case class LOption(stemming: Boolean, ignoreCase: Boolean, swDict: String) {
       case _ => {
         JsObject(Seq(
           "stemming" -> JsBoolean(stemming),
-          "ignoreCase" -> JsBoolean(ignoreCase),
+          "lowerCase" -> JsBoolean(ignoreCase),
           "swDict" -> JsString(swDict)
         ))
       }

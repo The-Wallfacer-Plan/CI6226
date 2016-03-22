@@ -73,19 +73,26 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   def search(queryString: String): LSearchResult = {
     validate(queryString)
     val startTime = System.currentTimeMillis()
-    val query = {
+    val queryOrNone = Option {
       val parser = new QueryParser(Config.COMBINED_FIELD, analyzer)
       parser.setAllowLeadingWildcard(true)
       parser.parse(queryString)
     }
-    Logger.info(s"string=$queryString, query=$query")
-    val topDocs = searcher.search(query, topN)
-
-    val duration = System.currentTimeMillis() - startTime
-    val foundPubs = getSearchPub(topDocs, query)
-    reader.close()
-    val searchStats = LSearchStats(duration, query.toString(), Some(query))
-    new LSearchResult(searchStats, Some(lOption), foundPubs)
+    Logger.info(s"string=$queryString, query=$queryOrNone")
+    queryOrNone match {
+      case None => {
+        val searchStats = LSearchStats(0, queryString, queryOrNone)
+        new LSearchResult(searchStats, Some(lOption), Array())
+      }
+      case Some(query) => {
+        val topDocs = searcher.search(query, topN)
+        val duration = System.currentTimeMillis() - startTime
+        val foundPubs = getSearchPub(topDocs, query)
+        reader.close()
+        val searchStats = LSearchStats(duration, queryString, queryOrNone)
+        new LSearchResult(searchStats, Some(lOption), foundPubs)
+      }
+    }
   }
 
   def getSearchPub(topDocs: TopDocs, query: Query): Array[LSearchPub] = {

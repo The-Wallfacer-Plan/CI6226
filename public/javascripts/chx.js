@@ -57,11 +57,7 @@ function indexIt() {
 // --------------------------------------------------------------
 
 function getSearchContent() {
-    var searchContent = $("#searchBox").val().trim();
-    //if (searchContent.length == 0) {
-    //    return null
-    //}
-    return searchContent;
+    return $("#searchBox").val().trim();
 }
 
 function selectiveSearchIt(e) {
@@ -100,5 +96,5 @@ function readTheDocs() {
 // ------------------------------------------------
 
 function evaluateIt() {
-    
+
 }

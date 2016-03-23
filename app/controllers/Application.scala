@@ -1,6 +1,6 @@
 package controllers
 
-import models.common.{Config, LOption}
+import models.common.{Config, Helper, LOption}
 import models.index._
 import models.search.{LSearchResult, LSearchStats, LSearcher}
 import play.api.Logger
@@ -9,18 +9,12 @@ import play.api.mvc._
 
 class Application extends Controller {
 
+  import Helper._
+
   val inputFile = Config.xmlFile
   val indexFolder = {
     val fileName = inputFile.split(java.io.File.separator).last
     Config.indexRoot + java.io.File.separator + fileName.split('.')(0)
-  }
-
-  @inline
-  private def getAsBoolean(option: Option[String], defaultB: Boolean): Boolean = {
-    option match {
-      case Some(arg) => arg.equalsIgnoreCase("true")
-      case None => defaultB
-    }
   }
 
   def searchDoc = Action { request => {
@@ -29,23 +23,14 @@ class Application extends Controller {
         val searchOption = {
           val stemming = getAsBoolean(request.getQueryString("stem"), defaultB = true)
           val ignoreCase = getAsBoolean(request.getQueryString("ignore"), defaultB = true)
-          val isEval = getAsBoolean(request.getQueryString("isEval"), defaultB = true)
           val swDict = request.getQueryString("swDict").get
-          new LOption(stemming, ignoreCase, swDict, isEval)
+          new LOption(stemming, ignoreCase, swDict)
         }
         val topN = request.getQueryString("topN").get.toInt
         val searcher = new LSearcher(searchOption, indexFolder, topN)
         Logger.info(s"queryString=$queryString")
-        if (searchOption.evaluate) {
-          val res = searcher.evaluate(queryString)
-          for ((tf, termText) <- res) {
-            Logger.info(s"tf:$tf, term=$termText")
-          }
-          Ok("l")
-        } else {
-          val res = searcher.search(queryString)
-          Ok(views.html.home(res))
-        }
+        val res = searcher.search(queryString)
+        Ok(views.html.home(res))
       }
       case _ => {
         val result = new LSearchResult(LSearchStats(0, "", None), None, Array())
@@ -62,7 +47,7 @@ class Application extends Controller {
       val stemming = (body \ "stem").as[Boolean]
       val ignoreCase = (body \ "ignore").as[Boolean]
       val swDict = (body \ "swDict").as[String]
-      new LOption(stemming, ignoreCase, swDict, false)
+      new LOption(stemming, ignoreCase, swDict)
     }
     val worker = LIndexWorker(indexOption, indexFolder)
 
@@ -81,6 +66,7 @@ class Application extends Controller {
   }
 
   def app1 = Action { request => {
+    val stemming = getAsBoolean(request.getQueryString("stem"), defaultB = true)
     Ok(views.html.app())
   }
   }

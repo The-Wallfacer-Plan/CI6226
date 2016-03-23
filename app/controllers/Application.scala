@@ -1,6 +1,6 @@
 package controllers
 
-import models.common.{Config, LOption, TopFreq}
+import models.common.{Config, LOption}
 import models.index._
 import models.search.{LSearchResult, LSearchStats, LSearcher}
 import play.api.Logger
@@ -69,9 +69,6 @@ class Application extends Controller {
     val stats = indexer.run(worker)
     val indexInfo = new LDocInfoReader(indexFolder)
     val fieldInfo = indexInfo.getFieldInfo("title")
-    ///
-    val misc = new TopFreq(indexFolder)
-    misc.analyze("title")
     ///
     val res = JsObject(Seq(
       "stats" -> stats.toJson(),

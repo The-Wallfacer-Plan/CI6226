@@ -13,6 +13,7 @@ import play.api.libs.json._
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
+import scala.util.control.Breaks.{break, breakable}
 
 
 case class LSearchPub(docID: Int, score: Double, info: Map[String, String])
@@ -77,7 +78,6 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) {
   }
 
   def reOrder(entry: TopEntryTy, topsArray: Array[TopEntryTy]): Unit = {
-    import scala.util.control.Breaks.{break, breakable}
     var i = 0
     breakable {
       while (i < topsArray.length) {

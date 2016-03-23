@@ -1,0 +1,19 @@
+@import search.LSearchResult
+
+@(result: LSearchResult)
+
+@main("LSearcher") {
+    <nav class="navbar navbar-default"></nav>
+    @UICorner()
+    <div class="container">
+        <div class="row container-fluid">
+            <div class="col-lg-5">
+                @bWork()
+                @UIStats(result.toJsonString())
+            </div>
+            <div class="col-lg-7">
+            @bResult(result.pubs)
+            </div>
+        </div>
+    </div>
+}

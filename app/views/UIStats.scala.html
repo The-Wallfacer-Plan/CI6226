@@ -1,12 +1,10 @@
-@import search.LSearchResult
-
-@(result: LSearchResult)
+@(stats: String)
 
 <div class="container">
 
     <label for="infoBox"></label>
     <textarea class="form-control" rows="20" id="infoBox">
-@result.toJsonString()
+@stats
     </textarea>
 
 </div>

@@ -1,0 +1,18 @@
+@UIOptions()
+
+<div class="container">
+    <div class="col-lg-12">
+        <button type="button" id="indexButton" class="btn btn-primary" onclick="indexIt()">Index It!</button>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="input-group col-lg-12">
+        <input type="text" id="searchBox" class="form-control" placeholder="Search for..." onkeypress="selectiveSearchIt(event)"/>
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="searchButton" onclick="searchIt()">Go!</button>
+            <button type="button" class="btn btn-info" onclick="readTheDocs()">Help</button>
+        </span>
+    </div>
+</div>

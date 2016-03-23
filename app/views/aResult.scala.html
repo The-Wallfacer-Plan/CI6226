@@ -1,0 +1,12 @@
+@(results: Array[(Long, String)] = Array.empty)
+
+<table class="table table-bordered table-striped">
+    <ul>
+        @for(entry <- results) {
+            <tr>
+                <th style="width: 20px">@(entry._2)</th>
+                <td>@(entry._1)</td>
+            </tr>
+        }
+    </ul>
+</table>

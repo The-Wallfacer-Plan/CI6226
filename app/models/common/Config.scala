@@ -6,6 +6,8 @@ import scala.io.Source
 
 object Config {
 
+  type TopEntryTy = (Long, String)
+
   val homeDir = System.getProperty("user.home")
   val tempDir = System.getProperty("java.io.tmpdir")
   val rootDir = homeDir + File.separator + "Dropbox/PHDCourses/IR/assignment"

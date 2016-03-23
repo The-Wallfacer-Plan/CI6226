@@ -1,7 +1,7 @@
 @selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
     <div class="form-group">
-        <label for="lb-@(attribute)" class="col-lg-1 control-label"><b>@attribute</b></label>
-        <div class="col-lg-11">
+        <label for="lb-@(attribute)" class="col-lg-2 control-label"><b>@attribute</b></label>
+        <div class="col-lg-10">
             <select id="lb-@(attribute)" class="form-control">
             @for(c <- candidates) {
                 @if(defaultVal == c) {
@@ -17,23 +17,19 @@
 
 @inputIt(attribute: String, elemId: String) = {
     <div class="form-group">
-        <label for="app-@(attribute)" class="col-lg-1">@attribute</label>
-        <div class="col-lg-11">
+        <label for="app-@(attribute)" class="col-lg-2">@attribute</label>
+        <div class="col-lg-10">
             <input type="text" id="app-@(attribute)" class="form-control" placeholder="e.g., @(elemId)"/>
         </div>
     </div>
 }
 
+@UIOptions()
 
-@main("App") {
-    <nav class="navbar navbar-default"></nav>
-    @corner()
-    <div class="container">
-        <form class="form-horizontal">
-            @selectIt("year", "2015", Array.range(1970, 2016).map(_.toString))
-            @inputIt("venue", "Informatik Spektrum")
-            @inputIt("author", "Andrei Terechko")
-        </form>
-
-    </div>
-}
+<div class="container">
+    <form class="form-horizontal">
+        @selectIt("year", "2015", Array.range(1970, 2016).map(_.toString))
+        @inputIt("venue", "Informatik Spektrum")
+        @inputIt("author", "Andrei Terechko")
+    </form>
+</div>

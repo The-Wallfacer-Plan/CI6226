@@ -1,18 +1,13 @@
-@import search.LSearchResult
-
-@(result: LSearchResult)
-
-@main("LSearcher") {
+@main("App") {
     <nav class="navbar navbar-default"></nav>
-    @corner()
+    @UICorner()
     <div class="container">
         <div class="row container-fluid">
             <div class="col-lg-5">
-                @workUI()
-                @statsUI(result)
+            @aWork()
             </div>
             <div class="col-lg-7">
-            @resultUI(result.pubs)
+            @aResult()
             </div>
         </div>
     </div>

@@ -29,15 +29,23 @@ class Application extends Controller {
         val searchOption = {
           val stemming = getAsBoolean(request.getQueryString("stem"), defaultB = true)
           val ignoreCase = getAsBoolean(request.getQueryString("ignore"), defaultB = true)
-          val isEval = getAsBoolean(request.getQueryString("isEval"), defaultB = false)
+          val isEval = getAsBoolean(request.getQueryString("isEval"), defaultB = true)
           val swDict = request.getQueryString("swDict").get
           new LOption(stemming, ignoreCase, swDict, isEval)
         }
         val topN = request.getQueryString("topN").get.toInt
         val searcher = new LSearcher(searchOption, indexFolder, topN)
-        Logger.info(s"queryString=${queryString.length}")
-        val res = searcher.search(queryString)
-        Ok(views.html.home(res))
+        Logger.info(s"queryString=$queryString")
+        if (searchOption.evaluate) {
+          val res = searcher.evaluate(queryString)
+          for ((tf, termText) <- res) {
+            Logger.info(s"tf:$tf, term=$termText")
+          }
+          Ok("l")
+        } else {
+          val res = searcher.search(queryString)
+          Ok(views.html.home(res))
+        }
       }
       case _ => {
         val result = new LSearchResult(LSearchStats(0, "", None), None, Array())

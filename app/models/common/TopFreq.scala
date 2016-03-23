@@ -46,8 +46,8 @@ class TopFreq(indexFolderString: String) {
         require(tf == itr.totalTermFreq())
         val docCount = reader.docFreq(termInstance)
         println(s"term: $termText, termFreq=$tf, docCount=$docCount")
-        bytesRef = itr.next()
       }
+      bytesRef = itr.next()
     }
   }
 

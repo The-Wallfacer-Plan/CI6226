@@ -1,21 +1,46 @@
 package models.search
 
+import models.common.Config.TopEntryTy
 import models.common.{Config, LOption}
 import org.apache.lucene.index.Term
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{Query, TopDocs, TotalHitCountCollector}
 import org.apache.lucene.util.BytesRef
 import play.api.Logger
-import play.api.libs.json.{JsNull, JsValue}
+import play.api.libs.json._
 
 import scala.collection.mutable
 import scala.util.control.Breaks.{break, breakable}
 
 
-case class LTopRecordStats(time: Long, query: Option[Query], topics: Array[Config.TopEntryTy]) {
+case class LTopRecordStats(time: Long, query: Option[Query]) {
   def toJson(): JsValue = {
-    JsNull
+    val queryResult = query match {
+      case Some(q) => JsString(q.toString)
+      case None => JsNull
+    }
+    JsObject(Seq(
+      "time" -> JsString(time.toString + "ms"),
+      "query" -> queryResult
+    ))
   }
+}
+
+case class LTopRecordResult(stats: LTopRecordStats, lOption: Option[LOption], tops: Array[TopEntryTy]) {
+  def toJson(): JsValue = {
+    val lOptionjson = {
+      lOption match {
+        case Some(l) => l.toJson()
+        case None => JsNull
+      }
+    }
+    JsObject(Seq(
+      "stats" -> stats.toJson(),
+      "lOption" -> lOptionjson
+    ))
+  }
+
+  def toJsonString(): String = Json.prettyPrint(toJson())
 }
 
 class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSBase(lOption, indexFolder, topN) {
@@ -36,7 +61,7 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
   }
 
 
-  def evaluate(queryString: String, topicsField: String = Config.I_TITLE): Array[TopEntryTy] = {
+  def evaluate(queryString: String, topicsField: String = Config.I_TITLE): LTopRecordResult = {
     val queryOrNone = Option {
       val parser = new QueryParser(Config.I_PUB_YEAR, analyzer)
       parser.setAllowLeadingWildcard(false)
@@ -44,13 +69,22 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
     }
     Logger.info(s"string=$queryString, query=$queryOrNone")
     queryOrNone match {
-      case None => Array.empty[TopEntryTy]
+      case None => {
+        val stats = LTopRecordStats(0L, queryOrNone)
+        val tops = Array.empty[TopEntryTy]
+        LTopRecordResult(stats, Some(lOption), tops)
+      }
       case Some(query) => {
         val collector = new TotalHitCountCollector()
         searcher.search(query, collector)
         Logger.info(s"${collector.getTotalHits}")
+        val timeStart = System.currentTimeMillis()
         val result = searcher.search(query, math.max(1, collector.getTotalHits))
-        getTopFreq(result, topicsField)
+        val tops = getTopFreq(result, topicsField)
+        val duration = System.currentTimeMillis() - timeStart
+        reader.close()
+        val stats = LTopRecordStats(duration, queryOrNone)
+        new LTopRecordResult(stats, Some(lOption), tops)
       }
     }
   }

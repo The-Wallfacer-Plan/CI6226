@@ -4,7 +4,7 @@
 
 GET         /                    controllers.Application.searchDoc
 POST        /indexDoc            controllers.Application.indexDoc
-GET         /app                 controllers.Application.app1
+GET         /app                 controllers.Application.topRecord
 
 
 # Map static resources from the /public folder to the /assets URL path

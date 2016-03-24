@@ -39,7 +39,8 @@ object Config {
   val COMBINED_FIELD = "ALL"
 
   //    interface Configurable
-  val topN = 20
+  val topN = 10
+  val defaultStep = 5
 
   val defaultSearchString = "title:\"Google\" authors:\"Thilo Weichert\""
 }

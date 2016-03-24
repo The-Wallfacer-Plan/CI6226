@@ -2,7 +2,7 @@ package controllers
 
 import models.common.{Config, LOption}
 import models.index._
-import models.search.{LSearchResult, LSearchStats, LSearcher, LTopRecorder}
+import models.search._
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -18,17 +18,36 @@ class Application extends Controller {
 
   def searchDoc = Action { request => {
     request.getQueryString("content") match {
-      case Some(queryString) if queryString.length != 0 => {
+      case Some(queryContent) if queryContent.length != 0 => {
         val lOption = LOption(request)
         val topN = request.getQueryString("topN").get.toInt
         val searcher = new LSearcher(lOption, indexFolder, topN)
-        Logger.info(s"queryString=$queryString")
-        val res = searcher.search(queryString)
+        Logger.info(s"queryContent=$queryContent")
+        val res = searcher.search(queryContent)
         Ok(views.html.bMain(res))
       }
       case _ => {
         val result = new LSearchResult(LSearchStats(0, "", None), None, Array())
         Ok(views.html.bMain(result))
+      }
+    }
+  }
+  }
+
+
+  def topRecord = Action { request => {
+    request.getQueryString("pubYear") match {
+      case Some(pubYear) => {
+        val lOption = LOption(request)
+        val topN = request.getQueryString("topN").get.toInt
+        val topRecorder = new LTopRecorder(lOption, indexFolder, topN)
+        val result = topRecorder.evaluate(queryString = pubYear)
+        Ok(views.html.aMain(result))
+      }
+      case None => {
+        val stats = LTopRecordStats(0L, None)
+        val result = LTopRecordResult(stats, None, Array.empty)
+        Ok(views.html.aMain(result))
       }
     }
   }
@@ -51,15 +70,6 @@ class Application extends Controller {
     ))
     Logger.debug(s"info: $res")
     Ok(res)
-  }
-  }
-
-  def app1 = Action { request => {
-    val lOption = LOption(request)
-    val topN = request.getQueryString("topN").get.toInt
-    val topRecorder = new LTopRecorder(lOption, indexFolder, topN)
-    topRecorder.evaluate(queryString = null)
-    Ok(views.html.aMain())
   }
   }
 

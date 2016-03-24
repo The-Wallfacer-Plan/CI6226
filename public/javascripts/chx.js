@@ -95,6 +95,22 @@ function readTheDocs() {
 
 // ------------------------------------------------
 
-function evaluateIt() {
+function getTopSearchInfo() {
+    return {
+        "pubYear": $("#lb-pubYear").val(),
+        "venue": $("#app-venue").val(),
+        "authors": $("#app-authors").val()
+    }
+}
 
+function topRecordIt() {
+    var lOption = getLOptions();
+    var searchInfo = getTopSearchInfo();
+    var topN = $("#topNSelect").val();
+    var paramObj = {
+        "topN": topN
+    };
+    $.extend(paramObj, lOption, searchInfo);
+    var param = $.param(paramObj);
+    location.href = appUrl + "?" + param
 }

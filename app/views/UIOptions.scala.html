@@ -1,4 +1,6 @@
-@(step: Int = 5)
+@import common.Config
+
+@(step: Int = Config.defaultStep, topN: Int = Config.topN)
 
 <div class="container">
 
@@ -6,14 +8,14 @@
 
         <div class="checkbox col-lg-12">
             <label>
-                <input id="cb-index-stem" type="checkbox"> Use Stemming
+                <input id="cb-index-stem" type="checkbox" checked="checked"> Use Stemming
                 @*<label for="cb-index-stem" class="form-control text-info font-weight-bold">Use Stemming</label>*@
             </label>
         </div>
 
         <div class="checkbox col-lg-12">
             <label>
-                <input id="cb-index-ignore" type="checkbox"> Lower Case
+                <input id="cb-index-ignore" type="checkbox" checked="checked"> Lower Case
             </label>
         </div>
 
@@ -29,7 +31,11 @@
             <label for="topNSelect" class="text-info">Top N</label>
             <select id="topNSelect" class="form-control">
                 @for(i <- Range(step, 100 + step, step)) {
-                    <option value="@i">@i</option>
+                    @if(i == topN) {
+                        <option value="@i" selected="selected">@i</option>
+                    } else {
+                        <option value="@i">@i</option>
+                    }
                 }
             </select>
         </div>

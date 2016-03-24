@@ -38,7 +38,7 @@ class LSearchResult(stats: LSearchStats, lOption: Option[LOption], val pubs: Arr
     JsObject(Seq(
       "stats" -> stats.toJson(),
       "found" -> JsNumber(pubs.length),
-      "searchOption" -> lOptionJson
+      "lOption" -> lOptionJson
     ))
   }
 

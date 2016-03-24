@@ -28,8 +28,14 @@
 
 <div class="container">
     <form class="form-horizontal">
-        @selectIt("year", "2015", Array.range(1970, 2016).map(_.toString))
+        @selectIt("pubYear", "2015", Array.range(1970, 2016).map(_.toString))
         @inputIt("venue", "Informatik Spektrum")
-        @inputIt("author", "Andrei Terechko")
+        @inputIt("authors", "Andrei Terechko")
     </form>
+</div>
+
+<div class="container">
+    <div class="col-lg-12">
+        <button type="button" id="topRecord" class="btn btn-primary" onclick="topRecordIt()">Get Top Topics!</button>
+    </div>
 </div>

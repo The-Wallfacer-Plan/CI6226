@@ -45,6 +45,7 @@ function indexDoneHint(response) {
 
 function indexIt() {
     var indexOptions = getLOptions();
+    indexOptions["reIndex"] = $("#cb-force-index").is(":checked");
     var privateParam = {
         "method": "POST",
         "url": _getUrl("indexDoc"),

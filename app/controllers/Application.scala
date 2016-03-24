@@ -1,11 +1,15 @@
 package controllers
 
+import java.nio.file.{Files, Paths}
+
 import models.common.{Config, LOption}
 import models.index._
 import models.search._
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
+
+import scala.sys.process.Process
 
 class Application extends Controller {
 
@@ -57,20 +61,37 @@ class Application extends Controller {
   def indexDoc = Action(parse.json) { request => {
     val body = request.body
     val indexer = new LIndexer(inputFile)
+    val reIndex = (body \ "reIndex").as[Boolean]
     val lOption = LOption(body)
-    val worker = LIndexWorker(lOption, indexFolder)
 
-    val stats = indexer.run(worker)
-    val indexInfo = new LDocInfoReader(indexFolder)
-    val fieldInfo = indexInfo.getFieldInfo(Config.I_TITLE)
-    ///
-    val res = JsObject(Seq(
-      "stats" -> stats.toJson(),
-      "docInfo" -> LDocInfoReader.toJson(fieldInfo),
-      "options" -> lOption.toJson()
-    ))
-    Logger.debug(s"info: $res")
-    Ok(res)
+    val indexExists = {
+      val indexPath = Paths.get(indexFolder)
+      Files.exists(indexPath)
+    }
+    if ((indexExists && reIndex) || !indexExists) {
+      Process(s"rm -rf $indexFolder").!
+      Logger.info(s"index folder: $indexFolder")
+      val worker = LIndexWorker(lOption, indexFolder)
+
+      val stats = indexer.run(worker)
+      val indexInfo = new LDocInfoReader(indexFolder)
+      val fieldInfo = indexInfo.getFieldInfo(Config.I_TITLE)
+      ///
+      val res = JsObject(Seq(
+        "stats" -> stats.toJson(),
+        "docInfo" -> LDocInfoReader.toJson(fieldInfo),
+        "options" -> lOption.toJson()
+      ))
+      Logger.debug(s"info: $res")
+      Ok(res)
+    } else {
+      val res = JsObject(Seq(
+        "stats" -> JsString("index folder exists"),
+        "folder" -> JsString(indexFolder)
+      ))
+      Ok(res)
+    }
+
   }
   }
 

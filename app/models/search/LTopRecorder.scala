@@ -60,6 +60,23 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
     }
   }
 
+  def selectionSort(textMap: scala.collection.mutable.Map[String, Long], topN: Int): Array[TopEntryTy] = {
+    val array = Array.fill[TopEntryTy](topN)(0L -> null)
+    var i = 0
+    while (i < array.length) {
+      var current: TopEntryTy = 0L -> null
+      for (entry <- textMap) {
+        if (current._1 < entry._2) {
+          current = entry._2 -> entry._1
+        }
+      }
+      array(i) = current
+      textMap -= current._2
+      i += 1
+    }
+    array
+  }
+
 
   def evaluate(queryString: String, contentMap: Map[String, Option[String]], topicsField: String = I_TITLE): LTopRecordResult = {
     val pubYearTerm = new Term(I_PUB_YEAR, queryString)
@@ -78,7 +95,7 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
     val query = queryBuilder.build()
     val collector = new TotalHitCountCollector()
     searcher.search(query, collector)
-    Logger.info(s"${collector.getTotalHits}")
+    Logger.info(s"${collector.getTotalHits} hit docs")
     val timeStart = System.currentTimeMillis()
     val result = searcher.search(query, math.max(1, collector.getTotalHits))
     val tops = getTopFreq(result, topicsField)
@@ -90,8 +107,8 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
 
 
   private def getTopFreq(topDocs: TopDocs, topicsField: String): Array[TopEntryTy] = {
-    var visitedSet = mutable.Set[String]()
-    val topsArray = Array.fill[TopEntryTy](topN)(0L -> null)
+    //    val termMap = new util.HashMap[String, Long]()
+    val termMap = mutable.Map.empty[String, Long]
     val scoreDocs = topDocs.scoreDocs
     var i = 0
     while (i < scoreDocs.size) {
@@ -104,12 +121,13 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
         var bytesRef: BytesRef = itr.next()
         while (bytesRef != null) {
           val termText = bytesRef.utf8ToString()
-          if (!ignoredTerms.contains(termText) && !visitedSet.contains(termText)) {
-            val termInstance = new Term(topicsField, bytesRef)
-            val tf = reader.totalTermFreq(termInstance)
-            //            require(tf == itr.totalTermFreq(), (tf, itr.totalTermFreq()))
-            reOrder((tf, termText), topsArray)
-            visitedSet += termText
+          if (!ignoredTerms.contains(termText)) {
+            val tf = itr.totalTermFreq()
+            if (termMap.contains(termText)) {
+              termMap += termText -> (termMap(termText) + tf)
+            } else {
+              termMap += termText -> tf
+            }
           }
           bytesRef = itr.next()
         }
@@ -122,7 +140,7 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
       }
       i += 1
     }
-    topsArray
+    selectionSort(termMap, topN)
   }
 
 }

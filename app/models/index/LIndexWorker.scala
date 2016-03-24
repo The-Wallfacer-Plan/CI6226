@@ -62,9 +62,13 @@ object LIndexWorker {
 
 class LIndexWorker(val writer: IndexWriter) {
 
+  import Config._
   import LIndexWorker._
 
-  def writeBack() = writer.close()
+  def writeBack() = {
+    writer.close()
+    Logger.info("index done")
+  }
 
   private def addDocText(key: String, value: String, document: Document) = {
     val field = new Field(key, value, ft1)
@@ -81,18 +85,18 @@ class LIndexWorker(val writer: IndexWriter) {
     val document = new Document()
 
     //        is the form of "xxx/xxx/xxx", use TextField
-    addDocText("paperId", pub.paperId, document)
+    addDocText(I_PAPER_ID, pub.paperId, document)
     //        TextField
-    addDocText("title", pub.title, document)
+    addDocText(I_TITLE, pub.title, document)
     //        StringField
-    addDocText("kind", pub.kind, document)
+    addDocText(I_KIND, pub.kind, document)
     //        ???
-    addDocText("venue", pub.venue, document)
+    addDocText(I_VENUE, pub.venue, document)
     //        StringField
-    addDocText("pubYear", pub.pubYear, document)
+    addDocText(I_PUB_YEAR, pub.pubYear, document)
     //        TextField (how to join/split author list ???)
     val authorString = pub.authors.mkString(Config.splitString)
-    addDocText("authors", authorString, document)
+    addDocText(I_AUTHORS, authorString, document)
     //    pub.authors.foreach(author => addDocText("authors", author, document))
 
     // for free text search

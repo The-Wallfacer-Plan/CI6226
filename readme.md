@@ -45,6 +45,8 @@ L := | AND | OR
 - authors indexed with same field
 - reopen directory reader
 
+- app1 for filtered cases
+
 
 ## notice:
 - removed dblp.xml for "author" attribute (`aux`) since it doesn't correspond to dtd

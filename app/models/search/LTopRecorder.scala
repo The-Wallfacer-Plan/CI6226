@@ -107,6 +107,7 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
           if (!ignoredTerms.contains(termText) && !visitedSet.contains(termText)) {
             val termInstance = new Term(topicsField, bytesRef)
             val tf = reader.totalTermFreq(termInstance)
+            //            require(tf == itr.totalTermFreq(), (tf, itr.totalTermFreq()))
             reOrder((tf, termText), topsArray)
             visitedSet += termText
           }

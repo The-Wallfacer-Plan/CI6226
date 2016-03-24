@@ -71,15 +71,15 @@ class Application extends Controller {
     if ((indexExists && reIndex) || !indexExists) {
       Process(s"rm -rf $indexFolder").!
       Logger.info(s"index folder: $indexFolder")
-      val worker = LIndexWorker(lOption, indexFolder)
+      val worker = BIndexWorker(lOption, indexFolder)
 
       val stats = indexer.run(worker)
-      val indexInfo = new LDocInfoReader(indexFolder)
+      val indexInfo = new BDocInfoReader(indexFolder)
       val fieldInfo = indexInfo.getFieldInfo(Config.I_TITLE)
       ///
       val res = JsObject(Seq(
         "stats" -> stats.toJson(),
-        "docInfo" -> LDocInfoReader.toJson(fieldInfo),
+        "docInfo" -> BDocInfoReader.toJson(fieldInfo),
         "options" -> lOption.toJson()
       ))
       Logger.debug(s"info: $res")

@@ -7,7 +7,7 @@ import org.apache.lucene.search.{CollectionStatistics, IndexSearcher}
 import org.apache.lucene.store.FSDirectory
 import play.api.libs.json.{JsNumber, JsObject, JsValue}
 
-class LDocInfoReader(indexFolderString: String) {
+class BDocInfoReader(indexFolderString: String) {
   val reader: IndexReader = {
     val indexFolder = Paths.get(indexFolderString)
     require(Files.exists(indexFolder))
@@ -22,7 +22,7 @@ class LDocInfoReader(indexFolderString: String) {
 
 }
 
-object LDocInfoReader {
+object BDocInfoReader {
   def toJson(info: CollectionStatistics): JsValue = {
     JsObject(Seq(
       "doc Count" -> JsNumber(info.docCount()),

@@ -18,7 +18,7 @@ case class LIndexStats(time: Long, source: String) {
 
 class LIndexer(source: String) {
 
-  def run(indexer: LIndexWorker): LIndexStats = {
+  def run(worker: LIndexWorker): LIndexStats = {
     val parserFactory = SAXParserFactory.newInstance()
     val parser = parserFactory.newSAXParser()
     parser.getXMLReader().setFeature(Config.VALIDATION, true)
@@ -27,11 +27,11 @@ class LIndexer(source: String) {
       val msg = source + " doesn't exist"
       throw new RuntimeException(msg)
     }
-    val handler = new PubHandler(indexer)
+    val handler = new PubHandler(worker)
     val timeStart = System.currentTimeMillis()
     parser.parse(inputFile, handler)
     val duration = System.currentTimeMillis() - timeStart
-    indexer.writeBack()
+    worker.writeDone()
     new LIndexStats(duration, source)
   }
 }

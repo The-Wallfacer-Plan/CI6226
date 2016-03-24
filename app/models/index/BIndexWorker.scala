@@ -4,7 +4,7 @@ import java.nio.file.Paths
 
 import models.common.{Config, LAnalyzer, LOption}
 import models.xml.Publication
-import org.apache.lucene.document.{Document, Field}
+import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
@@ -38,9 +38,9 @@ class BIndexWorker(writer: IndexWriter) extends LIndexWorker(writer) {
   import Config._
   import LIndexWorker._
 
-  private def addDocText(key: String, value: String, document: Document) = {
-    val field = new Field(key, value, ft1)
-    document.add(field)
+  def writeDone() = {
+    writer.close()
+    Logger.info("index done")
   }
 
   override def index(pub: Publication): Unit = {

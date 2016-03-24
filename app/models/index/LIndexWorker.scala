@@ -1,12 +1,8 @@
 package models.index
 
-import java.nio.file.Paths
-
-import models.common.{Config, LAnalyzer, LOption}
 import models.xml.Publication
 import org.apache.lucene.document.{Document, Field, FieldType}
-import org.apache.lucene.index.{IndexOptions, IndexWriter, IndexWriterConfig}
-import org.apache.lucene.store.FSDirectory
+import org.apache.lucene.index.{IndexOptions, IndexWriter}
 import play.api.Logger
 
 
@@ -31,17 +27,20 @@ object LIndexWorker {
     ft.freeze()
     ft
   }
+
+  def addDocText(key: String, value: String, document: Document) = {
+    val field = new Field(key, value, ft1)
+    document.add(field)
+  }
+
 }
 
 
 abstract class LIndexWorker(writer: IndexWriter) {
 
-  def writeBack() = {
-    writer.close()
-    Logger.info("index done")
-  }
+  def writeDone(): Unit
 
-  def index(pub: Publication): Unit;
+  def index(pub: Publication): Unit
 
-  }
+}
 

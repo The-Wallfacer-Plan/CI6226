@@ -14,8 +14,8 @@ object Config {
   val VALIDATION = "http://xml.org/sax/features/validation"
   val indexRoot = tempDir + File.separator + "index"
   val splitString = "; "
-  val xmlFile = rootDir + File.separator + "dblp.xml"
-  //  val xmlFile = rootDir + File.separator + "sample.xml"
+    val xmlFile = rootDir + File.separator + "dblp.xml"
+//  val xmlFile = rootDir + File.separator + "sample.xml"
 
   val ignoredTerms = {
     val filterFileName = rootDir + File.separator + "topics_filter"

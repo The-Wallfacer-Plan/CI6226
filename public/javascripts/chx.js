@@ -132,5 +132,13 @@ function a2Search() {
 }
 
 function a2Index() {
-
+    var indexOptions = getLOptions();
+    indexOptions["reIndex"] = $("#cb-force-index").is(":checked");
+    var privateParam = {
+        "method": "POST",
+        "url": _getUrl("app2"),
+        "data": JSON.stringify(indexOptions)
+    };
+    $.extend(privateParam, commonParam);
+    $.ajax(privateParam).done(indexDoneHint).error(onError);
 }

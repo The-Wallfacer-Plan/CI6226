@@ -3,8 +3,8 @@ package models.search
 import models.common.Config.TopEntryTy
 import models.common.{Config, LOption}
 import org.apache.lucene.index.Term
-import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{Query, TopDocs, TotalHitCountCollector}
+import org.apache.lucene.search.BooleanQuery.Builder
+import org.apache.lucene.search._
 import org.apache.lucene.util.BytesRef
 import play.api.Logger
 import play.api.libs.json._
@@ -45,7 +45,7 @@ case class LTopRecordResult(stats: LTopRecordStats, lOption: Option[LOption], to
 
 class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSBase(lOption, indexFolder, topN) {
 
-  import Config.TopEntryTy
+  import Config._
 
   def reOrder(entry: TopEntryTy, topsArray: Array[TopEntryTy]): Unit = {
     var i = 0
@@ -61,32 +61,31 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
   }
 
 
-  def evaluate(queryString: String, contentMap: Map[String, Option[String]], topicsField: String = Config.I_TITLE): LTopRecordResult = {
-    val queryOrNone = Option {
-      val parser = new QueryParser(Config.I_PUB_YEAR, analyzer)
-      parser.setAllowLeadingWildcard(false)
-      parser.parse(queryString)
-    }
-    Logger.info(s"string=$queryString, query=$queryOrNone")
-    queryOrNone match {
-      case None => {
-        val stats = LTopRecordStats(0L, queryOrNone)
-        val tops = Array.empty[TopEntryTy]
-        LTopRecordResult(stats, Some(lOption), tops)
-      }
-      case Some(query) => {
-        val collector = new TotalHitCountCollector()
-        searcher.search(query, collector)
-        Logger.info(s"${collector.getTotalHits}")
-        val timeStart = System.currentTimeMillis()
-        val result = searcher.search(query, math.max(1, collector.getTotalHits))
-        val tops = getTopFreq(result, topicsField)
-        val duration = System.currentTimeMillis() - timeStart
-        reader.close()
-        val stats = LTopRecordStats(duration, queryOrNone)
-        new LTopRecordResult(stats, Some(lOption), tops)
+  def evaluate(queryString: String, contentMap: Map[String, Option[String]], topicsField: String = I_TITLE): LTopRecordResult = {
+    val pubYearTerm = new Term(I_PUB_YEAR, queryString)
+    val pubYearQuery = new TermQuery(pubYearTerm)
+    val queryBuilder = new Builder().add(pubYearQuery, BooleanClause.Occur.MUST)
+    for (entry <- contentMap) {
+      entry._2 match {
+        case Some(content) => {
+          val term = new Term(entry._1, content)
+          val contentQuery = new TermQuery(term)
+          queryBuilder.add(contentQuery, BooleanClause.Occur.MUST)
+        }
+        case None =>
       }
     }
+    val query = queryBuilder.build()
+    val collector = new TotalHitCountCollector()
+    searcher.search(query, collector)
+    Logger.info(s"${collector.getTotalHits}")
+    val timeStart = System.currentTimeMillis()
+    val result = searcher.search(query, math.max(1, collector.getTotalHits))
+    val tops = getTopFreq(result, topicsField)
+    val duration = System.currentTimeMillis() - timeStart
+    reader.close()
+    val stats = LTopRecordStats(duration, Some(query))
+    new LTopRecordResult(stats, Some(lOption), tops)
   }
 
 
@@ -105,7 +104,7 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
         var bytesRef: BytesRef = itr.next()
         while (bytesRef != null) {
           val termText = bytesRef.utf8ToString()
-          if (!Config.ignoredTerms.contains(termText) && !visitedSet.contains(termText)) {
+          if (!ignoredTerms.contains(termText) && !visitedSet.contains(termText)) {
             val termInstance = new Term(topicsField, bytesRef)
             val tf = reader.totalTermFreq(termInstance)
             reOrder((tf, termText), topsArray)
@@ -114,7 +113,11 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
           bytesRef = itr.next()
         }
       } else {
-        Logger.info(s"$topicsField null TermVector: $topicsField=${searcher.doc(docID).get(topicsField)}, paperId=${searcher.doc(docID).get(Config.I_PAPER_ID)}")
+        Logger.info(s"$topicsField null TermVector: $topicsField=${
+          searcher.doc(docID).get(topicsField)
+        }, paperId=${
+          searcher.doc(docID).get(I_PAPER_ID)
+        }")
       }
       i += 1
     }

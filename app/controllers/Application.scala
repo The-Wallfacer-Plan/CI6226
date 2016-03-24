@@ -36,11 +36,11 @@ class Application extends Controller {
 
 
   def topRecord = Action { request => {
-    request.getQueryString("pubYear") match {
+    request.getQueryString(Config.I_PUB_YEAR) match {
       case Some(pubYear) => {
         val lOption = LOption(request)
         val topN = request.getQueryString("topN").get.toInt
-        val attrContentMap = Map("venue" -> request.getQueryString("venue"), "authors" -> request.getQueryString("authors"))
+        val attrContentMap = Map(Config.I_VENUE -> request.getQueryString(Config.I_VENUE), Config.I_AUTHORS -> request.getQueryString(Config.I_AUTHORS))
         val topRecorder = new LTopRecorder(lOption, indexFolder, topN)
         val result = topRecorder.evaluate(pubYear, attrContentMap)
         Ok(views.html.aMain(result))
@@ -62,7 +62,7 @@ class Application extends Controller {
 
     val stats = indexer.run(worker)
     val indexInfo = new LDocInfoReader(indexFolder)
-    val fieldInfo = indexInfo.getFieldInfo("title")
+    val fieldInfo = indexInfo.getFieldInfo(Config.I_TITLE)
     ///
     val res = JsObject(Seq(
       "stats" -> stats.toJson(),

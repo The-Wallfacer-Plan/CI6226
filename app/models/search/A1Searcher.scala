@@ -13,7 +13,7 @@ import scala.collection.mutable
 import scala.util.control.Breaks.{break, breakable}
 
 
-case class LTopRecordStats(time: Long, query: Option[Query]) {
+case class A1Stats(time: Long, query: Option[Query]) {
   def toJson(): JsValue = {
     val queryResult = query match {
       case Some(q) => JsString(q.toString)
@@ -26,7 +26,7 @@ case class LTopRecordStats(time: Long, query: Option[Query]) {
   }
 }
 
-case class LTopRecordResult(stats: LTopRecordStats, lOption: Option[LOption], tops: Array[TopEntryTy]) {
+case class A1Result(stats: A1Stats, lOption: Option[LOption], tops: Array[TopEntryTy]) {
   def toJson(): JsValue = {
     val lOptionjson = {
       lOption match {
@@ -43,7 +43,7 @@ case class LTopRecordResult(stats: LTopRecordStats, lOption: Option[LOption], to
   def toJsonString(): String = Json.prettyPrint(toJson())
 }
 
-class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSBase(lOption, indexFolder, topN) {
+class A1Searcher(lOption: LOption, indexFolder: String, topN: Int) extends LSearcher(lOption, indexFolder, topN) {
 
   import Config._
 
@@ -78,7 +78,7 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
   }
 
 
-  def evaluate(queryString: String, contentMap: Map[String, Option[String]], topicsField: String = I_TITLE): LTopRecordResult = {
+  def evaluate(queryString: String, contentMap: Map[String, Option[String]], topicsField: String = I_TITLE): A1Result = {
     val pubYearTerm = new Term(I_PUB_YEAR, queryString)
     val pubYearQuery = new TermQuery(pubYearTerm)
     val queryBuilder = new Builder().add(pubYearQuery, BooleanClause.Occur.MUST)
@@ -101,8 +101,8 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
     val tops = getTopFreq(result, topicsField)
     val duration = System.currentTimeMillis() - timeStart
     reader.close()
-    val stats = LTopRecordStats(duration, Some(query))
-    new LTopRecordResult(stats, Some(lOption), tops)
+    val stats = A1Stats(duration, Some(query))
+    new A1Result(stats, Some(lOption), tops)
   }
 
 

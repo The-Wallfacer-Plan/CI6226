@@ -28,13 +28,13 @@ class Application extends Controller {
       case Some(queryContent) if queryContent.length != 0 => {
         val lOption = LOption(request)
         val topN = request.getQueryString("topN").get.toInt
-        val searcher = new LSearcher(lOption, bIndexFolder, topN)
+        val searcher = new BSearcher(lOption, bIndexFolder, topN)
         Logger.info(s"queryContent=$queryContent")
         val res = searcher.search(queryContent)
         Ok(views.html.bMain(res))
       }
       case _ => {
-        val result = new LSearchResult(LSearchStats(0, "", None), None, Array())
+        val result = new BSearchResult(BSearchStats(0, "", None), None, Array())
         Ok(views.html.bMain(result))
       }
     }
@@ -48,13 +48,13 @@ class Application extends Controller {
         val lOption = LOption(request)
         val topN = request.getQueryString("topN").get.toInt
         val attrContentMap = Map(Config.I_VENUE -> request.getQueryString(Config.I_VENUE), Config.I_AUTHORS -> request.getQueryString(Config.I_AUTHORS))
-        val topRecorder = new LTopRecorder(lOption, bIndexFolder, topN)
+        val topRecorder = new A1Searcher(lOption, bIndexFolder, topN)
         val result = topRecorder.evaluate(pubYear, attrContentMap)
         Ok(views.html.a1Main(result))
       }
       case None => {
-        val stats = LTopRecordStats(0L, None)
-        val result = LTopRecordResult(stats, None, Array.empty)
+        val stats = A1Stats(0L, None)
+        val result = A1Result(stats, None, Array.empty)
         Ok(views.html.a1Main(result))
       }
     }

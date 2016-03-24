@@ -75,12 +75,7 @@ function bSearch() {
     };
     $.extend(paramObj, getLOptions());
     var param = $.param(paramObj);
-    //if (searchContent == null) {
-    //    return;
-    //}
     location.href = "?" + param;
-    console.log(location.href);
-    //$("#topNSelect").val(topN)
 }
 
 //------------------------------------------------

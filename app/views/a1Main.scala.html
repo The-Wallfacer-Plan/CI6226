@@ -1,17 +1,17 @@
 @import search.LTopRecordResult
 @(result: LTopRecordResult)
 
-@main("App") {
+@core("App") {
     <nav class="navbar navbar-default"></nav>
     @UICorner()
     <div class="container">
         <div class="row container-fluid">
             <div class="col-lg-5">
-                @aWork()
+                @a1Work()
                 @UIStats(result.toJsonString())
             </div>
             <div class="col-lg-7">
-            @aResult(result.tops)
+            @a1Result(result.tops)
             </div>
         </div>
     </div>

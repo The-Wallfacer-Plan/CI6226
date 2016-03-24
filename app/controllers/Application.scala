@@ -20,7 +20,7 @@ class Application extends Controller {
   }
 
 
-  def searchDoc = Action { request => {
+  def bSearch = Action { request => {
     request.getQueryString("content") match {
       case Some(queryContent) if queryContent.length != 0 => {
         val lOption = LOption(request)
@@ -39,7 +39,7 @@ class Application extends Controller {
   }
 
 
-  def topRecord = Action { request => {
+  def a1Search = Action { request => {
     request.getQueryString(Config.I_PUB_YEAR) match {
       case Some(pubYear) => {
         val lOption = LOption(request)
@@ -47,18 +47,18 @@ class Application extends Controller {
         val attrContentMap = Map(Config.I_VENUE -> request.getQueryString(Config.I_VENUE), Config.I_AUTHORS -> request.getQueryString(Config.I_AUTHORS))
         val topRecorder = new LTopRecorder(lOption, indexFolder, topN)
         val result = topRecorder.evaluate(pubYear, attrContentMap)
-        Ok(views.html.aMain(result))
+        Ok(views.html.a1Main(result))
       }
       case None => {
         val stats = LTopRecordStats(0L, None)
         val result = LTopRecordResult(stats, None, Array.empty)
-        Ok(views.html.aMain(result))
+        Ok(views.html.a1Main(result))
       }
     }
   }
   }
 
-  def indexDoc = Action(parse.json) { request => {
+  def bIndex = Action(parse.json) { request => {
     val body = request.body
     val indexer = new LIndexer(inputFile)
     val reIndex = (body \ "reIndex").as[Boolean]
@@ -91,9 +91,15 @@ class Application extends Controller {
       ))
       Ok(res)
     }
-
   }
   }
 
+  def a2Search = Action {
+    Ok("")
+  }
+
+  def a2Index = Action {
+    Ok("")
+  }
 
 }

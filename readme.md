@@ -35,17 +35,16 @@ L := | AND | OR
 [x] use another stopword dictionary
 [x] search should be something like "https://github.com", the url has changed --> mostly scala
 - add "HIGHLIGHT"
-- boolean retrieval model?
-  - LIMIT! /3 STATUTE ACTION /S FEDERAL /2 TORT /3 CLAIM
+[-]- boolean retrieval model?
+   - LIMIT! /3 STATUTE ACTION /S FEDERAL /2 TORT /3 CLAIM
 - effect of lowecasse/stemming/stopwords
-- "phrase query" should use different indexer!!!
 - tolerant retrieval
 - use a special field "ALL" to for "free text" search, others by combination
 - see whether can using "merge"
 - authors indexed with same field
 - reopen directory reader
 
-- app1 for filtered cases
+- app1 for filtered cases!!!
 
 
 ## notice:

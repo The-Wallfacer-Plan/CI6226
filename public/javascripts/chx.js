@@ -4,7 +4,6 @@ function onError(response, statusText, errorThrown) {
 }
 
 var hostUrl = location.origin + "/";
-var appUrl = hostUrl + "app";
 
 var hintTextSelector = "#infoBox";
 var commonParam = {
@@ -48,7 +47,7 @@ function indexIt() {
     indexOptions["reIndex"] = $("#cb-force-index").is(":checked");
     var privateParam = {
         "method": "POST",
-        "url": _getUrl("indexDoc"),
+        "url": hostUrl,
         "data": JSON.stringify(indexOptions)
     };
     $.extend(privateParam, commonParam);
@@ -96,6 +95,9 @@ function readTheDocs() {
 
 // ------------------------------------------------
 
+var app1Url = hostUrl + "app";
+
+
 function getTopSearchInfo() {
     var pubYear = $("#lb-pubYear").val();
     var venue = $("#app-venue").val().trim();
@@ -121,5 +123,7 @@ function topRecordIt() {
     };
     $.extend(paramObj, lOption, searchInfo);
     var param = $.param(paramObj);
-    location.href = appUrl + "?" + param
+    location.href = app1Url + "?" + param
 }
+
+// ------------------------------------------------

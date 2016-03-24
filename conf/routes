@@ -2,9 +2,13 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /                    controllers.Application.searchDoc
-POST        /indexDoc            controllers.Application.indexDoc
-GET         /app                 controllers.Application.topRecord
+GET         /                    controllers.Application.bSearch
+POST        /                    controllers.Application.bIndex
+
+GET         /app1                controllers.Application.a1Search
+
+GET         /app2                controllers.Application.a2Search
+POST        /app2                controllers.Application.a2Index
 
 
 # Map static resources from the /public folder to the /assets URL path

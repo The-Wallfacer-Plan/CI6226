@@ -96,11 +96,19 @@ function readTheDocs() {
 // ------------------------------------------------
 
 function getTopSearchInfo() {
-    return {
-        "pubYear": $("#lb-pubYear").val(),
-        "venue": $("#app-venue").val(),
-        "authors": $("#app-authors").val()
+    var pubYear = $("#lb-pubYear").val();
+    var venue = $("#app-venue").val().trim();
+    var authors = $("#app-authors").val().trim();
+    var info = {
+        "pubYear": pubYear
+    };
+    if (venue.length != 0) {
+        info["venue"] = venue
     }
+    if (authors.length != 0) {
+        info["authors"] = authors
+    }
+    return info
 }
 
 function topRecordIt() {

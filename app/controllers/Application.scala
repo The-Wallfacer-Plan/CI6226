@@ -40,8 +40,9 @@ class Application extends Controller {
       case Some(pubYear) => {
         val lOption = LOption(request)
         val topN = request.getQueryString("topN").get.toInt
+        val attrContentMap = Map("venue" -> request.getQueryString("venue"), "authors" -> request.getQueryString("authors"))
         val topRecorder = new LTopRecorder(lOption, indexFolder, topN)
-        val result = topRecorder.evaluate(queryString = pubYear)
+        val result = topRecorder.evaluate(pubYear, attrContentMap)
         Ok(views.html.aMain(result))
       }
       case None => {

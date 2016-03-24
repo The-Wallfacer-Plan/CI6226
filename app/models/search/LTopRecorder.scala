@@ -61,7 +61,7 @@ class LTopRecorder(lOption: LOption, indexFolder: String, topN: Int) extends LSB
   }
 
 
-  def evaluate(queryString: String, topicsField: String = Config.I_TITLE): LTopRecordResult = {
+  def evaluate(queryString: String, contentMap: Map[String, Option[String]], topicsField: String = Config.I_TITLE): LTopRecordResult = {
     val queryOrNone = Option {
       val parser = new QueryParser(Config.I_PUB_YEAR, analyzer)
       parser.setAllowLeadingWildcard(false)

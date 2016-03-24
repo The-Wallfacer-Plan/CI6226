@@ -51,3 +51,6 @@ L := | AND | OR
 ## notice:
 - removed dblp.xml for "author" attribute (`aux`) since it doesn't correspond to dtd
 - ignored tags (i, sup, sub, tt) in xml
+
+## example:
++pubYear:2007 +venue:datenschutz +authors:thilo

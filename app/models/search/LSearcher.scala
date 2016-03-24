@@ -67,7 +67,10 @@ class LSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
         new LSearchResult(searchStats, Some(lOption), Array())
       }
       case Some(query) => {
+        val allDocCollector = new TotalHitCountCollector()
+        searcher.search(query, allDocCollector)
         val topDocs = searcher.search(query, topN)
+        Logger.info(s"${allDocCollector.getTotalHits} hit docs")
         val duration = System.currentTimeMillis() - startTime
         val foundPubs = getSearchPub(topDocs, query)
         reader.close()

@@ -42,7 +42,7 @@ function indexDoneHint(response) {
     displayResponse(response);
 }
 
-function indexIt() {
+function bIndex() {
     var indexOptions = getLOptions();
     indexOptions["reIndex"] = $("#cb-force-index").is(":checked");
     var privateParam = {
@@ -62,11 +62,11 @@ function getSearchContent() {
 
 function selectiveSearchIt(e) {
     if (e.code == "Enter") {
-        searchIt()
+        bSearch()
     }
 }
 
-function searchIt() {
+function bSearch() {
     var searchContent = getSearchContent();
     var topN = $("#topNSelect").val();
     var paramObj = {
@@ -95,13 +95,12 @@ function readTheDocs() {
 
 // ------------------------------------------------
 
-var app1Url = hostUrl + "app";
+var app1Url = hostUrl + "app1";
 
-
-function getTopSearchInfo() {
-    var pubYear = $("#lb-pubYear").val();
-    var venue = $("#app-venue").val().trim();
-    var authors = $("#app-authors").val().trim();
+function a1QueryInfo() {
+    var pubYear = $("#app1-pubYear").val();
+    var venue = $("#app1-venue").val().trim();
+    var authors = $("#app1-authors").val().trim();
     var info = {
         "pubYear": pubYear
     };
@@ -114,9 +113,9 @@ function getTopSearchInfo() {
     return info
 }
 
-function topRecordIt() {
+function a1Search() {
     var lOption = getLOptions();
-    var searchInfo = getTopSearchInfo();
+    var searchInfo = a1QueryInfo();
     var topN = $("#topNSelect").val();
     var paramObj = {
         "topN": topN
@@ -127,3 +126,11 @@ function topRecordIt() {
 }
 
 // ------------------------------------------------
+
+function a2Search() {
+
+}
+
+function a2Index() {
+
+}

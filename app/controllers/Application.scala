@@ -95,7 +95,7 @@ class Application extends Controller {
   }
 
   def a2Search = Action {
-    Ok("")
+    Ok(views.html.a2Main())
   }
 
   def a2Index = Action {

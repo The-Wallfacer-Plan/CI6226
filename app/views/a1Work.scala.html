@@ -1,8 +1,8 @@
 @selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
     <div class="form-group">
-        <label for="lb-@(attribute)" class="col-lg-2 control-label"><b>@attribute</b></label>
+        <label for="app1-@(attribute)" class="col-lg-2 control-label"><b>@attribute</b></label>
         <div class="col-lg-10">
-            <select id="lb-@(attribute)" class="form-control">
+            <select id="app1-@(attribute)" class="form-control">
             @for(c <- candidates) {
                 @if(defaultVal == c) {
                     <option selected="selected" value="@(c)">@c</option>
@@ -17,9 +17,9 @@
 
 @inputIt(attribute: String, elemId: String) = {
     <div class="form-group">
-        <label for="app-@(attribute)" class="col-lg-2">@attribute</label>
+        <label for="app1-@(attribute)" class="col-lg-2">@attribute</label>
         <div class="col-lg-10">
-            <input type="text" id="app-@(attribute)" class="form-control" placeholder="e.g., @(elemId)"/>
+            <input type="text" id="app1-@(attribute)" class="form-control" placeholder="e.g., @(elemId)"/>
         </div>
     </div>
 }
@@ -36,6 +36,6 @@
 
 <div class="container">
     <div class="col-lg-12">
-        <button type="button" id="topRecord" class="btn btn-primary" onclick="topRecordIt()">Get Top Topics!</button>
+        <button type="button" id="topRecord" class="btn btn-primary" onclick="a1Search()">Get Top Topics!</button>
     </div>
 </div>

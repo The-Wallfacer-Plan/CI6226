@@ -43,5 +43,8 @@ object Config {
   val defaultTopN = 10
   val defaultStep = 5
 
+  val a1Range = (2000, 2016)
+  val a2Range = (1936, 2016)
+
   val defaultSearchString = "title:\"Google\" authors:\"Thilo Weichert\""
 }

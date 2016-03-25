@@ -115,21 +115,31 @@ function a1Search() {
     var paramObj = {
         "topN": topN
     };
-    $.extend(paramObj, lOption, searchInfo);
+    $.extend(paramObj, searchInfo, lOption);
     var param = $.param(paramObj);
     location.href = app1Url + "?" + param
 }
 
 // ------------------------------------------------
 
+function a2QueryInfo() {
+    var pubYear = $("#app2-pubYear").val().trim();
+    var venue = $("#app2-venue").val().trim();
+    info = {
+        "pubYear": pubYear
+    }
+    if (venue.length != 0) {
+        info["venue"] = venue;
+    }
+}
+
 function a2Search() {
-    var searchContent = getSearchContent();
+    var searchInfo = a2QueryInfo();
     var topN = $("#topNSelect").val();
     var paramObj = {
-        "content": searchContent,
         "topN": topN
     };
-    $.extend(paramObj, getLOptions());
+    $.extend(paramObj, searchInfo, getLOptions());
     var param = $.param(paramObj);
     location.href = "?" + param;
 }

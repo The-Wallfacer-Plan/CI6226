@@ -43,8 +43,8 @@ L := | AND | OR
 - see whether can using "merge"
 - authors indexed with same field
 - reopen directory reader
-
 - app1 for filtered cases!!!
+- add search limit for A2
 
 
 ## notice:

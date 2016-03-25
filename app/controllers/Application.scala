@@ -2,6 +2,7 @@ package controllers
 
 import java.nio.file.{Files, Paths}
 
+import models.common.Config._
 import models.common.{Config, LOption}
 import models.index._
 import models.search._
@@ -99,19 +100,19 @@ class Application extends Controller {
   }
 
   def a2Search = Action { request => {
-    request.getQueryString("content") match {
-      case Some(queryContent) if queryContent.length != 0 => {
-        val lOption = LOption(request)
-        val topN = request.getQueryString("topN").get.toInt
-        val searcher = new A2Searcher(lOption, a2IndexFolder, topN)
-        Logger.info(s"queryContent:\t$queryContent")
-        val res = searcher.search(queryContent)
-        Ok(views.html.a2Main(res))
-      }
-      case _ => {
-        val res = A2Result(SearchStats(0L, None), "", None, Array.empty)
-        Ok(views.html.a2Main(res))
-      }
+    val attrContentMap = Map(I_PUB_YEAR -> request.getQueryString(I_PUB_YEAR), I_VENUE -> request.getQueryString(I_VENUE))
+    val isValid = attrContentMap.values.forall(_.isDefined)
+    if (isValid) {
+      val lOption = LOption(request)
+      val topN = request.getQueryString("topN").get.toInt
+      val searcher = new A2Searcher(lOption, a2IndexFolder, topN)
+      val res = searcher.search(attrContentMap)
+      Ok(views.html.a2Main(res))
+    } else {
+      val stats = SearchStats(0L, None)
+      val res = A2Result(stats, None, Array.empty)
+      Logger.info("invalid query")
+      Ok(views.html.a2Main(res))
     }
   }
   }

@@ -68,17 +68,9 @@ class A1Searcher(lOption: LOption, indexFolder: String, topN: Int) extends LSear
     val pubYearTerm = new Term(I_PUB_YEAR, queryString)
     val pubYearQuery = new TermQuery(pubYearTerm)
     val queryBuilder = new Builder().add(pubYearQuery, BooleanClause.Occur.MUST)
-    for (entry <- contentMap) {
-      entry._2 match {
-        case Some(content) => {
-          val term = new Term(entry._1, content)
-          val contentQuery = new TermQuery(term)
-          queryBuilder.add(contentQuery, BooleanClause.Occur.MUST)
-        }
-        case None =>
-      }
-    }
+    addTermQuery(contentMap, queryBuilder)
     val query = queryBuilder.build()
+    Logger.info(s"contentMap=$contentMap query=$query")
     val collector = new TotalHitCountCollector()
     searcher.search(query, collector)
     Logger.info(s"${collector.getTotalHits} hit docs")

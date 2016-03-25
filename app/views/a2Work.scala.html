@@ -1,4 +1,32 @@
+@import common.Config
+
 @UIOptions()
+
+@selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
+    <div class="form-group">
+        <label for="app2-@(attribute)" class="col-lg-2 control-label"><b>@attribute</b></label>
+        <div class="col-lg-10">
+            <select id="app2-@(attribute)" class="form-control">
+            @for(c <- candidates) {
+                @if(defaultVal == c) {
+                    <option selected="selected" value="@(c)">@c</option>
+                } else {
+                    <option value="@(c)">@c</option>
+                }
+            }
+            </select>
+        </div>
+    </div>
+}
+
+@inputIt(attribute: String, elemId: String) = {
+    <div class="form-group">
+        <label for="app2-@(attribute)" class="col-lg-2">@attribute</label>
+        <div class="col-lg-10">
+            <input type="text" id="app2-@(attribute)" class="form-control" placeholder="e.g., @(elemId)"/>
+        </div>
+    </div>
+}
 
 <div class="container">
     <div class="col-lg-12">
@@ -10,12 +38,17 @@
 </div>
 
 <div class="container">
+    <form class="form-horizontal">
+        @selectIt("pubYear", "2015", Array.range(Config.a2Range._1, Config.a2Range._2).map(_.toString))
+        @inputIt("venue", "IJCC")
+    </form>
+</div>
 
-    <div class="input-group col-lg-12">
-        <input type="text" id="searchBox" class="form-control" placeholder="Search for..." onkeypress="selectiveSearchIt(event)"/>
+<div class="container col-lg-12">
+    <div class="input-group">
         <span class="input-group-btn">
-            <button class="btn btn-default" type="button" id="searchButton" onclick="a2Search()">Go!</button>
-            <button type="button" class="btn btn-info" onclick="readTheDocs()">Help</button>
+            <button type="button" id="a2button" class="btn btn-default" onclick="a2Search()">Go!</button>
+            <button type="button" class="btn btn-info">Help</button>
         </span>
     </div>
 </div>

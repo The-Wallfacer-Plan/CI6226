@@ -12,21 +12,7 @@ import play.api.libs.json._
 import scala.collection.mutable
 import scala.util.control.Breaks.{break, breakable}
 
-
-case class A1Stats(time: Long, query: Option[Query]) {
-  def toJson(): JsValue = {
-    val queryResult = query match {
-      case Some(q) => JsString(q.toString)
-      case None => JsNull
-    }
-    JsObject(Seq(
-      "time" -> JsString(time.toString + "ms"),
-      "query" -> queryResult
-    ))
-  }
-}
-
-case class A1Result(stats: A1Stats, lOption: Option[LOption], tops: Array[TopEntryTy]) {
+case class A1Result(stats: SearchStats, lOption: Option[LOption], tops: Array[TopEntryTy]) {
   def toJson(): JsValue = {
     val lOptionjson = {
       lOption match {
@@ -101,7 +87,7 @@ class A1Searcher(lOption: LOption, indexFolder: String, topN: Int) extends LSear
     val tops = getTopFreq(result, topicsField)
     val duration = System.currentTimeMillis() - timeStart
     reader.close()
-    val stats = A1Stats(duration, Some(query))
+    val stats = SearchStats(duration, Some(query))
     new A1Result(stats, Some(lOption), tops)
   }
 

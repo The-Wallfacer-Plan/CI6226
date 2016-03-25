@@ -2,7 +2,7 @@ package models.index
 
 import java.nio.file.Paths
 
-import models.common.{LAnalyzer, LOption}
+import models.common.{Config, LAnalyzer, LOption}
 import models.xml.Publication
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
@@ -29,6 +29,7 @@ object A2IndexWorker {
 
 class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) {
 
+  import Config._
   import LIndexWorker._
 
   val docMap = mutable.Map.empty[String, Document]
@@ -36,11 +37,16 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
   override def index(pub: Publication): Unit = {
     val docSign = pub.pubYear + "+" + pub.venue
     if (!docMap.contains(docSign)) {
-      docMap += docSign -> new Document
+      val doc = new Document
+      addDocText(I_PUB_YEAR, pub.pubYear, doc)
+      addDocText(I_VENUE, pub.venue, doc)
+      addDocText(I_TITLE, pub.title, doc)
+      docMap += docSign -> doc
+    } else {
+      //    Logger.info(s"add ${pub.paperId} into $docSign")
+      val doc = docMap(docSign)
+      addDocText(I_TITLE, pub.title, doc)
     }
-    val doc = docMap(docSign)
-//    Logger.info(s"add ${pub.paperId} into $docSign")
-    addDocText("a2", pub.title, doc)
 
   }
 

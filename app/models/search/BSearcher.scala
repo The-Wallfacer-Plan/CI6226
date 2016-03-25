@@ -11,23 +11,7 @@ import scala.collection.JavaConversions._
 
 case class BSearchPub(docID: Int, score: Double, info: Map[String, String])
 
-case class BSearchStats(time: Long, queryString: String, query: Option[Query]) {
-  def toJson(): JsValue = {
-    val parsedQuery = {
-      query match {
-        case Some(q) => JsString(q.toString())
-        case None => JsNull
-      }
-    }
-    JsObject(Seq(
-      "time" -> JsString(time.toString + "ms"),
-      "queryString" -> JsString(queryString),
-      "parsedQuery" -> parsedQuery
-    ))
-  }
-}
-
-class BSearchResult(stats: BSearchStats, lOption: Option[LOption], val pubs: Array[BSearchPub]) {
+class BSearchResult(stats: SearchStats, queryString:String, lOption: Option[LOption], val pubs: Array[BSearchPub]) {
   def toJson(): JsValue = {
     val lOptionJson = {
       lOption match {
@@ -37,6 +21,7 @@ class BSearchResult(stats: BSearchStats, lOption: Option[LOption], val pubs: Arr
     }
     JsObject(Seq(
       "stats" -> stats.toJson(),
+      "queryString"->JsString(queryString),
       "found" -> JsNumber(pubs.length),
       "lOption" -> lOptionJson
     ))
@@ -61,8 +46,8 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
     Logger.info(s"string=$queryString, query=$queryOrNone")
     queryOrNone match {
       case None => {
-        val searchStats = BSearchStats(0, queryString, queryOrNone)
-        new BSearchResult(searchStats, Some(lOption), Array())
+        val searchStats = SearchStats(0, queryOrNone)
+        new BSearchResult(searchStats, queryString, Some(lOption), Array())
       }
       case Some(query) => {
         val allDocCollector = new TotalHitCountCollector()
@@ -72,8 +57,8 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
         val duration = System.currentTimeMillis() - startTime
         val foundPubs = getSearchPub(topDocs, query)
         reader.close()
-        val searchStats = BSearchStats(duration, queryString, queryOrNone)
-        new BSearchResult(searchStats, Some(lOption), foundPubs)
+        val searchStats = SearchStats(duration, queryOrNone)
+        new BSearchResult(searchStats, queryString, Some(lOption), foundPubs)
       }
     }
   }

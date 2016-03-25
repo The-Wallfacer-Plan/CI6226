@@ -34,7 +34,7 @@ class Application extends Controller {
         Ok(views.html.bMain(res))
       }
       case _ => {
-        val result = new BSearchResult(BSearchStats(0, "", None), None, Array())
+        val result = new BSearchResult(SearchStats(0, None), "", None, Array())
         Ok(views.html.bMain(result))
       }
     }
@@ -53,7 +53,7 @@ class Application extends Controller {
         Ok(views.html.a1Main(result))
       }
       case None => {
-        val stats = A1Stats(0L, None)
+        val stats = SearchStats(0L, None)
         val result = A1Result(stats, None, Array.empty)
         Ok(views.html.a1Main(result))
       }
@@ -107,7 +107,7 @@ class Application extends Controller {
     val body = request.body
     val indexer = new LIndexer(inputFile)
     val reIndex = (body \ "reIndex").as[Boolean]
-    val lOption = LOption(body)
+    val lOption = LOption(body))
 
     val indexExists = {
       val indexPath = Paths.get(a2IndexFolder)
@@ -115,7 +115,6 @@ class Application extends Controller {
     }
     if ((indexExists && reIndex) || !indexExists) {
       Process(s"rm -rf $a2IndexFolder").!
-      Logger.info(s"index folder: $a2IndexFolder")
       val worker = A2IndexWorker(lOption, a2IndexFolder)
 
       val stats = indexer.run(worker)

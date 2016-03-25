@@ -2,8 +2,7 @@ package models.search
 
 import models.common.Config.TopEntryTy
 import models.common.{Config, LOption}
-import org.apache.lucene.index.Term
-import org.apache.lucene.search.BooleanQuery.Builder
+import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.apache.lucene.util.BytesRef
 import play.api.Logger
@@ -65,12 +64,8 @@ class A1Searcher(lOption: LOption, indexFolder: String, topN: Int) extends LSear
 
 
   def evaluate(queryString: String, contentMap: Map[String, Option[String]], topicsField: String = I_TITLE): A1Result = {
-    val pubYearTerm = new Term(I_PUB_YEAR, queryString)
-    val pubYearQuery = new TermQuery(pubYearTerm)
-    val queryBuilder = new Builder().add(pubYearQuery, BooleanClause.Occur.MUST)
-    addTermQuery(contentMap, queryBuilder)
-    val query = queryBuilder.build()
-    Logger.info(s"contentMap=$contentMap query=$query")
+    val queryString = getMustQuery(contentMap)
+    val query = new QueryParser(I_PUB_YEAR, analyzer).parse(queryString)
     val collector = new TotalHitCountCollector()
     searcher.search(query, collector)
     Logger.info(s"${collector.getTotalHits} hit docs")

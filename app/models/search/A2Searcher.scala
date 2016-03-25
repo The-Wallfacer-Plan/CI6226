@@ -2,7 +2,7 @@ package models.search
 
 import models.common.Config._
 import models.common.LOption
-import org.apache.lucene.search.BooleanQuery.Builder
+import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.TopDocs
 import play.api.Logger
 import play.api.libs.json._
@@ -29,9 +29,8 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
 
   def search(contentMap: Map[String, Option[String]]): A2Result = {
     val startTime = System.currentTimeMillis()
-    val queryBuilder = new Builder()
-    addTermQuery(contentMap, queryBuilder)
-    val query = queryBuilder.build()
+    val queryString = getMustQuery(contentMap)
+    val query = new QueryParser(I_PUB_YEAR, analyzer).parse(queryString)
     Logger.info(s"contentMap=$contentMap query=$query")
     val topDocs = searcher.search(query, topN)
     val a2Docs = getA2Docs(topDocs)
@@ -47,11 +46,11 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
       val scoreDoc = scoreDocs(0)
       val docID = scoreDoc.doc
       val hitDoc = searcher.doc(docID)
-      println(s"venue=${hitDoc.get(I_VENUE)} pubYear=${hitDoc.get(I_PUB_YEAR)}")
-      //      val fields = hitDoc.getFields(I_TITLE)
-      //      for (field <- fields) {
-      //        println(field.stringValue())
-      //      }
+      Logger.info(s"venue=${hitDoc.get(I_VENUE)} pubYear=${hitDoc.get(I_PUB_YEAR)}")
+      val fields = hitDoc.getFields(I_TITLE)
+      for (field <- fields) {
+        Logger.info(field.stringValue())
+      }
     }
     Array.empty
   }

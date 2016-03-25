@@ -37,7 +37,7 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
 
   override def index(pub: Publication): Unit = {
     val docSign = pub.pubYear + "\t" + pub.venue
-//    if (pub.pubYear == "2015" && pub.venue == "IJCC") {
+    //    if (pub.pubYear == "2015" && pub.venue == "IJCC") {
     //      println(s"pub:\t$pub")
     //    }
     if (!docMap.contains(docSign)) {
@@ -54,9 +54,9 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
 
   override def writeDone(): Unit = {
     val outFileName = rootDir + File.separator + "outfile"
-    val fw = new FileWriter(outFileName, true)
+    val fw = new FileWriter(outFileName, false)
     for (entry <- docMap) {
-//      if (entry._1.contains("IJCC")) {
+      //      if (entry._1.contains("IJCC")) {
       //        println(entry._1)
       //      }
       indexWriter.addDocument(entry._2)

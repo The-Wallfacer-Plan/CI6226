@@ -18,7 +18,7 @@ object A2IndexWorker {
     iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 
     val dir = {
-      Logger.info(s"a2 index Folder: $indexFolderString")
+      Logger.info(s"a2 indexing, Folder: $indexFolderString")
       val indexFolder = Paths.get(indexFolderString)
       FSDirectory.open(indexFolder)
     }
@@ -38,8 +38,19 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
     val docSign = pub.pubYear + "+" + pub.venue
     if (!docMap.contains(docSign)) {
       val doc = new Document
-      addDocText(I_PUB_YEAR, pub.pubYear, doc)
-      addDocText(I_VENUE, pub.venue, doc)
+      if (pub.venue == "TKDE" && pub.pubYear == "2012") {
+        Logger.info(s"pub=$pub, doc=$doc")
+      }
+      if (pub.pubYear != null) {
+        addDocText(I_PUB_YEAR, pub.pubYear, doc)
+      } else {
+        Logger.info(s"year=null for $pub")
+      }
+      if (pub.venue != null) {
+        addDocText(I_VENUE, pub.venue, doc)
+      } else {
+        Logger.warn(s"venue=null for $pub")
+      }
       addDocText(I_TITLE, pub.title, doc)
       docMap += docSign -> doc
     } else {

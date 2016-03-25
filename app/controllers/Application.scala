@@ -34,7 +34,7 @@ class Application extends Controller {
         Ok(views.html.bMain(res))
       }
       case _ => {
-        val result = new BSearchResult(SearchStats(0, None), "", None, Array())
+        val result = new BResult(SearchStats(0, None), "", None, Array.empty)
         Ok(views.html.bMain(result))
       }
     }
@@ -73,7 +73,6 @@ class Application extends Controller {
     }
     if ((indexExists && reIndex) || !indexExists) {
       Process(s"rm -rf $bIndexFolder").!
-      Logger.info(s"index folder: $bIndexFolder")
       val worker = BIndexWorker(lOption, bIndexFolder)
 
       val stats = indexer.run(worker)
@@ -99,15 +98,29 @@ class Application extends Controller {
   }
   }
 
-  def a2Search = Action {
-    Ok(views.html.a2Main())
+  def a2Search = Action { request => {
+    request.getQueryString("content") match {
+      case Some(queryContent) if queryContent.length != 0 => {
+        val lOption = LOption(request)
+        val topN = request.getQueryString("topN").get.toInt
+        val searcher = new A2Searcher(lOption, a2IndexFolder, topN)
+        Logger.info(s"queryContent=$queryContent")
+        val res = searcher.search(queryContent)
+        Ok(views.html.a2Main(res))
+      }
+      case _ => {
+        val res = A2Result(SearchStats(0L, None), "", None, Array.empty)
+        Ok(views.html.a2Main(res))
+      }
+    }
+  }
   }
 
   def a2Index = Action(parse.json) { request => {
     val body = request.body
     val indexer = new LIndexer(inputFile)
     val reIndex = (body \ "reIndex").as[Boolean]
-    val lOption = LOption(body))
+    val lOption = LOption(body)
 
     val indexExists = {
       val indexPath = Paths.get(a2IndexFolder)

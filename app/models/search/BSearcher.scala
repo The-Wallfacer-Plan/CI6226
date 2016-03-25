@@ -9,9 +9,9 @@ import play.api.libs.json._
 import scala.collection.JavaConversions._
 
 
-case class BSearchPub(docID: Int, score: Double, info: Map[String, String])
+case class BPub(docID: Int, score: Double, info: Map[String, String])
 
-class BSearchResult(stats: SearchStats, queryString:String, lOption: Option[LOption], val pubs: Array[BSearchPub]) {
+class BResult(stats: SearchStats, queryString: String, lOption: Option[LOption], val pubs: Array[BPub]) {
   def toJson(): JsValue = {
     val lOptionJson = {
       lOption match {
@@ -21,21 +21,19 @@ class BSearchResult(stats: SearchStats, queryString:String, lOption: Option[LOpt
     }
     JsObject(Seq(
       "stats" -> stats.toJson(),
-      "queryString"->JsString(queryString),
+      "queryString" -> JsString(queryString),
       "found" -> JsNumber(pubs.length),
       "lOption" -> lOptionJson
     ))
   }
 
-  def toJsonString(): String = {
-    Json.prettyPrint(toJson())
-  }
+  def toJsonString(): String = Json.prettyPrint(toJson())
 }
 
 class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends LSearcher(lOption, indexFolderString, topN) {
 
 
-  def search(queryString: String): BSearchResult = {
+  def search(queryString: String): BResult = {
     val startTime = System.currentTimeMillis()
     validate(queryString)
     val queryOrNone = Option {
@@ -47,7 +45,7 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
     queryOrNone match {
       case None => {
         val searchStats = SearchStats(0, queryOrNone)
-        new BSearchResult(searchStats, queryString, Some(lOption), Array())
+        new BResult(searchStats, queryString, Some(lOption), Array())
       }
       case Some(query) => {
         val allDocCollector = new TotalHitCountCollector()
@@ -58,12 +56,12 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
         val foundPubs = getSearchPub(topDocs, query)
         reader.close()
         val searchStats = SearchStats(duration, queryOrNone)
-        new BSearchResult(searchStats, queryString, Some(lOption), foundPubs)
+        new BResult(searchStats, queryString, Some(lOption), foundPubs)
       }
     }
   }
 
-  def getSearchPub(topDocs: TopDocs, query: Query): Array[BSearchPub] = {
+  def getSearchPub(topDocs: TopDocs, query: Query): Array[BPub] = {
     for (hit <- topDocs.scoreDocs) yield {
       val (docID, score) = (hit.doc, hit.score)
       val hitDoc = searcher.doc(docID)
@@ -73,7 +71,7 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
         if field.name() != Config.COMBINED_FIELD
       } yield field.name() -> field.stringValue()
       val fieldDocMap = Map(fieldValues: _*)
-      new BSearchPub(docID, score, fieldDocMap)
+      new BPub(docID, score, fieldDocMap)
     }
   }
 

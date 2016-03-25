@@ -23,7 +23,7 @@ object BIndexWorker {
     iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 
     val dir = {
-      Logger.info(s"indexing folder: $indexFolderString")
+      Logger.info(s"b indexing, folder: $indexFolderString")
       val indexFolder = Paths.get(indexFolderString)
       FSDirectory.open(indexFolder)
     }

@@ -123,7 +123,15 @@ function a1Search() {
 // ------------------------------------------------
 
 function a2Search() {
-
+    var searchContent = getSearchContent();
+    var topN = $("#topNSelect").val();
+    var paramObj = {
+        "content": searchContent,
+        "topN": topN
+    };
+    $.extend(paramObj, getLOptions());
+    var param = $.param(paramObj);
+    location.href = "?" + param;
 }
 
 function a2Index() {

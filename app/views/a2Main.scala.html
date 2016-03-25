@@ -1,3 +1,6 @@
+@import search.A2Result
+@(result: A2Result)
+
 @core("LSearcher") {
     <nav class="navbar navbar-default"></nav>
     @UICorner()
@@ -5,9 +8,10 @@
         <div class="row container-fluid">
             <div class="col-lg-5">
                 @a2Work()
-                @UIStats("nil")
+                @UIStats(result.toJsonString())
             </div>
             <div class="col-lg-7">
+                @a2Result(result.docs)
             </div>
         </div>
     </div>

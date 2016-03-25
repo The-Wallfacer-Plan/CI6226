@@ -15,8 +15,8 @@ object Config {
   val VALIDATION = "http://xml.org/sax/features/validation"
   val indexRoot = tempDir + File.separator + "index"
   val splitString = "; "
-    val xmlFile = rootDir + File.separator + "dblp.xml"
-//  val xmlFile = rootDir + File.separator + "sample.xml"
+  val xmlFile = rootDir + File.separator + "dblp.xml"
+  //  val xmlFile = rootDir + File.separator + "sample.xml"
 
   val ignoredTerms = {
     val filterFileName = rootDir + File.separator + "topics_filter"
@@ -40,7 +40,7 @@ object Config {
   val COMBINED_FIELD = "ALL"
 
   //    interface Configurable
-  val topN = 10
+  val defaultTopN = 10
   val defaultStep = 5
 
   val defaultSearchString = "title:\"Google\" authors:\"Thilo Weichert\""

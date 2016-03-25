@@ -7,11 +7,11 @@ import org.apache.lucene.search.BooleanQuery.Builder
 import org.apache.lucene.search.{BooleanClause, TermQuery, TopDocs}
 import play.api.libs.json._
 
-class A3SearchResult(stats: SearchStats, queryString: String, lOption: Option[LOption], docs: Array[A2DocTy]) {
-  def toString: JsValue = {
+case class A2Result(stats: SearchStats, queryString: String, lOption: Option[LOption], docs: Array[A2DocTy]) {
+  def toJson(): JsValue = {
     val lOptionJson = {
       lOption match {
-        case Some(l) => l.toJson(),
+        case Some(l) => l.toJson()
         case None => JsNull
       }
     }
@@ -21,6 +21,8 @@ class A3SearchResult(stats: SearchStats, queryString: String, lOption: Option[LO
       "lOption" -> lOptionJson
     ))
   }
+
+  def toJsonString(): String = Json.prettyPrint(toJson())
 }
 
 
@@ -39,7 +41,8 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
     Map(I_VENUE -> ss.head, I_PUB_YEAR -> ss.last)
   }
 
-  def search(queryString: String): Array[A2DocTy] = {
+  def search(queryString: String): A2Result = {
+    val startTime = System.currentTimeMillis()
     val contentMap = parseQuery(queryString)
     val queryBuilder = new Builder()
     for (entry <- contentMap) {
@@ -49,11 +52,13 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
     }
     val query = queryBuilder.build()
     val topDocs = searcher.search(query, topN)
-    val result = getA2Result(topDocs)
-    Array.empty
+    val a2Docs = getA2Docs(topDocs)
+    val duration = System.currentTimeMillis() - startTime
+    val stats = SearchStats(duration, Some(query))
+    A2Result(stats, queryString, Some(lOption), a2Docs)
   }
 
-  private def getA2Result(topDocs: TopDocs) = {
+  private def getA2Docs(topDocs: TopDocs): Array[A2DocTy] = {
     val scoreDocs = topDocs.scoreDocs
     require(scoreDocs.length == 1)
     val scoreDoc = scoreDocs(0)
@@ -63,6 +68,7 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
     for (field <- fields) {
       println(field.stringValue())
     }
+    Array.empty
   }
 
 }

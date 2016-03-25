@@ -5,6 +5,7 @@ import models.common.LOption
 import org.apache.lucene.index.Term
 import org.apache.lucene.search.BooleanQuery.Builder
 import org.apache.lucene.search.{BooleanClause, TermQuery, TopDocs}
+import play.api.Logger
 import play.api.libs.json._
 
 case class A2Result(stats: SearchStats, queryString: String, lOption: Option[LOption], docs: Array[A2DocTy]) {
@@ -45,12 +46,14 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
     val startTime = System.currentTimeMillis()
     val contentMap = parseQuery(queryString)
     val queryBuilder = new Builder()
+    Logger.info(s"contentMap=$contentMap")
     for (entry <- contentMap) {
       val term = new Term(entry._1, entry._2)
       val termQuery = new TermQuery(term)
-      queryBuilder.add(termQuery, BooleanClause.Occur.MUST)
+      queryBuilder.add(termQuery, BooleanClause.Occur.SHOULD)
     }
     val query = queryBuilder.build()
+    Logger.info(s"query=$query")
     val topDocs = searcher.search(query, topN)
     val a2Docs = getA2Docs(topDocs)
     val duration = System.currentTimeMillis() - startTime
@@ -60,7 +63,7 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
 
   private def getA2Docs(topDocs: TopDocs): Array[A2DocTy] = {
     val scoreDocs = topDocs.scoreDocs
-    require(scoreDocs.length == 1)
+    //    require(scoreDocs.length == 1)
     val scoreDoc = scoreDocs(0)
     val docID = scoreDoc.doc
     val hitDoc = searcher.doc(docID)

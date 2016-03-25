@@ -29,12 +29,12 @@ class Application extends Controller {
         val lOption = LOption(request)
         val topN = request.getQueryString("topN").get.toInt
         val searcher = new BSearcher(lOption, bIndexFolder, topN)
-        Logger.info(s"queryContent=$queryContent")
+        Logger.info(s"queryContent:\t$queryContent")
         val res = searcher.search(queryContent)
         Ok(views.html.bMain(res))
       }
       case _ => {
-        val result = new BResult(SearchStats(0, None), "", None, Array.empty)
+        val result = new BResult(SearchStats(0, None), 0, "", None, Array.empty)
         Ok(views.html.bMain(result))
       }
     }
@@ -104,7 +104,7 @@ class Application extends Controller {
         val lOption = LOption(request)
         val topN = request.getQueryString("topN").get.toInt
         val searcher = new A2Searcher(lOption, a2IndexFolder, topN)
-        Logger.info(s"queryContent=$queryContent")
+        Logger.info(s"queryContent:\t$queryContent")
         val res = searcher.search(queryContent)
         Ok(views.html.a2Main(res))
       }

@@ -1,5 +1,6 @@
 package models.index
 
+import java.io.{File, FileWriter}
 import java.nio.file.Paths
 
 import models.common.{Config, LAnalyzer, LOption}
@@ -35,26 +36,14 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
   val docMap = mutable.Map.empty[String, Document]
 
   override def index(pub: Publication): Unit = {
-    val docSign = pub.pubYear + "+" + pub.venue
+    val docSign = pub.pubYear + "\t" + pub.venue
     if (!docMap.contains(docSign)) {
       val doc = new Document
-      if (pub.venue == "TKDE" && pub.pubYear == "2012") {
-        Logger.info(s"pub=$pub, doc=$doc")
-      }
-      if (pub.pubYear != null) {
-        addDocText(I_PUB_YEAR, pub.pubYear, doc)
-      } else {
-        Logger.info(s"year=null for $pub")
-      }
-      if (pub.venue != null) {
-        addDocText(I_VENUE, pub.venue, doc)
-      } else {
-        Logger.warn(s"venue=null for $pub")
-      }
+      addDocText(I_PUB_YEAR, pub.pubYear, doc)
+      addDocText(I_VENUE, pub.venue, doc)
       addDocText(I_TITLE, pub.title, doc)
       docMap += docSign -> doc
     } else {
-      //    Logger.info(s"add ${pub.paperId} into $docSign")
       val doc = docMap(docSign)
       addDocText(I_TITLE, pub.title, doc)
     }
@@ -62,9 +51,13 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
   }
 
   override def writeDone(): Unit = {
+    val outFileName = rootDir + File.separator + "outfile"
+    val fw = new FileWriter(outFileName, true)
     for (entry <- docMap) {
       indexWriter.addDocument(entry._2)
+      fw.write(entry._1 + '\n')
     }
+    fw.close()
     indexWriter.close()
     Logger.info("a2 index done")
   }

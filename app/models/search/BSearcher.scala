@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 
 case class BPub(docID: Int, score: Double, info: Map[String, String])
 
-class BResult(stats: SearchStats, queryString: String, lOption: Option[LOption], val pubs: Array[BPub]) {
+class BResult(stats: SearchStats, hits: Int, queryString: String, lOption: Option[LOption], val pubs: Array[BPub]) {
   def toJson(): JsValue = {
     val lOptionJson = {
       lOption match {
@@ -22,7 +22,8 @@ class BResult(stats: SearchStats, queryString: String, lOption: Option[LOption],
     JsObject(Seq(
       "stats" -> stats.toJson(),
       "queryString" -> JsString(queryString),
-      "found" -> JsNumber(pubs.length),
+      "found" -> JsNumber(hits),
+      "listed" -> JsNumber(pubs.length),
       "lOption" -> lOptionJson
     ))
   }
@@ -45,7 +46,7 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
     queryOrNone match {
       case None => {
         val searchStats = SearchStats(0, queryOrNone)
-        new BResult(searchStats, queryString, Some(lOption), Array())
+        new BResult(searchStats, 0, queryString, Some(lOption), Array())
       }
       case Some(query) => {
         val allDocCollector = new TotalHitCountCollector()
@@ -56,7 +57,7 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
         val foundPubs = getSearchPub(topDocs, query)
         reader.close()
         val searchStats = SearchStats(duration, queryOrNone)
-        new BResult(searchStats, queryString, Some(lOption), foundPubs)
+        new BResult(searchStats, allDocCollector.getTotalHits, queryString, Some(lOption), foundPubs)
       }
     }
   }

@@ -44,10 +44,6 @@ class BIndexWorker(writer: IndexWriter) extends LIndexWorker(writer) {
   }
 
   override def index(pub: Publication): Unit = {
-    if (pub.paperId.startsWith(DBLPNOTE)) {
-      Logger.warn("dblpnote entry, ignoring")
-      return
-    }
     pub.validate()
     Logger.debug(s"=> $pub")
     val document = new Document()

@@ -1,5 +1,6 @@
 package models.xml
 
+import models.common.Config._
 import models.index.LIndexWorker
 import org.slf4j.LoggerFactory
 import org.xml.sax.helpers.DefaultHandler
@@ -70,7 +71,11 @@ class PubHandler(indexer: LIndexWorker) extends DefaultHandler {
     val qLowerName = qName.toLowerCase
     if (inEntry) {
       if (isInterestingEntry(qLowerName)) {
-        indexer.index(pub)
+        if (pub.paperId.startsWith(DBLPNOTE)) {
+          Logger.warn("dblpnote entry, ignoring")
+        } else {
+          indexer.index(pub)
+        }
         inEntry = false
         pub = null
       } else {

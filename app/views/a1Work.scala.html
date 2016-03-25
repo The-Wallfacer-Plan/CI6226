@@ -1,9 +1,9 @@
 @import common.Config
 
-@selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
+    @selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
     <div class="form-group">
-        <label for="app1-@(attribute)" class="col-lg-2 control-label"><b>@attribute</b></label>
-        <div class="col-lg-10">
+        <label for="app1-@(attribute)" class="control-label"><b>@attribute</b></label>
+        <div>
             <select id="app1-@(attribute)" class="form-control">
             @for(c <- candidates) {
                 @if(defaultVal == c) {
@@ -19,8 +19,8 @@
 
 @inputIt(attribute: String, elemId: String) = {
     <div class="form-group">
-        <label for="app1-@(attribute)" class="col-lg-2">@attribute</label>
-        <div class="col-lg-10">
+        <label for="app1-@(attribute)">@attribute</label>
+        <div>
             <input type="text" id="app1-@(attribute)" class="form-control" placeholder="e.g., @(elemId)"/>
         </div>
     </div>

@@ -4,9 +4,9 @@
 
 @selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
     <div class="form-group">
-        <label for="app2-@(attribute)" class="col-lg-2 control-label"><b>@attribute</b></label>
-        <div class="col-lg-10">
-            <select id="app2-@(attribute)" class="form-control">
+        <label for="app2-@(attribute)" class="control-label"><b>@attribute</b></label>
+        <div>
+            <select id="app2-@(attribute)" class="form-control col-lg-10">
             @for(c <- candidates) {
                 @if(defaultVal == c) {
                     <option selected="selected" value="@(c)">@c</option>
@@ -21,34 +21,36 @@
 
 @inputIt(attribute: String, elemId: String) = {
     <div class="form-group">
-        <label for="app2-@(attribute)" class="col-lg-2">@attribute</label>
-        <div class="col-lg-10">
+        <label for="app2-@(attribute)">@attribute</label>
+        <div>
             <input type="text" id="app2-@(attribute)" class="form-control" placeholder="e.g., @(elemId)"/>
         </div>
     </div>
 }
 
 <div class="container">
-    <div class="col-lg-12">
-        <label>
-            <input id="cb-force-index" type="checkbox">Force Index
-        </label>
-        <button type="button" id="indexButton" class="btn btn-primary" onclick="a2Index()">Index It!</button>
+    <div class="input-group col-lg-12">
+        <div class="checkbox">
+            <label>
+                <input id="cb-force-index" type="checkbox"> Force Index
+            </label>
+        </div>
+        <button type="button" id="indexButton" class="btn btn-primary" onclick="a2Index()">Index Docs</button>
     </div>
 </div>
 
 <div class="container">
-    <form class="form-horizontal">
+    <form class="form-horizontal col-lg-12">
         @selectIt("pubYear", "2015", Array.range(Config.a2Range._1, Config.a2Range._2).map(_.toString))
         @inputIt("venue", "IJCC")
     </form>
 </div>
 
-<div class="container col-lg-12">
-    <div class="input-group">
+<div class="container">
+    <div class="input-group col-lg-12">
         <span class="input-group-btn">
-            <button type="button" id="a2button" class="btn btn-default" onclick="a2Search()">Go!</button>
-            <button type="button" class="btn btn-info">Help</button>
+            <button type="button" id="a2button" class="btn btn-default col-lg-6" onclick="a2Search()">Search!</button>
+            <button type="button" class="btn btn-info col-lg-6">Help</button>
         </span>
     </div>
 </div>

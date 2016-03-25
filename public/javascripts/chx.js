@@ -125,12 +125,13 @@ function a1Search() {
 function a2QueryInfo() {
     var pubYear = $("#app2-pubYear").val().trim();
     var venue = $("#app2-venue").val().trim();
-    info = {
+    var info = {
         "pubYear": pubYear
-    }
+    };
     if (venue.length != 0) {
         info["venue"] = venue;
     }
+    return info
 }
 
 function a2Search() {

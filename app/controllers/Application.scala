@@ -101,7 +101,8 @@ class Application extends Controller {
 
   def a2Search = Action { request => {
     val attrContentMap = Map(I_PUB_YEAR -> request.getQueryString(I_PUB_YEAR), I_VENUE -> request.getQueryString(I_VENUE))
-    val isValid = attrContentMap.values.forall(_.isDefined)
+    // val isValid = attrContentMap.values.forall(_.isDefined)
+    val isValid = true
     if (isValid) {
       val lOption = LOption(request)
       val topN = request.getQueryString("topN").get.toInt

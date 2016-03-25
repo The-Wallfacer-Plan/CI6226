@@ -42,14 +42,16 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
 
   private def getA2Docs(topDocs: TopDocs): Array[A2DocTy] = {
     val scoreDocs = topDocs.scoreDocs
+    Logger.info(s"# of matched docs: ${scoreDocs.length}")
     for (scoreDoc <- scoreDocs) {
       val scoreDoc = scoreDocs(0)
       val docID = scoreDoc.doc
       val hitDoc = searcher.doc(docID)
-      val fields = hitDoc.getFields(I_TITLE)
-      for (field <- fields) {
-        println(field.stringValue())
-      }
+      println(s"venue=${hitDoc.get(I_VENUE)} pubYear=${hitDoc.get(I_PUB_YEAR)}")
+      //      val fields = hitDoc.getFields(I_TITLE)
+      //      for (field <- fields) {
+      //        println(field.stringValue())
+      //      }
     }
     Array.empty
   }

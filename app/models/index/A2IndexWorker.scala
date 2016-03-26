@@ -50,7 +50,7 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
   }
 
   override def writeDone(): Unit = {
-    val outFileName = play.Play.application().path() + "/public/tmp/outfiles.txt"
+    val outFileName = play.Play.application().path() + "/public/tmp/outfile.txt"
     val fw = new FileWriter(outFileName, false)
     for (entry <- docMap) {
       indexWriter.addDocument(entry._2)

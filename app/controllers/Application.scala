@@ -11,8 +11,6 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 
-import scala.sys.process.Process
-
 class Application extends Controller {
 
   val inputFile = Config.xmlFile
@@ -82,7 +80,7 @@ class Application extends Controller {
       Files.exists(indexPath)
     }
     if ((indexExists && reIndex) || !indexExists) {
-      Process(s"rm -rf $bIndexFolder").!
+      recursivelyDelete(Paths.get(bIndexFolder))
       val worker = BIndexWorker(lOption, bIndexFolder)
 
       val stats = indexer.run(worker)
@@ -140,7 +138,7 @@ class Application extends Controller {
       Files.exists(indexPath)
     }
     if ((indexExists && reIndex) || !indexExists) {
-      Process(s"rm -rf $a2IndexFolder").!
+      recursivelyDelete(Paths.get(a2IndexFolder))
       val worker = A2IndexWorker(lOption, a2IndexFolder)
 
       val stats = indexer.run(worker)

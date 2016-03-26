@@ -1,5 +1,5 @@
 ## design
-  
+
 - "index" should be totally from client side (jquery POST), response changes statsUI
 - "search" is mainly from server side, jquery only jumps to required uri (with params), no GET
 
@@ -25,11 +25,15 @@
 ## setup
 - Requirement:
   1. Oracle Java 8 is required and should be pre-installed; if you have multiple JREs, please ensure `JAVA_HOME` is correctly pointed to the Java 8 directory
-  1. `LSearcher` is based on [Scala](http://www.scala-lang.org/) and [Play!](https://www.playframework.com/), you can use `activator` (embedded in our project) to get them
+  1. `LSearcher` is based on [Scala](http://www.scala-lang.org/) and [Play!](https://www.playframework.com/), you can use [activator](https://www.lightbend.com/activator/download) (embedded in our project) to get them if `bash` is available
 - Deployment
-  1. git clone https://github.com/HongxuChen/ci6226.git
-  1. cd ci6226/
-  1. ./activator
-  1. run -Dhttp.port=9001
-  1. open http://localhost:9001 in your favorite web browser
-- try demo at http://155.69.145.146:9001
+
+```shell
+git clone https://github.com/HongxuChen/ci6226.git
+cd ci6226/
+./activator # or download activator yourself and set the executable inside your PATH environment and run `activator` in project directory
+run -Dhttp.port=9001 # (inside activator shell)
+open http://localhost:9001 in your favorite web browser
+```
+
+- Try it at http://155.69.145.146:9001

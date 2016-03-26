@@ -100,7 +100,7 @@ function readTheDocs() {
 }
 
 function references() {
-    var url = "/assets/resources/outfile.txt";
+    var url = "/assets/tmp/outfile.txt";
     _openUrlInNewTab(url);
 }
 

@@ -74,7 +74,7 @@ class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extend
     val tops = getTopFreq(result, topicsField)
     val duration = System.currentTimeMillis() - timeStart
     reader.close()
-    val stats = SearchStats(duration, Some(query))
+    val stats = SearchStats(duration, Some(query), "OK")
     new A1Result(stats, Some(lOption), tops)
   }
 

@@ -43,7 +43,7 @@ class BSearcher(lOption: LOption, sOption: SOption, indexFolderString: String) e
     Logger.info(s"string=$queryString, query=$queryOrNone")
     queryOrNone match {
       case None => {
-        val searchStats = SearchStats(0, queryOrNone)
+        val searchStats = SearchStats(0, queryOrNone, "Error")
         new BResult(searchStats, 0, queryString, Some(lOption), Array())
       }
       case Some(query) => {
@@ -54,7 +54,7 @@ class BSearcher(lOption: LOption, sOption: SOption, indexFolderString: String) e
         val duration = System.currentTimeMillis() - startTime
         val foundPubs = getSearchPub(topDocs, query)
         reader.close()
-        val searchStats = SearchStats(duration, queryOrNone)
+        val searchStats = SearchStats(duration, queryOrNone, "OK")
         new BResult(searchStats, allDocCollector.getTotalHits, queryString, Some(lOption), foundPubs)
       }
     }

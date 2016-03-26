@@ -36,7 +36,7 @@ class A2Searcher(lOption: LOption, sOption: SOption, indexFolderString: String) 
     val topDocs = searcher.search(query, sOption.topN)
     val a2Docs = getA2Docs(topDocs)
     val duration = System.currentTimeMillis() - startTime
-    val stats = SearchStats(duration, Some(query))
+    val stats = SearchStats(duration, Some(query), "OK")
     A2Result(stats, Some(lOption), a2Docs)
   }
 

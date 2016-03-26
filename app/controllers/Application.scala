@@ -3,6 +3,7 @@ package controllers
 import java.nio.file.{Files, Paths}
 
 import models.common.Config._
+import models.common.Helper._
 import models.common.{Config, LOption}
 import models.index._
 import models.search._
@@ -25,17 +26,22 @@ class Application extends Controller {
   }
 
   def bSearch = Action { request => {
-    request.getQueryString("content") match {
-      case Some(queryContent) if queryContent.length != 0 => {
-        val lOption = LOption(request)
-        val sOption = SOption(request)
-        val searcher = new BSearcher(lOption, sOption, bIndexFolder)
-        Logger.info(s"queryContent:\t$queryContent")
-        val res = searcher.search(queryContent)
-        Ok(views.html.bMain(res))
+    val contentOpt = request.getQueryString("content")
+    try {
+      if (contentOpt.isEmpty || contentOpt.get.length == 0) {
+        throw new LError("[content] not exist or its value empty")
       }
-      case _ => {
-        val result = new BResult(SearchStats(0, None), 0, "", None, Array.empty)
+      val queryContent = contentOpt.get
+      val lOption = LOption(request)
+      val sOption = SOption(request)
+      val searcher = new BSearcher(lOption, sOption, bIndexFolder)
+      Logger.info(s"queryContent:\t$queryContent")
+      val res = searcher.search(queryContent)
+      Ok(views.html.bMain(res))
+    } catch {
+      case e: Exception => {
+        val msg = e.toString
+        val result = new BResult(SearchStats(0, None, msg), 0, "", None, Array.empty)
         Ok(views.html.bMain(result))
       }
     }
@@ -44,17 +50,20 @@ class Application extends Controller {
 
 
   def a1Search = Action { request => {
-    request.getQueryString(Config.I_PUB_YEAR) match {
-      case Some(pubYear) => {
-        val lOption = LOption(request)
-        val sOption = SOption(request)
-        val attrContentMap = Map(I_VENUE -> request.getQueryString(I_VENUE), I_AUTHORS -> request.getQueryString(I_AUTHORS), I_PUB_YEAR -> Some(pubYear))
-        val topRecorder = new A1Searcher(lOption, sOption, bIndexFolder)
-        val result = topRecorder.evaluate(attrContentMap)
-        Ok(views.html.a1Main(result))
+    val pubYearOpt = request.getQueryString(I_PUB_YEAR)
+    try {
+      if (pubYearOpt.isEmpty) {
+        throw new LError(s"[$I_PUB_YEAR] should be nonEmpty")
       }
-      case None => {
-        val stats = SearchStats(0L, None)
+      val lOption = LOption(request)
+      val sOption = SOption(request)
+      val attrContentMap = Map(I_VENUE -> request.getQueryString(I_VENUE), I_AUTHORS -> request.getQueryString(I_AUTHORS), I_PUB_YEAR -> pubYearOpt)
+      val topRecorder = new A1Searcher(lOption, sOption, bIndexFolder)
+      val result = topRecorder.evaluate(attrContentMap)
+      Ok(views.html.a1Main(result))
+    } catch {
+      case e: Exception => {
+        val stats = SearchStats(0L, None, e.toString)
         val result = A1Result(stats, None, Array.empty)
         Ok(views.html.a1Main(result))
       }
@@ -81,7 +90,6 @@ class Application extends Controller {
         val indexInfo = new BDocInfoReader(bIndexFolder)
         indexInfo.getFieldInfo(Config.I_TITLE)
       }
-      ///
       val res = JsObject(Seq(
         "stats" -> stats.toJson(),
         "docInfo" -> BDocInfoReader.toJson(fieldInfo),
@@ -101,18 +109,22 @@ class Application extends Controller {
 
   def a2Search = Action { request => {
     val attrContentMap = Map(I_PUB_YEAR -> request.getQueryString(I_PUB_YEAR), I_VENUE -> request.getQueryString(I_VENUE))
-    val isValid = attrContentMap.values.forall(_.isDefined)
-    if (isValid) {
+    try {
+      val isValid = attrContentMap.values.forall(_.isDefined)
+      if (!isValid) {
+        throw new LError(s"[$I_PUB_YEAR] and [$I_VENUE] should both be nonEmpty")
+      }
       val lOption = LOption(request)
       val sOption = SOption(request)
       val searcher = new A2Searcher(lOption, sOption, a2IndexFolder)
       val res = searcher.search(attrContentMap)
       Ok(views.html.a2Main(res))
-    } else {
-      val stats = SearchStats(0L, None)
-      val res = A2Result(stats, None, Map.empty)
-      Logger.info("invalid query")
-      Ok(views.html.a2Main(res))
+    } catch {
+      case e: Exception => {
+        val stats = SearchStats(0L, None, e.toString)
+        val res = A2Result(stats, None, Map.empty)
+        Ok(views.html.a2Main(res))
+      }
     }
   }
   }

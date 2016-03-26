@@ -2,12 +2,13 @@ package models.search
 
 import models.common.Config._
 import models.common.LOption
+import org.apache.lucene.queries.mlt.MoreLikeThis
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.TopDocs
 import play.api.Logger
 import play.api.libs.json._
 
-case class A2Result(stats: SearchStats, lOption: Option[LOption], docs: Array[A2DocTy]) {
+case class A2Result(stats: SearchStats, lOption: Option[LOption], docs: Map[String, Array[A2DocTy]]) {
   def toJson(): JsValue = {
     val lOptionJson = {
       lOption match {
@@ -39,20 +40,35 @@ class A2Searcher(lOption: LOption, indexFolderString: String, topN: Int) extends
     A2Result(stats, Some(lOption), a2Docs)
   }
 
-  private def getA2Docs(topDocs: TopDocs): Array[A2DocTy] = {
+  def getSimilarDocs(docID: Int): Array[A2DocTy] = {
+    val mlt = new MoreLikeThis(reader)
+    mlt.setFieldNames(Array(I_TITLE))
+    val query = mlt.like(docID)
+    val similarDocs = searcher.search(query, topN + 1)
+    for (similarDoc <- similarDocs.scoreDocs; if docID != similarDoc.doc) yield {
+      val docID = similarDoc.doc
+      val score = similarDoc.score
+      val hitDoc = searcher.doc(docID)
+      val venue = hitDoc.get(I_VENUE)
+      val pubYear = hitDoc.get(I_PUB_YEAR)
+      (venue + ", " + pubYear, score)
+    }
+  }
+
+  private def getA2Docs(topDocs: TopDocs): Map[String, Array[A2DocTy]] = {
     val scoreDocs = topDocs.scoreDocs
     Logger.info(s"# of matched docs: ${scoreDocs.length}")
-    for (scoreDoc <- scoreDocs) {
-      val scoreDoc = scoreDocs(0)
+    val arrayInfo = for (scoreDoc <- scoreDocs) yield {
       val docID = scoreDoc.doc
       val hitDoc = searcher.doc(docID)
-      Logger.info(s"venue=${hitDoc.get(I_VENUE)} pubYear=${hitDoc.get(I_PUB_YEAR)}")
-      val fields = hitDoc.getFields(I_TITLE)
-      for (field <- fields) {
-        Logger.info(field.stringValue())
-      }
+      val venue = hitDoc.get(I_VENUE)
+      val pubYear = hitDoc.get(I_PUB_YEAR)
+      val docInfo = venue + " " + pubYear
+      Logger.info(s"$docInfo")
+      val similarDocs = getSimilarDocs(docID)
+      docInfo -> similarDocs
     }
-    Array.empty
+    arrayInfo.toMap
   }
 
 }

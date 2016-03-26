@@ -2,20 +2,18 @@
 
 @(results: Array[BPub])
 
-@formattedDouble(num: Double) = @{
-    "%.6f".format(num)
-}
+    @formattedDouble(num: Double) = @{
+        "%.6f".format(num)
+    }
 
-@for(s <- results) {
-    <li class="tree-view"><b>docID:</b> @(s.docID) &emsp; <b>Score:</b> @formattedDouble(s.score)</li>
-    <table class="table table-bordered table-striped">
-        <ul>
+    @for(s <- results) {
+        <li class="tree-view"><b>docID:</b> @(s.docID) &emsp; <b>Score:</b> @formattedDouble(s.score)</li>
+        <table class="table table-bordered table-striped">
         @for(entry <- s.info) {
             <tr>
                 <th style="width: 20px">@(entry._1)</th>
                 <td>@entry._2</td>
             </tr>
         }
-        </ul>
-    </table>
-}
+        </table>
+    }

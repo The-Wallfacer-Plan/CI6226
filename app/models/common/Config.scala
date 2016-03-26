@@ -7,7 +7,7 @@ import scala.io.Source
 object Config {
 
   type TopEntryTy = (Long, String)
-  type A2DocTy = String
+  type A2DocTy = (String, Float)
 
   val homeDir = System.getProperty("user.home")
   val tempDir = System.getProperty("java.io.tmpdir")

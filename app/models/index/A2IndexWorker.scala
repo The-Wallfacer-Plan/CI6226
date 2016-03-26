@@ -37,9 +37,6 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
 
   override def index(pub: Publication): Unit = {
     val docSign = pub.pubYear + "\t" + pub.venue
-    //    if (pub.pubYear == "2015" && pub.venue == "IJCC") {
-    //      println(s"pub:\t$pub")
-    //    }
     if (!docMap.contains(docSign)) {
       val doc = new Document
       addDocText(I_PUB_YEAR, pub.pubYear, doc)

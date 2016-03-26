@@ -1,5 +1,14 @@
-@(docs: Array[String])
+@import common.Config
+@(docs: Map[String, Array[Config.A2DocTy]])
 
 @for(doc <- docs) {
-    <li class="tree-view">@doc</li>
+    <li class="tree-view">@doc._1</li>
+    <table class="table table-bordered table-striped">
+    @for(similarDoc <- doc._2) {
+        <tr>
+            <th>@similarDoc._1</th>
+            <td>@similarDoc._2</td>
+        </tr>
+    }
+    </table>
 }

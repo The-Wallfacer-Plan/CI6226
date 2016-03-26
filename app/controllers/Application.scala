@@ -110,7 +110,7 @@ class Application extends Controller {
       Ok(views.html.a2Main(res))
     } else {
       val stats = SearchStats(0L, None)
-      val res = A2Result(stats, None, Array.empty)
+      val res = A2Result(stats, None, Map.empty)
       Logger.info("invalid query")
       Ok(views.html.a2Main(res))
     }

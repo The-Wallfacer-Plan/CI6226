@@ -30,8 +30,7 @@ class BResult(stats: SearchStats, hits: Int, queryString: String, lOption: Optio
   def toJsonString(): String = Json.prettyPrint(toJson())
 }
 
-class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends LSearcher(lOption, indexFolderString, topN) {
-
+class BSearcher(lOption: LOption, sOption: SOption, indexFolderString: String) extends LSearcher(lOption, indexFolderString) {
 
   def search(queryString: String): BResult = {
     val startTime = System.currentTimeMillis()
@@ -50,7 +49,7 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
       case Some(query) => {
         val allDocCollector = new TotalHitCountCollector()
         searcher.search(query, allDocCollector)
-        val topDocs = searcher.search(query, topN)
+        val topDocs = searcher.search(query, sOption.topN)
         Logger.info(s"${allDocCollector.getTotalHits} hit docs")
         val duration = System.currentTimeMillis() - startTime
         val foundPubs = getSearchPub(topDocs, query)
@@ -61,7 +60,7 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
     }
   }
 
-  def getSearchPub(topDocs: TopDocs, query: Query): Array[BPub] = {
+  private def getSearchPub(topDocs: TopDocs, query: Query): Array[BPub] = {
     for (hit <- topDocs.scoreDocs) yield {
       val (docID, score) = (hit.doc, hit.score)
       val hitDoc = searcher.doc(docID)

@@ -39,7 +39,6 @@ L := | AND | OR
    - LIMIT! /3 STATUTE ACTION /S FEDERAL /2 TORT /3 CLAIM
 - effect of lowecasse/stemming/stopwords
 - tolerant retrieval
-- use a special field "ALL" to for "free text" search, others by combination
 - see whether can using "merge"
 [x] authors indexed with same field
 - reopen directory reader

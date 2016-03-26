@@ -28,8 +28,8 @@ class Application extends Controller {
     request.getQueryString("content") match {
       case Some(queryContent) if queryContent.length != 0 => {
         val lOption = LOption(request)
-        val topN = request.getQueryString("topN").get.toInt
-        val searcher = new BSearcher(lOption, bIndexFolder, topN)
+        val sOption = SOption(request)
+        val searcher = new BSearcher(lOption, sOption, bIndexFolder)
         Logger.info(s"queryContent:\t$queryContent")
         val res = searcher.search(queryContent)
         Ok(views.html.bMain(res))
@@ -47,9 +47,9 @@ class Application extends Controller {
     request.getQueryString(Config.I_PUB_YEAR) match {
       case Some(pubYear) => {
         val lOption = LOption(request)
-        val topN = request.getQueryString("topN").get.toInt
+        val sOption = SOption(request)
         val attrContentMap = Map(I_VENUE -> request.getQueryString(I_VENUE), I_AUTHORS -> request.getQueryString(I_AUTHORS), I_PUB_YEAR -> Some(pubYear))
-        val topRecorder = new A1Searcher(lOption, bIndexFolder, topN)
+        val topRecorder = new A1Searcher(lOption, sOption, bIndexFolder)
         val result = topRecorder.evaluate(attrContentMap)
         Ok(views.html.a1Main(result))
       }
@@ -104,8 +104,8 @@ class Application extends Controller {
     val isValid = attrContentMap.values.forall(_.isDefined)
     if (isValid) {
       val lOption = LOption(request)
-      val topN = request.getQueryString("topN").get.toInt
-      val searcher = new A2Searcher(lOption, a2IndexFolder, topN)
+      val sOption = SOption(request)
+      val searcher = new A2Searcher(lOption, sOption, a2IndexFolder)
       val res = searcher.search(attrContentMap)
       Ok(views.html.a2Main(res))
     } else {

@@ -46,6 +46,7 @@ L := | AND | OR
 [x] app1 for filtered cases!!!
 [x] add search limit for A2
 - write unit test
+- note: won't add "weak phrase option"
 
 
 ## notice:

@@ -29,7 +29,7 @@ abstract class LSearcher(lOption: LOption, indexFolderString: String, topN: Int)
   }
 
   def getMustQuery(contentMap: Map[String, Option[String]]): String = {
-    val fields = for (entry <- contentMap; if entry._2.isDefined) yield "+" + entry._1 + ":\"" + entry._2.get + "\""
+    val fields = for (entry <- contentMap; s <- entry._2) yield "+" + entry._1 + ":\"" + s + "\""
     fields.mkString(" ")
   }
 }

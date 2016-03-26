@@ -4,7 +4,8 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
-javaOptions += "-DentityExpansionLimit=1500000 -Xms1g -Xmx4g -Xss4M -XX:+CMSClassUnloadingEnabled"
+javaOptions += "-DentityExpansionLimit=1500000"
+javaOptions += "-Xms1g -Xmx4g -Xss4M -XX:+CMSClassUnloadingEnabled"
 
 lazy val `ci6226` = project.in(file(".")).enablePlugins(PlayScala)
 

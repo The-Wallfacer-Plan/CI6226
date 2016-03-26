@@ -63,7 +63,7 @@ class A1Searcher(lOption: LOption, indexFolder: String, topN: Int) extends LSear
   }
 
 
-  def evaluate(queryString: String, contentMap: Map[String, Option[String]], topicsField: String = I_TITLE): A1Result = {
+  def evaluate(contentMap: Map[String, Option[String]], topicsField: String = I_TITLE): A1Result = {
     val queryString = getMustQuery(contentMap)
     val query = new QueryParser(I_PUB_YEAR, analyzer).parse(queryString)
     val collector = new TotalHitCountCollector()

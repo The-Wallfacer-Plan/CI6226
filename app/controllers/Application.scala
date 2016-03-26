@@ -48,9 +48,9 @@ class Application extends Controller {
       case Some(pubYear) => {
         val lOption = LOption(request)
         val topN = request.getQueryString("topN").get.toInt
-        val attrContentMap = Map(Config.I_VENUE -> request.getQueryString(Config.I_VENUE), Config.I_AUTHORS -> request.getQueryString(Config.I_AUTHORS))
+        val attrContentMap = Map(I_VENUE -> request.getQueryString(I_VENUE), I_AUTHORS -> request.getQueryString(I_AUTHORS), I_PUB_YEAR -> Some(pubYear))
         val topRecorder = new A1Searcher(lOption, bIndexFolder, topN)
-        val result = topRecorder.evaluate(pubYear, attrContentMap)
+        val result = topRecorder.evaluate(attrContentMap)
         Ok(views.html.a1Main(result))
       }
       case None => {

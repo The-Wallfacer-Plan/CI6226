@@ -53,3 +53,4 @@ L := | AND | OR
 
 ## example:
 +pubYear:2007 +venue:datenschutz +authors:thilo
++pubYear:2000 +venue:"ACM SIGMOD Anthology" +authors:"Michael Ley"

@@ -12,7 +12,10 @@
         <script type="text/javascript" src="@routes.Assets.at("javascripts/chx.js")"></script>
         <link rel="icon" href="@routes.Assets.at("images/favicon.ico")"/>
     </head>
+
     <body>
-    @content
+        @UINavBar()
+        @UICorner()
+        @content
     </body>
 </html>

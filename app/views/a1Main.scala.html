@@ -1,18 +1,16 @@
 @import search.A1Result
 @(result: A1Result)
 
-@core("A1") {
-    <nav class="navbar navbar-default"></nav>
-    @UICorner()
-    <div class="container">
-        <div class="row container-fluid">
-            <div class="col-lg-5">
-                @a1Work()
-                @UIStats(result.toJsonString())
-            </div>
-            <div class="col-lg-7">
-            @a1Result(result.tops)
+    @core("App1") {
+        <div class="container">
+            <div class="row container-fluid">
+                <div class="col-lg-5">
+                    @a1Work()
+                    @UIStats(result.toJsonString())
+                </div>
+                <div class="col-lg-7">
+                @a1Result(result.tops)
+                </div>
             </div>
         </div>
-    </div>
-}
+    }

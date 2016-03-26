@@ -15,8 +15,8 @@ object Config {
   val VALIDATION = "http://xml.org/sax/features/validation"
   val indexRoot = tempDir + File.separator + "index"
   val splitString = "; "
-  val xmlFile = rootDir + File.separator + "dblp.xml"
-  //  val xmlFile = rootDir + File.separator + "sample.xml"
+  //  val xmlFile = rootDir + File.separator + "dblp.xml"
+  val xmlFile = rootDir + File.separator + "sample.xml"
 
   val ignoredTerms = {
     val filterFileName = rootDir + File.separator + "topics_filter"
@@ -32,12 +32,12 @@ object Config {
   val I_AUTHORS = "authors"
   val I_VENUE = "venue"
   val I_PUB_YEAR = "pubYear"
+  val I_ALL = "ALL"
 
-  val defaultFields = List(I_PAPER_ID, I_TITLE, I_KIND, I_AUTHORS, I_VENUE, I_PUB_YEAR)
+  val allFields = List(I_PAPER_ID, I_TITLE, I_KIND, I_AUTHORS, I_VENUE, I_PUB_YEAR)
   val DBLPNOTE = "dblpnote"
 
   val DEFAULT_CONJ = "NIL"
-  val COMBINED_FIELD = "ALL"
 
   //    interface Configurable
   val defaultTopN = 10

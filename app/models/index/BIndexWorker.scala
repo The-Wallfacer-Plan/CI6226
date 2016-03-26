@@ -43,28 +43,22 @@ class BIndexWorker(writer: IndexWriter) extends LIndexWorker(writer) {
     Logger.info("index done")
   }
 
+  private def combinedAddField(fieldName: String, fieldValue: String, document: Document): Unit = {
+    addField(fieldName, fieldValue, document)
+    addField(I_ALL, fieldValue, document)
+  }
+
   override def index(pub: Publication): Unit = {
     pub.validate()
     Logger.debug(s"=> $pub")
     val document = new Document()
 
-    //        is the form of "xxx/xxx/xxx", use TextField
-    addDocText(I_PAPER_ID, pub.paperId, document)
-    //        TextField
-    addDocText(I_TITLE, pub.title, document)
-    //        StringField
-    addDocText(I_KIND, pub.kind, document)
-    //        ???
-    addDocText(I_VENUE, pub.venue, document)
-    //        StringField
-    addDocText(I_PUB_YEAR, pub.pubYear, document)
-    //        TextField (how to join/split author list ???)
-    val authorString = pub.authors.mkString(Config.splitString)
-    addDocText(I_AUTHORS, authorString, document)
-    //    pub.authors.foreach(author => addDocText("authors", author, document))
-
-    // for free text search
-    addDocText("ALL", pub.combinedString(), document)
+    combinedAddField(I_PAPER_ID, pub.paperId, document)
+    combinedAddField(I_TITLE, pub.title, document)
+    combinedAddField(I_KIND, pub.kind, document)
+    combinedAddField(I_VENUE, pub.venue, document)
+    combinedAddField(I_PUB_YEAR, pub.pubYear, document)
+    pub.authors.foreach(author => combinedAddField(I_AUTHORS, author, document))
 
     if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
       writer.addDocument(document)

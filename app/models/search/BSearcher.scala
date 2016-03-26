@@ -1,12 +1,11 @@
 package models.search
 
-import models.common.{Config, LOption}
+import models.common.Config._
+import models.common.LOption
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import play.api.Logger
 import play.api.libs.json._
-
-import scala.collection.JavaConversions._
 
 
 case class BPub(docID: Int, score: Double, info: Map[String, String])
@@ -38,7 +37,7 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
     val startTime = System.currentTimeMillis()
     validate(queryString)
     val queryOrNone = Option {
-      val parser = new QueryParser(Config.COMBINED_FIELD, analyzer)
+      val parser = new QueryParser(I_ALL, analyzer)
       parser.setAllowLeadingWildcard(true)
       parser.parse(queryString)
     }
@@ -66,11 +65,15 @@ class BSearcher(lOption: LOption, indexFolderString: String, topN: Int) extends 
     for (hit <- topDocs.scoreDocs) yield {
       val (docID, score) = (hit.doc, hit.score)
       val hitDoc = searcher.doc(docID)
-      //      Logger.info(s"Explain: ${searcher.explain(query, docID)}")
-      val fieldValues = for {
-        field <- hitDoc.getFields
-        if field.name() != Config.COMBINED_FIELD
-      } yield field.name() -> field.stringValue()
+      Logger.debug(s"Explain: ${searcher.explain(query, docID)}")
+      val fieldValues = for (fieldName <- allFields) yield {
+        fieldName match {
+          case I_AUTHORS => {
+            fieldName -> hitDoc.getFields(I_AUTHORS).map(_.stringValue()).mkString(";")
+          }
+          case _ => fieldName -> hitDoc.getField(fieldName).stringValue()
+        }
+      }
       val fieldDocMap = Map(fieldValues: _*)
       new BPub(docID, score, fieldDocMap)
     }

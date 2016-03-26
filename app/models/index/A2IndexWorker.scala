@@ -39,13 +39,13 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
     val docSign = pub.pubYear + "\t" + pub.venue
     if (!docMap.contains(docSign)) {
       val doc = new Document
-      addDocText(I_PUB_YEAR, pub.pubYear, doc)
-      addDocText(I_VENUE, pub.venue, doc)
-      addDocText(I_TITLE, pub.title, doc)
+      addField(I_PUB_YEAR, pub.pubYear, doc)
+      addField(I_VENUE, pub.venue, doc)
+      addField(I_TITLE, pub.title, doc)
       docMap += docSign -> doc
     } else {
       val doc = docMap(docSign)
-      addDocText(I_TITLE, pub.title, doc)
+      addField(I_TITLE, pub.title, doc)
     }
   }
 

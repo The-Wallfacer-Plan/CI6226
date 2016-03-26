@@ -41,10 +41,11 @@ L := | AND | OR
 - tolerant retrieval
 - use a special field "ALL" to for "free text" search, others by combination
 - see whether can using "merge"
-- authors indexed with same field
+[x] authors indexed with same field
 - reopen directory reader
-- app1 for filtered cases!!!
-- add search limit for A2
+[x] app1 for filtered cases!!!
+[x] add search limit for A2
+- write unit test
 
 
 ## notice:

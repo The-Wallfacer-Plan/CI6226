@@ -3,7 +3,6 @@ package models.index
 import models.xml.Publication
 import org.apache.lucene.document.{Document, Field, FieldType}
 import org.apache.lucene.index.{IndexOptions, IndexWriter}
-import play.api.Logger
 
 
 object LIndexWorker {
@@ -28,7 +27,7 @@ object LIndexWorker {
     ft
   }
 
-  def addDocText(key: String, value: String, document: Document) = {
+  def addField(key: String, value: String, document: Document) = {
     val field = new Field(key, value, ft1)
     document.add(field)
   }

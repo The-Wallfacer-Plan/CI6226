@@ -12,6 +12,8 @@ import play.api.Logger
 
 class LAnalyzer(option: LOption, patternString: Option[String]) extends Analyzer {
 
+  override def getPositionIncrementGap(fieldName: String): Int = 10
+
   override def createComponents(fieldName: String): TokenStreamComponents = {
     val tokenizer = {
       patternString match {

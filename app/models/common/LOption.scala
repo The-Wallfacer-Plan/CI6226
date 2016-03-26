@@ -32,13 +32,13 @@ object LOption {
     val stemming = getAsBoolean(request.getQueryString("stem"), defaultB = true)
     val ignoreCase = getAsBoolean(request.getQueryString("ignore"), defaultB = true)
     val swDict = request.getQueryString("swDict").get
-    LOption(stemming, ignoreCase, swDict)
+    new LOption(stemming, ignoreCase, swDict)
   }
 
   def apply(body: JsValue): LOption = {
     val stemming = (body \ "stem").as[Boolean]
     val ignoreCase = (body \ "ignore").as[Boolean]
     val swDict = (body \ "swDict").as[String]
-    LOption(stemming, ignoreCase, swDict)
+    new LOption(stemming, ignoreCase, swDict)
   }
 }

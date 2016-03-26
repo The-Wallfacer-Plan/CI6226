@@ -1,6 +1,6 @@
 package models.index
 
-import java.io.{File, FileWriter}
+import java.io.FileWriter
 import java.nio.file.Paths
 
 import models.common.{Config, LAnalyzer, LOption}
@@ -53,12 +53,9 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
   }
 
   override def writeDone(): Unit = {
-    val outFileName = rootDir + File.separator + "outfile"
+    val outFileName = play.Play.application().path() + "/public/tmp/outfiles.txt"
     val fw = new FileWriter(outFileName, false)
     for (entry <- docMap) {
-      //      if (entry._1.contains("IJCC")) {
-      //        println(entry._1)
-      //      }
       indexWriter.addDocument(entry._2)
       fw.write(entry._1 + '\n')
     }

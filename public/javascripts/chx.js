@@ -79,13 +79,25 @@ function bSearch() {
 }
 
 //------------------------------------------------
-function readTheDocs() {
+
+function openUrlInNewTab(url) {
+    console.log(url);
     var form = document.createElement("form");
     form.method = "GET";
-    form.action = "http://lucene.apache.org/core/5_5_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Overview";
+    form.action = url;
     form.target = "_blank";
     document.body.appendChild(form);
     form.submit();
+}
+
+function readTheDocs() {
+    var url = "http://lucene.apache.org/core/5_5_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Overview";
+    openUrlInNewTab(url);
+}
+
+function references() {
+    var url = "/assets/resources/outfile.txt";
+    openUrlInNewTab(url);
 }
 
 // ------------------------------------------------

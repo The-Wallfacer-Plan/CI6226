@@ -30,7 +30,7 @@ class BResult(stats: SearchStats, hits: Int, queryString: String, lOption: Optio
   def toJsonString(): String = Json.prettyPrint(toJson())
 }
 
-class BSearcher(lOption: LOption, sOption: SOption, indexFolderString: String) extends LSearcher(lOption, indexFolderString) {
+class BSearcher(lOption: LOption, sOption: SOption, indexFolderString: String) extends LSearcher(lOption, sOption, indexFolderString) {
 
   def search(queryString: String): BResult = {
     val startTime = System.currentTimeMillis()

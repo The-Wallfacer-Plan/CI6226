@@ -28,7 +28,7 @@ case class A1Result(stats: SearchStats, lOption: Option[LOption], tops: Array[To
   def toJsonString(): String = Json.prettyPrint(toJson())
 }
 
-class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extends LSearcher(lOption, indexFolder) {
+class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extends LSearcher(lOption, sOption, indexFolder) {
 
   import Config._
 

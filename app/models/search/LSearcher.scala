@@ -5,7 +5,7 @@ import java.nio.file.{Files, Paths}
 import models.common.{LAnalyzer, LOption}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.search.IndexSearcher
-import org.apache.lucene.search.similarities.BM25Similarity
+import org.apache.lucene.search.similarities.{BM25Similarity, ClassicSimilarity}
 import org.apache.lucene.store.FSDirectory
 import play.api.Logger
 import play.api.mvc.{AnyContent, Request}
@@ -21,7 +21,7 @@ object SOption {
   }
 }
 
-abstract class LSearcher(lOption: LOption, indexFolderString: String) {
+abstract class LSearcher(lOption: LOption, sOption: SOption, indexFolderString: String) {
 
   val analyzer = new LAnalyzer(lOption, None)
   val reader = {
@@ -33,8 +33,13 @@ abstract class LSearcher(lOption: LOption, indexFolderString: String) {
 
   val searcher = {
     val s = new IndexSearcher(reader)
-
-    val similarity = new BM25Similarity()
+    val similarity = {
+      sOption.similarityKind match {
+        case "ClassicSimilarity" => new ClassicSimilarity()
+        case "BM25Similarity" => new BM25Similarity()
+        case _ => new ClassicSimilarity()
+      }
+    }
     s.setSimilarity(similarity)
     s
   }

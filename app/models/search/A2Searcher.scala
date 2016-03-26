@@ -26,7 +26,7 @@ case class A2Result(stats: SearchStats, lOption: Option[LOption], docs: Map[Stri
 }
 
 
-class A2Searcher(lOption: LOption, sOption: SOption, indexFolderString: String) extends LSearcher(lOption, indexFolderString) {
+class A2Searcher(lOption: LOption, sOption: SOption, indexFolderString: String) extends LSearcher(lOption, sOption, indexFolderString) {
 
   def search(contentMap: Map[String, Option[String]]): A2Result = {
     val startTime = System.currentTimeMillis()

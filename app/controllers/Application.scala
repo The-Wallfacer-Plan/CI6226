@@ -57,7 +57,7 @@ class Application extends Controller {
       val sOption = SOption(request)
       val attrContentMap = Map(I_VENUE -> request.getQueryString(I_VENUE), I_AUTHORS -> request.getQueryString(I_AUTHORS), I_PUB_YEAR -> pubYearOpt)
       val topRecorder = new A1Searcher(lOption, sOption, bIndexFolder)
-      val result = topRecorder.evaluate(attrContentMap)
+      val result = topRecorder.run(attrContentMap)
       Ok(views.html.a1Main(result))
     } catch {
       case e: Exception => {

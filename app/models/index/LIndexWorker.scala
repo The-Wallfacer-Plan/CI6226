@@ -13,6 +13,7 @@ object LIndexWorker {
     ft.setTokenized(true)
     ft.setStored(true)
     ft.setStoreTermVectors(true)
+    ft.setStoreTermVectorPositions(true)
     ft.freeze()
     ft
   }

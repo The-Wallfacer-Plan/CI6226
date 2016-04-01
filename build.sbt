@@ -4,7 +4,7 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
-javaOptions += "-DentityExpansionLimit=1500000"
+javaOptions += "-DentityExpansionLimit=1800000"
 javaOptions += "-Xms1g -Xmx4g -Xss4M -XX:+CMSClassUnloadingEnabled"
 
 lazy val `ci6226` = project.in(file(".")).enablePlugins(PlayScala)
@@ -24,3 +24,5 @@ libraryDependencies ++= Seq(
   "org.webjars.bower" % "awesome-bootstrap-checkbox" % "0.3.7",
   "org.webjars" % "jquery" % "2.2.0"
 )
+
+libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0" artifacts(Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp"))

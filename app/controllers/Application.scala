@@ -27,7 +27,7 @@ class Application extends Controller {
     val contentOpt = request.getQueryString("content")
     try {
       if (contentOpt.isEmpty || contentOpt.get.length == 0) {
-        throw new LError("[content] not exist or its value empty")
+        throw new LError("[query] not exist or its value empty")
       }
       val queryContent = contentOpt.get
       val lOption = LOption(request)
@@ -38,6 +38,7 @@ class Application extends Controller {
       Ok(views.html.bMain(res))
     } catch {
       case e: Exception => {
+        Logger.warn(s"Error: ${e.getStackTrace.mkString("\n")}")
         val msg = e.toString
         val result = new BResult(SearchStats(0, None, msg), 0, "", None, Array.empty)
         Ok(views.html.bMain(result))
@@ -80,7 +81,10 @@ class Application extends Controller {
       Files.exists(indexPath)
     }
     if ((indexExists && reIndex) || !indexExists) {
-      recursivelyDelete(Paths.get(bIndexFolder))
+      if (indexExists && reIndex) {
+        Logger.info(s"$bIndexFolder exists")
+        recursivelyDelete(Paths.get(bIndexFolder))
+      }
       val worker = BIndexWorker(lOption, bIndexFolder)
 
       val stats = indexer.run(worker)

@@ -17,6 +17,8 @@ libraryDependencies ++= Seq(
   "org.apache.lucene" % "lucene-queryparser" % "5.5.0"
 )
 
+libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0" artifacts(Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp"))
+
 libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.5.0",
   "org.webjars.bower" % "bootstrap" % "4.0.0-alpha.2",
@@ -24,5 +26,3 @@ libraryDependencies ++= Seq(
   "org.webjars.bower" % "awesome-bootstrap-checkbox" % "0.3.7",
   "org.webjars" % "jquery" % "2.2.0"
 )
-
-libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0" artifacts(Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp"))

@@ -1,6 +1,6 @@
 package models.search
 
-import models.common.Config
+import models.common.{Config, Helper}
 import org.apache.lucene.index.IndexReader
 import org.apache.lucene.search.{IndexSearcher, TopDocs}
 import org.apache.lucene.util.BytesRef
@@ -11,23 +11,7 @@ import scala.collection.mutable
 case class A1Term(topDocs: TopDocs, searcher: IndexSearcher, reader: IndexReader) {
 
   import Config._
-
-  private def selectionSort(textMap: scala.collection.mutable.Map[String, Long], topN: Int): Array[TopEntryTy] = {
-    val array = Array.fill[TopEntryTy](topN)(0L -> null)
-    var i = 0
-    while (i < array.length) {
-      var current: TopEntryTy = 0L -> null
-      for (entry <- textMap) {
-        if (current._1 < entry._2) {
-          current = entry._2 -> entry._1
-        }
-      }
-      array(i) = current
-      textMap -= current._2
-      i += 1
-    }
-    array
-  }
+  import Helper._
 
 
   def run(topN: Int, topicsField: String = I_TITLE): Array[TopEntryTy] = {

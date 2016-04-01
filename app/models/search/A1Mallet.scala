@@ -39,16 +39,18 @@ object A1Mallet {
 
   import Config._
 
-  def apply(topDocs: TopDocs, searcher: IndexSearcher, malletOption: MalletOption): A1Mallet = {
+  def initMalletInstanceList() = {
+    val pipeList = new util.ArrayList[Pipe]()
+    pipeList.add(new CharSequenceLowercase())
+    pipeList.add(new CharSequence2TokenSequence(Pattern.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}")))
+    pipeList.add(new TokenSequenceRemoveStopwords(new File(malletRoot + "/stoplists/en.txt"), "UTF-8", false, false, false))
+    pipeList.add(new TokenSequence2FeatureSequence())
+    new InstanceList(new SerialPipes(pipeList))
+  }
+
+  def getProcessedInstances(topDocs: TopDocs, searcher: IndexSearcher): InstanceList = {
     val scoreDocs = topDocs.scoreDocs
-    val instanceList = {
-      val pipeList = new util.ArrayList[Pipe]()
-      pipeList.add(new CharSequenceLowercase())
-      pipeList.add(new CharSequence2TokenSequence(Pattern.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}")))
-      pipeList.add(new TokenSequenceRemoveStopwords(new File(malletRoot + "/stoplists/en.txt"), "UTF-8", false, false, false))
-      pipeList.add(new TokenSequence2FeatureSequence())
-      new InstanceList(new SerialPipes(pipeList))
-    }
+    val instanceList = initMalletInstanceList()
     val instanceArray = for (scoreDoc <- scoreDocs) yield {
       val docID = scoreDoc.doc
       val hitDoc = searcher.doc(docID)
@@ -57,10 +59,15 @@ object A1Mallet {
       new Instance(title, "X", paperID, null)
     }
     instanceList.addThruPipe(instanceArray.iterator)
-    for (i <- 0 until 10) {
-      val instance = instanceArray(i)
-      System.err.print(s"${instance.getName} ${instance.getData}")
-    }
+    //    for (i <- 0 until 10) {
+    //      val instance = instanceArray(i)
+    //      System.err.print(s"${instance.getName} ${instance.getData}")
+    //    }
+    instanceList
+  }
+
+  def apply(topDocs: TopDocs, searcher: IndexSearcher, malletOption: MalletOption): A1Mallet = {
+    val instanceList = getProcessedInstances(topDocs, searcher)
     new A1Mallet(instanceList, malletOption)
   }
 }

@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0" artifacts(Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp"))
+libraryDependencies += "cc.mallet" % "mallet" % "2.0.7"
+
 
 libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.5.0",

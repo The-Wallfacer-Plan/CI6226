@@ -46,11 +46,16 @@ class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extend
   }
 
   private def getTopics(topicDocs: TopDocs, topicsField: String): Array[TopEntryTy] = {
-    //    val malletOption = MalletOption(100, 1.0, 0.1, 6, 60)
-    //    val a1Mallet = A1Mallet(topicDocs, searcher, malletOption)
-    //    a1Mallet.run()
+    //
     //    val a1Term = A1Term(topicDocs, searcher, reader)
     //    a1Term.run(sOption.topN, I_TITLE)
+    //
+    val instanceList = A1Mallet.getProcessedInstances(topicDocs, searcher)
+    //
+    val malletOption = MalletOption(100, 1.0, 0.1, 6, 60)
+    val a1Mallet = new A1Mallet(instanceList, malletOption)
+    //        a1Mallet.run()
+    //
     val a1PoST = A1PoST(topicDocs, searcher, reader)
     a1PoST.run(sOption.topN)
     Array.empty

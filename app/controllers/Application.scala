@@ -38,7 +38,7 @@ class Application extends Controller {
       Ok(views.html.bMain(res))
     } catch {
       case e: Exception => {
-        Logger.warn(s"Error: ${e.getStackTrace.mkString("\n")}")
+        //        Logger.warn(s"Error: ${e.getStackTrace.mkString("\n")}")
         val msg = e.toString
         val result = new BResult(SearchStats(0, None, msg), 0, "", None, Array.empty)
         Ok(views.html.bMain(result))

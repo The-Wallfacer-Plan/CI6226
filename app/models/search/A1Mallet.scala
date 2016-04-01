@@ -66,8 +66,11 @@ object A1Mallet {
     instanceList
   }
 
-  def apply(topDocs: TopDocs, searcher: IndexSearcher, malletOption: MalletOption): A1Mallet = {
-    val instanceList = getProcessedInstances(topDocs, searcher)
-    new A1Mallet(instanceList, malletOption)
+  def getInstanceData(instanceList: InstanceList) = {
+    for (i <- 0 until 10) {
+      val instance = instanceList(i)
+      val data = instance.getData
+    }
   }
+
 }

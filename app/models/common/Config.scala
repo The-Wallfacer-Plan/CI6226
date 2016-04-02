@@ -15,7 +15,7 @@ object Config {
   val VALIDATION = "http://xml.org/sax/features/validation"
   val indexRoot = tempDir + File.separator + "index"
   val splitString = "; "
-  val malletRoot = rootDir + File.separator + "en.txt"
+  val malletSWFileName = rootDir + File.separator + "en.txt"
   //  val xmlFile = rootDir + File.separator + "dblp.xml"
   val xmlFile = rootDir + File.separator + "sample.xml"
 

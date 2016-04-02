@@ -1,6 +1,6 @@
 package models.search
 
-import java.io.File
+import java.io.{File, IOException}
 import java.util
 import java.util.regex.Pattern
 
@@ -43,14 +43,18 @@ object A1Mallet {
     val pipeList = new util.ArrayList[Pipe]()
     pipeList.add(new CharSequenceLowercase())
     pipeList.add(new CharSequence2TokenSequence(Pattern.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}")))
-    pipeList.add(new TokenSequenceRemoveStopwords(new File(malletRoot + "/stoplists/en.txt"), "UTF-8", false, false, false))
+    val malletStopWordFile = new File(malletSWFileName)
+    if (!malletStopWordFile.exists()) {
+      throw new IOException(s"mallet stopWords file $malletStopWordFile not exist")
+    }
+    pipeList.add(new TokenSequenceRemoveStopwords(new File(malletSWFileName), "UTF-8", false, false, false))
     pipeList.add(new TokenSequence2FeatureSequence())
     new InstanceList(new SerialPipes(pipeList))
   }
 
   def getProcessedInstances(topDocs: TopDocs, searcher: IndexSearcher): InstanceList = {
-    val scoreDocs = topDocs.scoreDocs
     val instanceList = initMalletInstanceList()
+    val scoreDocs = topDocs.scoreDocs
     val instanceArray = for (scoreDoc <- scoreDocs) yield {
       val docID = scoreDoc.doc
       val hitDoc = searcher.doc(docID)
@@ -59,17 +63,13 @@ object A1Mallet {
       new Instance(title, "X", paperID, null)
     }
     instanceList.addThruPipe(instanceArray.iterator)
-    //    for (i <- 0 until 10) {
-    //      val instance = instanceArray(i)
-    //      System.err.print(s"${instance.getName} ${instance.getData}")
-    //    }
     instanceList
   }
 
   def getInstanceData(instanceList: InstanceList) = {
-    for (i <- 0 until 10) {
-      val instance = instanceList(i)
-      val data = instance.getData
+    for (instance <- instanceList) yield {
+      val data = instance.getData.asInstanceOf[FeatureSequence]
+      System.err.println(instance.getData)
     }
   }
 

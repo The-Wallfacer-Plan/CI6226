@@ -33,9 +33,9 @@ class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extend
     val queryString = getMustQuery(contentMap)
     val query = new QueryParser(I_PUB_YEAR, analyzer).parse(queryString)
     val collector = new TotalHitCountCollector()
+    val timeStart = System.currentTimeMillis()
     searcher.search(query, collector)
     Logger.info(s"${collector.getTotalHits} hit docs")
-    val timeStart = System.currentTimeMillis()
     val result = searcher.search(query, math.max(1, collector.getTotalHits))
     //    val tops = getTopFreq(result, topicsField)
     val tops = getTopics(result, topicsField)
@@ -51,13 +51,14 @@ class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extend
     //    a1Term.run(sOption.topN, I_TITLE)
     //
     val instanceList = A1Mallet.getProcessedInstances(topicDocs, searcher)
+    A1Mallet.getInstanceData(instanceList)
     //
     val malletOption = MalletOption(100, 1.0, 0.1, 6, 60)
     val a1Mallet = new A1Mallet(instanceList, malletOption)
     //        a1Mallet.run()
     //
-    val a1PoST = A1PoST(topicDocs, searcher, reader)
-    a1PoST.run(sOption.topN)
+    //    val a1PoST = A1PoST(topicDocs, searcher, reader)
+    //    a1PoST.run(sOption.topN)
     Array.empty
   }
 

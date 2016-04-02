@@ -307,7 +307,6 @@ public class ForkedTopicalNGrams implements Serializable {
                     wp[wi] = new WordProb(wi, (double) unitypeTopicCounts[wi][ti]);
                 Arrays.sort(wp);
                 int numToPrint = Math.min(wp.length, numWords);
-                System.out.print("Topic " + ti + ": ");
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < numToPrint; i++) {
                     Object o = uniAlphabet.lookupObject(wp[i].wi);

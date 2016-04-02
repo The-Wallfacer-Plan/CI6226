@@ -63,7 +63,7 @@ class Application extends Controller {
     } catch {
       case e: Exception => {
         val stats = SearchStats(0L, None, e.toString)
-        val result = A1Result(stats, None, Array.empty)
+        val result = A1Result(stats, None, A1TermResult(Array.empty, 0L), MalletResult(List.empty, 0L))
         Ok(views.html.a1Main(result))
       }
     }

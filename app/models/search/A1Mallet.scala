@@ -16,21 +16,20 @@ import scala.collection.JavaConversions._
 
 case class MalletOption(numOfTopics: Int, alphaSum: Double, beta: Double, threads: Int, iterations: Int)
 
-class A1Mallet(instanceList: InstanceList, malletOption: MalletOption) {
+case class MalletResult(data: List[StringPair], duration: Long)
+
+class A1Mallet(instanceList: InstanceList) {
 
   import Config._
 
-  def runTNG(topN: Int) = {
-  }
-
-  def run(topN: Int): List[StringPair] = {
+  def run(topN: Int): MalletResult = {
     val startTime = System.currentTimeMillis()
-    Logger.info("start TNG")
+    Logger.info("starting TNG")
     val m = new ForkedTopicalNGrams(topN)
     val res = m.estimate(instanceList, TNG_ITERATIONS, TNG_ITERATIONS / 10, new Randoms())
     val duration = System.currentTimeMillis() - startTime
-    Logger.info(s"end TNG, cost ${duration}")
-    res.toList
+    Logger.info(s"ending TNG, cost ${duration}ms")
+    MalletResult(res.toList, duration)
   }
 }
 
@@ -38,6 +37,20 @@ class A1Mallet(instanceList: InstanceList, malletOption: MalletOption) {
 object A1Mallet {
 
   import Config._
+
+  def getProcessedInstances(topDocs: TopDocs, searcher: IndexSearcher): InstanceList = {
+    val instanceList = initMalletInstanceList()
+    val scoreDocs = topDocs.scoreDocs
+    val instanceArray = for (scoreDoc <- scoreDocs) yield {
+      val docID = scoreDoc.doc
+      val hitDoc = searcher.doc(docID)
+      val paperID = hitDoc.get(I_PAPER_ID)
+      val title = hitDoc.get(I_TITLE)
+      new Instance(title, "X", paperID, null)
+    }
+    instanceList.addThruPipe(instanceArray.iterator)
+    instanceList
+  }
 
   def initMalletInstanceList() = {
     val pipeList = new util.ArrayList[Pipe]()
@@ -53,20 +66,6 @@ object A1Mallet {
     //    pipeList.add(new TokenSequence2FeatureSequence())
     pipeList.add(new TokenSequence2FeatureSequenceWithBigrams())
     new InstanceList(new SerialPipes(pipeList))
-  }
-
-  def getProcessedInstances(topDocs: TopDocs, searcher: IndexSearcher): InstanceList = {
-    val instanceList = initMalletInstanceList()
-    val scoreDocs = topDocs.scoreDocs
-    val instanceArray = for (scoreDoc <- scoreDocs) yield {
-      val docID = scoreDoc.doc
-      val hitDoc = searcher.doc(docID)
-      val paperID = hitDoc.get(I_PAPER_ID)
-      val title = hitDoc.get(I_TITLE)
-      new Instance(title, "X", paperID, null)
-    }
-    instanceList.addThruPipe(instanceArray.iterator)
-    instanceList
   }
 
 }

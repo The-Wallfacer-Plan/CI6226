@@ -1,6 +1,7 @@
 package models.search
 
-import models.common.{Config, Helper}
+import models.common.Config._
+import models.common.Helper
 import org.apache.lucene.index.IndexReader
 import org.apache.lucene.search.{IndexSearcher, TopDocs}
 import org.apache.lucene.util.BytesRef
@@ -8,13 +9,14 @@ import play.api.Logger
 
 import scala.collection.mutable
 
+case class A1TermResult(data: Array[TopEntryTy], duration: Long)
+
 case class A1Term(topDocs: TopDocs, searcher: IndexSearcher, reader: IndexReader) {
 
-  import Config._
   import Helper._
 
-
-  def run(topN: Int, topicsField: String = I_TITLE): Array[TopEntryTy] = {
+  def run(topN: Int, topicsField: String = I_TITLE): A1TermResult = {
+    val startTime = System.currentTimeMillis()
     val termMap = mutable.Map.empty[String, Long]
     val scoreDocs = topDocs.scoreDocs
     var i = 0
@@ -47,7 +49,9 @@ case class A1Term(topDocs: TopDocs, searcher: IndexSearcher, reader: IndexReader
       }
       i += 1
     }
-    selectionSort(termMap, topN)
+    val duration = System.currentTimeMillis() - startTime
+    val data = selectionSort(termMap, topN)
+    A1TermResult(data, duration)
   }
 
 }

@@ -1,12 +1,24 @@
-@(results: Array[(Long, String)])
+@import models.search.{A1TermResult, MalletResult}
+@(malletResult: MalletResult, termResult: A1TermResult)
 
 <table class="table table-bordered table-striped">
     <ul>
-        @for(entry <- results) {
+        @for(entry <- termResult.data) {
             <tr>
                 <th>@(entry._2)</th>
                 <td>@(entry._1)</td>
             </tr>
         }
+    </ul>
+</table>
+
+<table class="table table-bordered table-striped">
+    <ul>
+    @for(entry <- malletResult.data) {
+        <tr>
+            <th>@(entry.s1)</th>
+            <td>@(entry.s2)</td>
+        </tr>
+    }
     </ul>
 </table>

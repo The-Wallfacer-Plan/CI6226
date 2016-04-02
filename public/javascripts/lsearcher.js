@@ -124,7 +124,7 @@ function _a1QueryParam() {
 
 function a1Search() {
     var paramObj = _a1QueryParam();
-    $.extend(paramObj, getSOptions(), getLOptions());
+    $.extend(paramObj, getSOptions());
     var param = $.param(paramObj);
     location.href = "?" + param
 }

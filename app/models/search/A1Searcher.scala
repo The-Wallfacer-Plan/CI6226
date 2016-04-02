@@ -16,7 +16,11 @@ case class A1Result(stats: SearchStats, lOption: Option[LOption], termResult: A1
     }
     JsObject(Seq(
       "stats" -> stats.toJson(),
-      "lOption" -> lOptionJson
+      "lOption" -> lOptionJson,
+      "time cost" -> JsObject(Seq(
+        "TermFrequency" -> JsString(termResult.duration.toString + "ms"),
+        "TopicalNGram" -> JsString(malletResult.duration.toString + "ms")
+      ))
     ))
   }
 

@@ -31,6 +31,8 @@ import java.util.List;
 
 public class ForkedTopicalNGrams implements Serializable {
 
+    public static int displayedNum = 3;
+
     class WordProb implements Comparable {
         int wi;
         double p;
@@ -156,7 +158,7 @@ public class ForkedTopicalNGrams implements Serializable {
             long iterDuration = System.currentTimeMillis() - iterNow;
             logger.info("iteration {} costs {}ms", iteration, iterDuration);
         }
-        return getTopicSamples(5);
+        return getTopicSamples(displayedNum);
     }
 
     // One iteration of Gibbs sampling, across all documents.

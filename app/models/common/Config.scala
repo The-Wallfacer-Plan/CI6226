@@ -40,7 +40,7 @@ object Config {
 
   val DEFAULT_CONJ = "NIL"
 
-  val TNG_ITERATIONS = 60
+  val TNG_ITERATIONS = 5
 
   //    interface Configurable
   val defaultTopN = 10

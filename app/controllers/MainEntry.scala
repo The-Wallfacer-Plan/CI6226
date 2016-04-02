@@ -11,7 +11,7 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 
-class Application extends Controller {
+class MainEntry extends Controller {
 
   val inputFile = Config.xmlFile
   val bIndexFolder = {
@@ -49,19 +49,21 @@ class Application extends Controller {
 
 
   def a1Search = Action { request => {
+    Logger.info("a1Search")
     val pubYearOpt = request.getQueryString(I_PUB_YEAR)
     try {
       if (pubYearOpt.isEmpty) {
         throw new LError(s"[$I_PUB_YEAR] should be nonEmpty")
       }
-      val lOption = LOption(request)
-      val sOption = SOption(request)
       val attrContentMap = Map(I_VENUE -> request.getQueryString(I_VENUE), I_AUTHORS -> request.getQueryString(I_AUTHORS), I_PUB_YEAR -> pubYearOpt)
+      val sOption = new SOption("ClassicSimilarity", defaultTopN)
+      val lOption = new LOption(stemming = false, ignoreCase = true, swDict = "Lucene")
       val topRecorder = new A1Searcher(lOption, sOption, bIndexFolder)
       val result = topRecorder.run(attrContentMap)
       Ok(views.html.a1Main(result))
     } catch {
       case e: Exception => {
+        Logger.info(s"${e.getStackTrace.mkString("\n")}")
         val stats = SearchStats(0L, None, e.toString)
         val result = A1Result(stats, None, A1TermResult(Array.empty, 0L), MalletResult(List.empty, 0L))
         Ok(views.html.a1Main(result))

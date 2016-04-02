@@ -49,7 +49,7 @@ case class A1PoST(topDocs: TopDocs, searcher: IndexSearcher, reader: IndexReader
         val sb = new mutable.ArrayBuffer[String]()
         val data = instance.getData.toString
         if (data.length == 0 || data == null) {
-          Sentence.toWordList("XXXXXXXXXXXXXXXXXXXXX")
+          Sentence.toWordList("")
         } else {
           for (s <- data.toString.split("\n")) {
             sb += s.split(' ')(1).replace('_', ' ')

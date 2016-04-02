@@ -24,6 +24,7 @@ case class A1Result(stats: SearchStats, lOption: Option[LOption], tops: Array[To
   def toJsonString(): String = Json.prettyPrint(toJson())
 }
 
+
 class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extends LSearcher(lOption, sOption, indexFolder) {
 
   import Config._
@@ -46,11 +47,10 @@ class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extend
 
   private def getTopics(topicDocs: TopDocs, topicsField: String): Array[TopEntryTy] = {
     //
-    //    val a1Term = A1Term(topicDocs, searcher, reader)
-    //    a1Term.run(sOption.topN, I_TITLE)
+    val a1Term = A1Term(topicDocs, searcher, reader)
+    a1Term.run(sOption.topN, I_TITLE)
     //
     val instanceList = A1Mallet.getProcessedInstances(topicDocs, searcher)
-    //    A1Mallet.getInstanceData(instanceList)
     //
     val malletOption = MalletOption(100, 1.0, 0.1, 6, 60)
     val a1Mallet = new A1Mallet(instanceList, malletOption)

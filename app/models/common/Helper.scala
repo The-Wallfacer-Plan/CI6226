@@ -5,6 +5,7 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.{FileVisitResult, Files, Path, SimpleFileVisitor}
 
 import models.common.Config._
+import play.api.Logger
 
 object Helper {
 
@@ -32,6 +33,7 @@ object Helper {
 
 
   def selectionSort(textMap: scala.collection.mutable.Map[String, Long], topN: Int): Array[TopEntryTy] = {
+    Logger.info(s"sorting the result, size=${textMap.size}")
     val array = Array.fill[TopEntryTy](topN)(0L -> null)
     var i = 0
     while (i < array.length) {

@@ -37,7 +37,6 @@ class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extend
     searcher.search(query, collector)
     Logger.info(s"${collector.getTotalHits} hit docs")
     val result = searcher.search(query, math.max(1, collector.getTotalHits))
-    //    val tops = getTopFreq(result, topicsField)
     val tops = getTopics(result, topicsField)
     val duration = System.currentTimeMillis() - timeStart
     reader.close()
@@ -51,14 +50,16 @@ class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extend
     //    a1Term.run(sOption.topN, I_TITLE)
     //
     val instanceList = A1Mallet.getProcessedInstances(topicDocs, searcher)
-    A1Mallet.getInstanceData(instanceList)
+    //    A1Mallet.getInstanceData(instanceList)
     //
     val malletOption = MalletOption(100, 1.0, 0.1, 6, 60)
     val a1Mallet = new A1Mallet(instanceList, malletOption)
-    //        a1Mallet.run()
+    a1Mallet.run(sOption.topN)
     //
     //    val a1PoST = A1PoST(topicDocs, searcher, reader)
     //    a1PoST.run(sOption.topN)
+    //    a1PoST.dealWith(instanceList)
+    //    a1PoST.run(instanceList, sOption.topN)
     Array.empty
   }
 

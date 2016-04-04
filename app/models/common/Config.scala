@@ -16,8 +16,8 @@ object Config {
   val indexRoot = tempDir + File.separator + "index"
   val splitString = "; "
   val malletSWFileName = rootDir + File.separator + "en.txt"
-  val xmlFile = rootDir + File.separator + "dblp.xml"
-  //  val xmlFile = rootDir + File.separator + "sample.xml"
+    val xmlFile = rootDir + File.separator + "dblp.xml"
+//  val xmlFile = rootDir + File.separator + "sample.xml"
 
   val ignoredTerms = {
     val filterFileName = rootDir + File.separator + "topics_filter"

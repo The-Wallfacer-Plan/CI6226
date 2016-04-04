@@ -63,7 +63,7 @@ class MainEntry extends Controller {
       Ok(views.html.a1Main(result))
     } catch {
       case e: Exception => {
-        Logger.info(s"${e.getStackTrace.mkString("\n")}")
+//        Logger.info(s"${e.getStackTrace.mkString("\n")}")
         val stats = SearchStats(0L, None, e.toString)
         val result = A1Result(stats, None, A1TermResult(Array.empty, 0L), MalletResult(List.empty, 0L))
         Ok(views.html.a1Main(result))

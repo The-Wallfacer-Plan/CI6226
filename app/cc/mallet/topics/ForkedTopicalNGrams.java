@@ -29,7 +29,7 @@ import java.util.List;
  *         based on C code by Xuerui Wang.
  */
 
-public class ForkedTopicalNGrams implements Serializable {
+public class ForkedTopicalNGrams {
 
     public static int displayedNum = 3;
 

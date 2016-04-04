@@ -62,7 +62,7 @@ object A1Mallet {
     if (!malletStopWordFile.exists()) {
       throw new IOException(s"mallet stopWords file $malletStopWordFile not exist")
     }
-    pipeList.add(new TokenSequenceRemoveStopwords(new File(malletSWFileName), "UTF-8", false, false, false))
+    pipeList.add(new TokenSequenceRemoveStopwords(malletStopWordFile, "UTF-8", false, false, false))
     //    pipeList.add(new TokenSequence2FeatureSequence())
     pipeList.add(new TokenSequence2FeatureSequenceWithBigrams())
     new InstanceList(new SerialPipes(pipeList))

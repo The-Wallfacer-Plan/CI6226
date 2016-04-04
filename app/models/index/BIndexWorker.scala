@@ -58,7 +58,7 @@ class BIndexWorker(writer: IndexWriter) extends LIndexWorker(writer) {
     Logger.debug(s"=> $pub")
     val document = new Document()
 
-    combinedAddField(I_PAPER_ID, pub.paperId, document, tokenized = false)
+    combinedAddField(I_PAPER_ID, pub.paperId.replace('/', ' '), document, tokenized = true)
     combinedAddField(I_TITLE, pub.title, document, tokenized = true)
     combinedAddField(I_KIND, pub.kind, document, tokenized = false)
     combinedAddField(I_VENUE, pub.venue, document, tokenized = false)

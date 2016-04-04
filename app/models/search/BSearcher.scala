@@ -68,9 +68,12 @@ class BSearcher(lOption: LOption, sOption: SOption, indexFolderString: String) e
       val fieldValues = for (fieldName <- allFields) yield {
         fieldName match {
           case I_AUTHORS => {
-            fieldName -> hitDoc.getFields(I_AUTHORS).map(_.stringValue()).mkString(";")
+            I_AUTHORS -> hitDoc.getFields(I_AUTHORS).map(_.stringValue()).mkString("; ")
           }
-          case _ => fieldName -> hitDoc.getField(fieldName).stringValue()
+          case I_PAPER_ID => {
+            I_PAPER_ID -> hitDoc.get(fieldName).replace(' ', '/')
+          }
+          case _ => fieldName -> hitDoc.get(fieldName)
         }
       }
       val fieldDocMap = Map(fieldValues: _*)

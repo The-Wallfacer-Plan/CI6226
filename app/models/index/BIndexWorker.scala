@@ -43,9 +43,14 @@ class BIndexWorker(writer: IndexWriter) extends LIndexWorker(writer) {
     Logger.info("index done")
   }
 
-  private def combinedAddField(fieldName: String, fieldValue: String, document: Document): Unit = {
-    addField(fieldName, fieldValue, document)
-    addField(I_ALL, fieldValue, document)
+  private def combinedAddField(fieldName: String, fieldValue: String, document: Document, tokenized: Boolean): Unit = {
+    if (tokenized) {
+      addTokenizedField(fieldName, fieldValue, document)
+      addTokenizedField(I_ALL, fieldValue, document)
+    } else {
+      addStringField(fieldName, fieldValue, document)
+      addStringField(fieldName, fieldValue, document)
+    }
   }
 
   override def index(pub: Publication): Unit = {
@@ -53,12 +58,12 @@ class BIndexWorker(writer: IndexWriter) extends LIndexWorker(writer) {
     Logger.debug(s"=> $pub")
     val document = new Document()
 
-    combinedAddField(I_PAPER_ID, pub.paperId, document)
-    combinedAddField(I_TITLE, pub.title, document)
-    combinedAddField(I_KIND, pub.kind, document)
-    combinedAddField(I_VENUE, pub.venue, document)
-    combinedAddField(I_PUB_YEAR, pub.pubYear, document)
-    pub.authors.foreach(author => combinedAddField(I_AUTHORS, author, document))
+    combinedAddField(I_PAPER_ID, pub.paperId, document, tokenized = false)
+    combinedAddField(I_TITLE, pub.title, document, tokenized = true)
+    combinedAddField(I_KIND, pub.kind, document, tokenized = false)
+    combinedAddField(I_VENUE, pub.venue, document, tokenized = false)
+    combinedAddField(I_PUB_YEAR, pub.pubYear, document, tokenized = false)
+    pub.authors.foreach(author => combinedAddField(I_AUTHORS, author, document, tokenized = true))
 
     if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
       writer.addDocument(document)

@@ -7,17 +7,7 @@ import org.apache.lucene.index.{IndexOptions, IndexWriter}
 
 object LIndexWorker {
 
-  val ft1 = {
-    val ft = new FieldType()
-    ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
-    ft.setTokenized(true)
-    ft.setStored(true)
-    ft.setStoreTermVectors(true)
-    ft.freeze()
-    ft
-  }
-
-  val ft2 = {
+  val textFT = {
     val ft = new FieldType()
     ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
     ft.setTokenized(true)
@@ -27,8 +17,23 @@ object LIndexWorker {
     ft
   }
 
-  def addField(key: String, value: String, document: Document) = {
-    val field = new Field(key, value, ft1)
+  val stringFT = {
+    val ft = new FieldType()
+    ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+    ft.setTokenized(false)
+    ft.setStored(true)
+    ft.setStoreTermVectors(false)
+    ft.freeze()
+    ft
+  }
+
+  def addTokenizedField(key: String, value: String, document: Document) = {
+    val field = new Field(key, value, textFT)
+    document.add(field)
+  }
+
+  def addStringField(key: String, value: String, document: Document) = {
+    val field = new Field(key, value, stringFT)
     document.add(field)
   }
 

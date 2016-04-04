@@ -15,13 +15,12 @@ object Config {
   val VALIDATION = "http://xml.org/sax/features/validation"
   val indexRoot = tempDir + File.separator + "index"
   val splitString = "; "
-  val malletSWFileName = rootDir + File.separator + "en.txt"
-    val xmlFile = rootDir + File.separator + "dblp.xml"
-//  val xmlFile = rootDir + File.separator + "sample.xml"
+  val longSWFName = rootDir + File.separator + "en.txt"
+  val xmlFile = rootDir + File.separator + "dblp.xml"
+  //    val xmlFile = rootDir + File.separator + "sample.xml"
 
   val ignoredTerms = {
-    val filterFileName = rootDir + File.separator + "topics_filter"
-    val ignored = Source.fromFile(filterFileName).getLines().toSet
+    val ignored = Source.fromFile(longSWFName).getLines().toSet
     require(ignored.nonEmpty)
     ignored
   }
@@ -46,8 +45,9 @@ object Config {
   val defaultTopN = 10
   val defaultStep = 5
 
+  val defaultNGramSizes = Array(2, 3, 4)
+
   val a1Range = (2000, 2016)
   val a2Range = (1936, 2016)
 
-  val defaultSearchString = "title:\"Google\" authors:\"Thilo Weichert\""
 }

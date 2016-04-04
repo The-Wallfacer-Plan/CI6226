@@ -1,6 +1,6 @@
 @import common.Config
 
-@selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
+    @selectIt(attribute: String, defaultVal: String, candidates: Array[String]) = {
     <div class="form-group">
         <label for="app1-@(attribute)" class="control-label"><b>@attribute</b></label>
         <div>
@@ -17,7 +17,7 @@
     </div>
 }
 
-@inputIt(attribute: String, elemId: String) = {
+    @inputIt(attribute: String, elemId: String) = {
     <div class="form-group">
         <label for="app1-@(attribute)">@attribute</label>
         <div>
@@ -28,7 +28,7 @@
 
 <div class="container">
     <form class="form-horizontal">
-        @selectIt("pubYear", "2007", Array.range(Config.a1Range._1, Config.a2Range._2).map(_.toString))
+        @selectIt("pubYear", "2013", Array.range(Config.a1Range._1, Config.a2Range._2).map(_.toString))
         @inputIt("venue", "Informatik Spektrum")
         @inputIt("authors", "Andrei Terechko")
     </form>

@@ -47,7 +47,7 @@ object Helper {
       textMap -= current._2
       i += 1
     }
-    array
+    for (a <- array; if a._1 != 0) yield a
   }
 
   class LError(val msg: String) extends Exception(msg)

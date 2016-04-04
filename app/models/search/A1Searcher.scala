@@ -1,12 +1,13 @@
 package models.search
 
+import models.common.Config._
 import models.common.{Config, LOption}
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import play.api.Logger
 import play.api.libs.json._
 
-case class A1Result(stats: SearchStats, lOption: Option[LOption], termResult: A1TermResult, malletResult: MalletResult) {
+case class A1Result(stats: SearchStats, lOption: Option[LOption], topEntries: Array[TopEntryTy]) {
   def toJson(): JsValue = {
     val lOptionJson = {
       lOption match {
@@ -17,10 +18,7 @@ case class A1Result(stats: SearchStats, lOption: Option[LOption], termResult: A1
     JsObject(Seq(
       "stats" -> stats.toJson(),
       "lOption" -> lOptionJson,
-      "time cost" -> JsObject(Seq(
-        "TermFrequency" -> JsString(termResult.duration.toString + "ms"),
-        "TopicalNGram" -> JsString(malletResult.duration.toString + "ms")
-      ))
+      "listed" -> JsNumber(topEntries.length)
     ))
   }
 
@@ -39,24 +37,15 @@ class A1Searcher(lOption: LOption, sOption: SOption, indexFolder: String) extend
     val timeStart = System.currentTimeMillis()
     searcher.search(query, collector)
     Logger.info(s"${collector.getTotalHits} hit docs")
-    val result = searcher.search(query, math.max(1, collector.getTotalHits))
-    val termResult = getTermResults(result, topicsField)
-    val malletResult = getMalletResults(result, topicsField)
+    val topDocs = searcher.search(query, math.max(1, collector.getTotalHits))
+    val ngramResults = {
+      val a1Mallet = A1Mallet(topDocs, searcher)
+      a1Mallet.runNGrams(sOption.topN, defaultNGramSizes)
+    }
     val duration = System.currentTimeMillis() - timeStart
     reader.close()
     val stats = SearchStats(duration, Some(query), "OK")
-    new A1Result(stats, Some(lOption), termResult, malletResult)
-  }
-
-  private def getMalletResults(topDocs: TopDocs, topicsField: String): MalletResult = {
-    val instanceList = A1Mallet.getProcessedInstances(topDocs, searcher)
-    val a1Mallet = new A1Mallet(instanceList)
-    a1Mallet.run(sOption.topN)
-  }
-
-  private def getTermResults(topicDocs: TopDocs, topicsField: String): A1TermResult = {
-    val a1Term = A1Term(topicDocs, searcher, reader)
-    a1Term.run(sOption.topN, I_TITLE)
+    new A1Result(stats, Some(lOption), ngramResults)
   }
 
 }

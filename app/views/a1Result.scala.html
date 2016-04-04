@@ -1,12 +1,12 @@
-@import models.search.{A1TermResult, MalletResult}
-@(malletResult: MalletResult, termResult: A1TermResult)
+@import models.common.Config.TopEntryTy
+@(topEntries: Array[TopEntryTy])
 
 <div class="container">
-    @if(termResult.data.length > 0) {
-        <h3>Topics Based on Term Frequency</h3>
+    @if(topEntries.length > 0) {
+        <h3>Top-@(topEntries.length) Topics</h3>
         <table class="table table-bordered table-striped">
             <ul>
-            @for(entry <- termResult.data) {
+            @for(entry <- topEntries) {
                 <tr>
                     <th>@(entry._2)</th>
                     <td>@(entry._1)</td>
@@ -15,25 +15,4 @@
             </ul>
         </table>
     }
-</div>
-
-<div class="container">
-@if(malletResult.data.nonEmpty) {
-    <h3>Topics Based on Topical N-Gram</h3>
-    <table class="table table-bordered table-striped">
-        <ul>
-        @for((e, i) <- malletResult.data.zipWithIndex) {
-            <tr>
-                <td rowspan="2">@(i + 1)</td>
-                <th>uniGram</th>
-                <td>@(e.s1)</td>
-            </tr>
-            <tr>
-                <th>nGram</th>
-                <td>@(e.s2)</td>
-            </tr>
-        }
-        </ul>
-    </table>
-}
 </div>

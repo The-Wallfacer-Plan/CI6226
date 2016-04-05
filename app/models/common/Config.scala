@@ -11,6 +11,9 @@ object Config {
 
   val homeDir = System.getProperty("user.home")
   val tempDir = System.getProperty("java.io.tmpdir")
+
+  // NOTE: please change this value to the absolute path for "public/resources" of the project
+  // and put dblp.xml file inside the directory.
   val rootDir = homeDir + File.separator + "Dropbox/PHDCourses/IR/assignment"
   val VALIDATION = "http://xml.org/sax/features/validation"
   val indexRoot = tempDir + File.separator + "index"

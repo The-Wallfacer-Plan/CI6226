@@ -60,9 +60,9 @@ class BIndexWorker(writer: IndexWriter) extends LIndexWorker(writer) {
 
     combinedAddField(I_PAPER_ID, pub.paperId.replace('/', ' '), document, tokenized = true)
     combinedAddField(I_TITLE, pub.title, document, tokenized = true)
-    combinedAddField(I_KIND, pub.kind, document, tokenized = false)
-    combinedAddField(I_VENUE, pub.venue, document, tokenized = false)
+    combinedAddField(I_VENUE, pub.venue, document, tokenized = true)
     combinedAddField(I_PUB_YEAR, pub.pubYear, document, tokenized = false)
+    combinedAddField(I_KIND, pub.kind, document, tokenized = false)
     pub.authors.foreach(author => combinedAddField(I_AUTHORS, author, document, tokenized = true))
 
     if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {

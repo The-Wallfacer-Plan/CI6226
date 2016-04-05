@@ -50,8 +50,9 @@ class A2IndexWorker(indexWriter: IndexWriter) extends LIndexWorker(indexWriter) 
   }
 
   override def writeDone(): Unit = {
+    Logger.info("dumping year-venue info to file")
     val projectResourceDir = play.Play.application().path()
-    val outFileName = projectResourceDir + "/public/tmp/outfile.txt"
+    val outFileName = projectResourceDir + "/public/resources/outfile.txt"
     val fw = new FileWriter(outFileName, false)
     for (entry <- docMap) {
       indexWriter.addDocument(entry._2)

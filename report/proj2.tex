@@ -1,0 +1,183 @@
+\section{Project 2}\label{sec:proj2}
+
+In this section, we present two IR applications, Top-$N$ most popular research topics and Top-$N$ similar publication Venue and Year with a given query.
+
+\subsection{Application 1: Top-N Topic Discovery}
+
+This application tries to discover the top-$N$ most popular key words from relative research topics in each year. It includes two steps.
+\begin{enumerate}
+	\item Retrieving all the relevant documents that match the query.
+	\item According to field information of the matched documents (specially, \textsf{title} field), get the top-$N$ topics.\end{enumerate}
+
+We have already dealt with the first procedure in Project 1. The differences are that, the \textsf{year} field is mandatory in the query, but we are allowed to specify different \textsf{venue}s or \textsf{authors}.
+
+\begin{table*}[!ht]
+\caption{TF Based Top-10 Topics in 2007}\label{tbl:a1-tf-res}
+\small
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Term}      & networks & systems & analysis & system & model & design & network & control & wireless & performance \\ \hline
+\textbf{Frequency} & 9934     & 9675    & 8300     & 8171   & 7389  & 5983   & 5274    & 5128    & 4666     & 4210     \\  \hline
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!ht]
+\caption{TNG Based Top-10 Topics in 2007 (partly listed 1,2,3,$\ldots$10)}\label{tbl:a1-tng-res}
+\centering
+\label{my-label}
+\begin{tabular}{|l|l|l|}
+\hline
+\multirow{2}{*}{1} & uniGram & efficient, data, system                                                   \\ \cline{2-3}
+                   & nGram   & genetic\_algorithm, performance\_evaluation, guest\_editors\_introduction \\ \hline
+\multirow{2}{*}{2} & uniGram & performance, approach, design                                             \\ \cline{2-3}
+                   & nGram   & design\_implementation, performance\_analysis, experimental\_evaluation   \\ \hline
+\multirow{2}{*}{3} & uniGram & adaptive, efficient, approach                                             \\ \cline{2-3}
+                   & nGram   & design\_implementation, performance\_analysis, performance\_evaluation    \\ \hline
+\multirow{2}{*}{10} & uniGram & efficient, systems, model                                                 \\ \cline{2-3}
+                   & nGram   & performance\_analysis, guest\_editorial, wireless\_sensor                 \\ \hline
+\end{tabular}
+\end{table*}
+
+Now our focus would be how to define a ``topic'' and what methodology to apply to generate them. We applied two approaches.
+
+
+
+
+\subsubsection{Term-Frequency Based Topic Discovery}\label{sec:a1-tf}
+A naive approach is to count the term frequency of all the matched documents and select those with highest frequencies. This approach has the limitation that not all the terms can represent topics, even using an aggressive stopword list; even worse, the generated topics might  not be helpful for the users since they probably are the words that have broad meanings.
+
+
+As an example, Table~\ref{tbl:a1-tf-res} depicts a term frequency-based results with the query \verb|pubYear:2007|. Obviously these results are far from satisfactory since they are too ambiguous: does ``system'' mean an operating system, or a network system, or a type system? Meanwhile, ``systems'' and ``system'' are not merged.
+
+
+\subsubsection{Topic Modeling Discovery}
+In natural language processing, topic modeling is widely used as a type of statistical model to extract abstract ``topics'' that occur in a collection of documents~\cite{topic_model}. It follows the intuition that given a document with a particular topic, one would expect particular words to appear in the document more or less frequently. Latent Dirichlet allocation (LDA)~\cite{paper_lda} is the most famous topic model that allows sets of observations to be explained by unobserved groups that explain why some parts of the data are similar. The results of LDA are several instances of words. Topical N-Grams (TNG)~\cite{paper_tng} is another similar topic model but is inherently aware of a phrase. During our trial, we used the builtin LDA and TNG modeling in Mallet, with the default parameters and 20 iterations.
+
+For the query \verb|pubYear:2007|, unfortunately, LDA seems to retrieve 10 topics, similar but \textit{no better} than the term frequency-based one in Section~\ref{sec:a1-tf}. Meanwhile, TNG's results are shown in Table~\ref{tbl:a1-tng-res}. It is noticeable that the \textsf{uniGram} and \textsf{nGram} seems not quite relevant; still there are overlaps for different scored topics.
+
+A further though of the application scenario reveals that topic modeling should be too killing. Both LDA and TNG are good at extracting topics from a large document collection. Despite that DBLP contains many entries, the content we need to extract is mainly from the titles of publications, which typically contain no more than 20 words (and mostly are less than 10 words). Therefore, the statistical models cannot learn from each publication well.
+
+\subsubsection{Vanilla N-Grams Topic Discovery}
+Finally we applied a compromised approach: we treat a N-Gram term as a topic, but simply calculate its frequency and retrieve those with highest frequencies as the popular topics. We select N heuristically that they can be 2, 3, 4, this is because typically a topic merely contains two (e.g., ``information retrieval'') or three (e.g., ``wireless sensor networks'') or four (e.g., ``code division multiple access'') words.
+
+The implementation (\textsf{A1Mallet}) is based on Mallet-2.0.8-SNAPSHOT. As the preprocessing did in Lucene indexing, we extract tokens from \textsf{title} field, removing non-alpha characters and stopwords; then we generate the N-Gram forms of the tokens and count their frequencies (with a mapping from N-Gram term to their occurrences); and finally select the top-10 frequently used terms.
+
+Table ~\ref{tbl:a1-ngram} reveals the hot topics in 2015. Obviously the N-Gram based results seem better: it actually contains widely accepted hot topics such as ``neural networks'', ``big data'', ``wireless sensor networks'', ``cloud computing'', etc. These results can be calculated within 12s; given the number of matched documents, it should be considered efficient.
+
+Admittedly, it still has some drawbacks because we can see they ``wireless sensor'', ``sensor networks'' and ``wireless sensor networks'' perhaps should be merged into one topic.
+
+In effect, for this particular case, N-Gram frequency based approach is perhaps the most profitable way to discover the hottest topics due to the fact that the publication titles in academical papers are typically a summary and therefore contain lots of commonly used phrases.
+
+\begin{table}[t]
+\centering
+\caption{N-Gram Based Top-10 Topics in 2015}
+\label{tbl:a1-ngram}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Topics}          & \textbf{Frequency} \\ \hline
+sensor networks          & 1726               \\ \hline
+wireless sensor          & 1544               \\ \hline
+neural networks          & 1408               \\ \hline
+wireless sensor networks & 1241               \\ \hline
+big data                 & 1190               \\ \hline
+social networks          & 838                \\ \hline
+social media             & 824                \\ \hline
+cognitive radio          & 791                \\ \hline
+wireless networks        & 715                \\ \hline
+cloud computing          & 680                \\ \hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Application 2: Similar Venue Discovery}
+
+If we consider all the paper titles published in a single year in a publication venue as a virtual document, we can get the top-$N$ documents similar to a given one. This is essentially useful for researchers of a field, and can also be used a guide for the research field classification.
+
+\subsubsection{Virtual Document Indexing}
+We use a different index strategy from the one in Project 1: the titles of publications belonging to a special venue and year are added to one document's ``title'' field,  and the venue and year information is also indexed. This is achieved by maintaining a map from the venue-year to the document, and finally writing back all the documents to disk (\textsf{B2IndexWorker}). The main core implementations are shown in Fig. \ref{fig:a2index}.
+
+\begin{figure}[t]
+\begin{lstlisting}[language=scala]
+def index(pub: Publication) = {
+  val docSign = pub.pubYear+"\t"+pub.venue
+  if (!docMap.contains(docSign)) {
+    val doc = new Document
+    addField(PUBYEAR, pub.pubYear, doc)
+    addField(VENUE, pub.venue, doc)
+    addField(TITLE, pub.title, doc)
+    docMap += docSign -> doc
+  } else {
+    val doc = docMap(docSign)
+    addField(TITLE, pub.title, doc)
+  }
+}	
+\end{lstlisting}
+\caption{Virtual Document Indexing.}\label{fig:a2index}
+\end{figure}
+
+\subsubsection{Searching}
+Given a special \textsf{year} and \textsf{venue} in the query, we are able to find the matched document(s). The second round is to find the similar documents with these documents. We use \textsf{MoreLikeThis} API to achieve this goal. Basically, we only rely on the \textsf{title} field for the similarity analysis. Due to the fact that the most similar doc will always be the document itself, we are in fact getting the top-$(N+1)$ results followed by droping the document itself.
+
+
+%\begin{figure}[t]
+%\begin{lstlisting}[language=scala]
+%def getSimilarDocs(docID: Int) = {
+%  val mlt = new MoreLikeThis(reader)
+%  mlt.setFieldNames(Array(TITLE))
+%  val query = mlt.like(docID)
+%  val similarDocs =
+%    searcher.search(query, sOption.topN+1)
+%  for {
+%    similarDoc <- similarDocs.scoreDocs
+%    if docID != similarDoc.doc
+%  }
+%  yield {
+%    val docID = similarDoc.doc
+%    val score = similarDoc.score
+%    val hitDoc = searcher.doc(docID)
+%    val venue = hitDoc.get(VENUE)
+%    val pubYear = hitDoc.get(PUBYEAR)
+%    (venue + ", " + pubYear, score)
+%  }
+%}	
+%\end{lstlisting}
+%\caption{Similar Documents Retrieval.}\label{fig:a2search}	
+%\end{figure}
+
+\subsubsection{Evaluation}
+
+We use different venue-year pairs to see the effectiveness of {\SS}.
+
+\begin{table}[t]
+\small
+\cprotect\caption {Top-15 most similar venues \& years to query \verb|venue:"IEEE Trans. Knowl Data Eng." AND pubYear:2014.|}\label{tbl:similarVenue}	
+%\resizebox{\textwidth}{!}{%
+		\begin{tabular}{|c|l|c|c|}
+			\hline
+				\textbf{Rank} & \multicolumn{1}{c|}{\textbf{Venue \& pubYear}} & \multicolumn{1}{c|}{\textbf{Similarity}} \\ \hline
+				1             & IEEE Trans. Knowl. Data Eng.,2015              & 0.7648                                   \\ \hline
+				2             & ICDE,2011                                      & 0.7269                                   \\ \hline
+				3             & ICDE,2012                                      & 0.7124                                   \\ \hline
+				4             & IEEE Trans. Knowl. Data Eng.,2013              & 0.6797                                   \\ \hline
+				5             & IEEE Trans. Knowl. Data Eng.,2011              & 0.6654                                   \\ \hline
+				6             & IEEE Trans. Knowl. Data Eng.,2016              & 0.6577                                   \\ \hline
+				7             & IEEE Trans. Knowl. Data Eng.,2012              & 0.6533                                   \\ \hline
+				8             & EDBT,2009                                      & 0.6407                                   \\ \hline
+				9             & DASFAA,2009                                    & 0.6389                                   \\ \hline
+				10            & DASFAA,2012                                    & 0.6159                                   \\ \hline
+				11            & PVLDB,2013                                     & 0.6126                                   \\ \hline
+				12            & ICDE,2013                                      & 0.6105                                   \\ \hline
+				13            & CIKM,2009                                      & 0.6082                                   \\ \hline
+				14            & CIKM,2012                                      & 0.6073                                   \\ \hline
+				15            & SIGMOD Conference,2010                         & 0.5933                                   \\ \hline
+		\end{tabular}%
+	%}
+	%
+\end{table}
+
+As an example, we use ``IEEE Transactions on Knowledge and Data Engineering'' in Year 2014 as the query, i.e., searching with ``IEEE Trans. Knowl. Data Eng.'' as the \textsf{venue} content and ``2014'' as \textsf{pubYear}.  By specifying $N=15$, we get the top-15 similar publication venue and year with \textit{ClassicSimilarity}, we obtained a query result as listed in Table~\ref{tbl:similarVenue}. It is obvious that the results include 'IEEE Trans. Knowl. Data Eng.' in different published years,  as well as ``ICDE'', ``EDBT'', ``DASFFA'', ``PVLDB'', ``CIKM'' and ``SIGMOD''. After some investigations on these matched venues, we are persuaded that all of them mainly deal with research problems on data or database management. Additionally, {\SS} are able to get these results within tens of milliseconds.
+
+After 10 other queries against other venues with special years, we are positive that {\SS} is able to retrieve similar venues effectively and efficiently.
+
+

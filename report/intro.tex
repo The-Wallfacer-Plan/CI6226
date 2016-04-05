@@ -1,0 +1,14 @@
+\section{Introduction}
+
+Information Retrieval (IR) tries to find material (usually documents) of an unstructured nature (usually text) that satisfies an information need from within large collections~\cite{MRS08}. A search engine provides an interface to a group of items that enables users to specify criteria about a given information need and have the engine find the material~\cite{search-engine}. The search results are a list of relevant items.
+Search engines help humans to minimize the time to find information and the amount of information to be consulted.
+There are many kinds of search engines aiming at different domains, such as web search engine, visual search engine, enterprise search engine, desktop search engine, and so on \cite{list-of-engine}.
+
+In this study, we focus on the retrieval of the publication records in DBLP (\textbf{D}igital \textbf{B}ibliography \& \textbf{L}ibrary \textbf{P}roject).
+DBLP is a computer science bibliography which provides open bibliographic information on major computer science publications. It records papers from many resources, such as journals, magazines, conferences and workshops, informal publications, and so on. For simplicity, in our project, we only consider articles and inproceedings. The raw DBLP data is in a single daily-updated XML file\footnote{\url{http://dblp.uni-trier.de/xml/}}. The xml file used in our experiments was retrieved on 22 February, 2016.
+
+A search engine called {\SS} is developed in this study. It can search for the publication records based on user queries. Besides, users can also search for the top-$N$ topics in a single year or top-$N$ publication venues in a specific year that are similar with the given one.
+
+The objective of this work is to practice and be familiar with (1) the basic knowledge of IR, such as term weighting schemes (e.g., IT-IDF based measures), indexing process, ranking mechanisms, and evaluation for a search engine, and (2) the details for the development of a basic search engine with the help of third-party libraries. 
+
+The rest of this paper is organized as follows. Section \ref{sec:overview} gives an overview of the main processes for a search engine; section~\ref{sec:impl-overview} gives a blueprint of the implementations; section~\ref{sec:extraction} talks about the data extraction from xml file; section \ref{sec:proj1} shows the indexing and searching implementation details as well as the evaluations; section \ref{sec:proj2} talks about the two IR applications; Section \ref{sec:discuss} contains discussions on the implementation method; and section \ref{sec:conclusion} concludes our work.

@@ -1,0 +1,108 @@
+\RequirePackage[hyphens]{url}
+\documentclass{sig-alternate-05-2015}
+\usepackage{graphicx}
+\usepackage[marginal]{footmisc}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{cprotect}
+\usepackage{multirow}
+%\usepackage{tabularx}
+
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+  numbers=left,
+  showstringspaces=false,
+  xleftmargin=0em,
+  framexleftmargin=0em,
+  frame=single,
+  commentstyle=\it,
+  basicstyle=\ttfamily\scriptsize,
+  commentstyle=\color{mygreen},
+  numberstyle=\tiny\color{mygray},
+  stringstyle=\color{mymauve},
+  keywordstyle=\color{blue}
+}
+
+\lstdefinestyle{myCompactStyle}{
+  xleftmargin=0em,
+  framexleftmargin=0em,
+  numbers=none,
+  stepnumber=1,
+  tabsize=4,
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries,
+  showspaces=false,
+  showstringspaces=false
+}
+
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+
+\newtheorem{rem}{Remark}
+\def\SS{{\textit{LSearcher}}}
+
+\newcommand{\todo}[1]{{\footnotesize \textcolor{red}{$\ll$\textsf{TODO #1}$\gg$}}}%
+
+\begin{document}
+
+\title{LSearcher: A DBLP Search Engine Based on Lucene}
+
+
+\numberofauthors{4}
+\author{
+\alignauthor Chen Hongxu, {SCSE}\\
+       \email{hchen017@e.ntu.edu.sg}
+% 2nd. author
+\alignauthor
+Feng Ruitao, {SCSE}\\
+       \email{feng0082@e.ntu.edu.sg}
+%% 3rd. author
+\alignauthor
+Zhou Yuan, {SCSE}\\
+       \email{yzhou027@e.ntu.edu.sg}
+\and  % use '\and' if you need 'another row' of author names
+%% 4th. author
+\alignauthor Zhu Jingyang, {WKW}\\
+       \email{W150016@e.ntu.edu.sg}
+}
+
+\maketitle
+
+\input{abstract}
+
+\keywords{Information retrieval; Search engine; DBLP; Lucene}
+
+\input{intro}
+\input{preliminary}
+\input{implementation}
+\input{extraction}
+\input{proj1}
+\input{proj2}
+\input{discuss}
+\input{conclusion}
+
+\bibliographystyle{abbrv}
+\bibliography{ref}
+
+\end{document}

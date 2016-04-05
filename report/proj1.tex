@@ -1,0 +1,142 @@
+\section{Project 1}\label{sec:proj1}
+
+With the extracted DBLP publication records in Section~\ref{sec:extraction}, we are now going to implement a search engine that can satisfy different kinds of query requirements.
+
+\subsection{Analyzer}
+
+For both indexing and searching, \textsf{LAnalyzer} is used to deal with the text processing for documents' fields and queries. It is a class inherited from the abstract analysis class \textsf{Analyzer}.
+
+\subsubsection{Field Type}
+
+For each content that are needed to be processed, it is required to specify the field type in order to determine how the field will be processed. In our implementation, we use the options in Fig.~\ref{fig:indexOption}. This indicates that we will index documents, frequencies, and positions. Thus, full scoring and positional query applications are supported. In order to reduce time cost, we selectively tokenize the fields \textsf{title}, \textsf{authors}, \textsf{paperId} and \textsf{venue}. We hope that a partial query with respect to the indexed content should also work, and therefore they are tokenized. But for \textsf{kind} (either ``article'' or ``proceedings'') and year, we simply treat them as a single word. Note that \textsf{paperId} in DBLP is of the form ``xxx/yyy/zzz'', but since ``/'' has special meanings in Lucene \textsf{QueryParser}, we always replace ``/'' with `` '' before tokenizing. Because of this, when users hope to match \textit{conf/ifip8-6/LandeweerdSK13}, they should use query strings like \verb|paperId:"ifip8-6 LandeweerdSK13"|. The term vector contains the frequency information for each document. This is important when we need them to calculate the frequency for only \textit{some} of the matched documents (c.f. Section~\ref{sec:a1-tf}); however we finally adopted Mallet processing for our analysis on N-Gram terms therefore is unnecessary. We treat all the content as strings although \textsf{year} attribute can be specified as an integer for special queries, like range-based searches.
+
+\begin{figure}[t]
+\begin{lstlisting}[language=scala]
+val tf = new FieldType()
+tf.setIndexOptions(DOCS_AND_FREQS_AND_POSITIONS)
+tf.setTokenized(true) // title, authors, paperId, venue
+// tf.setTokenized(false) // kind, year
+tf.setStored(true)
+tf.setStoreTermVectors(false)
+\end{lstlisting}
+\caption{Index Option used for FieldType.}\label{fig:indexOption}
+\end{figure}
+
+\subsubsection{Token Filters and Postion Gapping}
+It is typical to do some filterings on tokens. In addition to use \textsf{StandardFilter}, we also provide a \textsf{LOption} class to control whether stemming will be processed, whether all tokens will be transformed to lower cases, and what stopwods list will be used to remove most commonly used words. These are wrapped in \textsf{LAnalyzer} by implementing \textit{createComponents}, shown in Fig. \ref{fig:createComponents}.
+\begin{figure}[t]
+\begin{lstlisting}[language=scala]
+def getPositionIncrementGap(f:String) = 10
+
+def createComponents(field: String)= {
+    val tok = new StandardTokenizer()
+    var res = new StandardFilter(tok)
+    if (loption.ignoreCase) {
+      res = new LowerCaseFilter(r)
+    }
+    if (loption.swDict=="Lucene")) {
+      res = new StopFilter(res,
+      StopAnalyzer.ENGLISH_STOP_WORDS_SET)
+    }
+    if (loption.stemming) {
+      res = new PorterStemFilter(res)
+    }
+    new TokenStreamComponents(tok, res)
+  }	
+\end{lstlisting}
+\caption{Overrided Functions in \textsf{LAnalyzer}.}\label{fig:createComponents}
+\end{figure}
+
+During the indexing, several field information is put inside one single \textsf{field}. For example, for \textsf{authors} attribute search, \textit{Marcel Landeweerd}, \textit{Ton A. M. Spil} are two of the authors in the \textit{conf/ifip8-6/LandeweerdSK13} record. But by default Lucene will still match if we query with ``\verb|Landeweerd Ton|'', which is not true since they belong to different authors' names. In order to handle this, we simply override \textit{getPositionIncrementGap} to increase the gap.
+
+
+\subsection{Indexing Strategy}
+\textsf{BIndexWorker} does the actual indexing. For each field, in addition to indexing with a special field name, we also add the content to a special field named ``ALL''. It is used for ``free text'' search without specifying any attributes. And for \textsf{authors} field, the content might also be added several times. The main implementation is shown in Fig. \ref{fig:indexing}.
+
+\begin{figure}[t]
+\begin{lstlisting}[language=scala]
+def combinedAddField(
+  field: String, value: String, d: Document) = {
+  addField(field, value, d)
+  addField(ALL, value, d) // "ALL"
+}
+
+def index(pub: Publication) = {
+  pub.validate()
+  val d = new Document()
+
+  combinedAddField(PAPERID, pub.paperId, d)
+  combinedAddField(TITLE, pub.title, d)
+  combinedAddField(KIND, pub.kind, d)
+  combinedAddField(VENUE, pub.venue, d)
+  combinedAddField(YEAR, pub.pubYear, d)
+  for(author <- pub.authors) {
+    combinedAddField(AUTHORS, author, d)
+  }
+  writer.addDocument(document)
+}
+	
+\end{lstlisting}
+\caption{Indexing Fields for Publications.}\label{fig:indexing}
+\end{figure}
+
+\subsection{Searching}
+\textsf{BSearcher} deals with the searching work. It firstly parses the query strings so that it supports all kinds of searching patterns provided by Lucene \textsf{QueryParser}, e.g., attributes specified searches including boolean operators ``AND'', ``OR'', regular expression searches, or even fuzzy searches. The default search field is ``ALL'' without specifying attributes. It is considered to be a free text search. The phrase searching is supported by surrounding the query text with double quotes. The allowed attributes are \textsf{title}, \textsf{paperId}, \textsf{pubYear}, \textsf{authors}, \textsf{venue} and \textsf{kind}.
+
+Table \ref{tbl:queries} shows some free text query examples. For a more complete example lists, please refer to ~\cite{doc_lucene_parser} for more details.
+
+
+\begin{table*}[t]
+\centering
+\caption{Examples of Valid Query Strings and Their Meanings}\label{tbl:queries}
+\label{my-label}
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Query String}} & \multicolumn{1}{c|}{\textbf{Requirements of Matched Documents}}                                                                            \\ \hline
+system                                      & one field contains  ``system''                                                                                                             \\ \hline
+``system model''                                & one field contains the phrase ``system model''                                                                                                 \\ \hline
+system OR model                             & one field contains ``system'' or ``model''                                                                                                 \\ \hline
+system OR ``model checking''                     & one field contains ``system'' or phrase ``model checking''                                                                                 \\ \hline
+system AND model                            & one field contains ``system'' and ``model''                                                                                                \\ \hline
+title:system                                & field \textsf{title} contains ``system''                                                                                                 \\ \hline
+title:``model checking'' AND system           & \begin{tabular}[c]{@{}l@{}}field \textsf{title} contains phrase ``model checking'',\\ and one field contains ``system''\end{tabular}     \\ \hline
+title:PAT AND authors:``Yang Liu''        & \begin{tabular}[c]{@{}l@{}}field \textsf{title} contains ``PAT'',\\ and \textsf{authors} contains phrase ``Yang Liu''\end{tabular} \\ \hline
+\end{tabular}
+\end{table*}
+
+\subsection{Evaluation}
+
+\subsubsection{Changes with Different Indexing Options}
+First we discuss the options when using different options to index documents. Whether or not applying ``lowering case'', ``using stopwords'' or ``stemming'' should have great impacts on the query since it affects both the indexed documents and the query strings. Here we are only interested in the statistical differences for \textsf{title} during indexing. The result is collected by \textsf{CollectionStatistics} and shown in Table~\ref{tbl:indexOptions}.
+
+Of all the 8 cases, totally they have the same number of documents 3166927 -- this is the number all documents, including those with empty field content. Due to the fact ``stopwords'' removes while the other two filters might possibly combine words, the number of tokens as well as postings are not the same. Another observation is that the time cost for the whole indexing procedure is different but not by a large margin. This indicates that the filter operations do take time but perhaps the Lucene I/O write operations are more time costly.
+
+
+\begin{table*}[t]
+\centering
+\caption{Indexing Statistics Against Different Options}\label{tbl:indexOptions}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline
+\multirow{3}{*}{} & \multicolumn{4}{c|}{Lower Case}                                        & \multicolumn{4}{c|}{Preserve Case}                                     \\ \cline{2-9}
+                  & \multicolumn{2}{c|}{Use StopWords} & \multicolumn{2}{c|}{No StopWords} & \multicolumn{2}{c|}{Use StopWords} & \multicolumn{2}{c|}{No StopWords} \\ \cline{2-9}
+                  & Stem             & No Stem         & Stem            & No Stem         & Stem             & No Stem         & Stem            & No Stem         \\ \hline
+\# of document         & 3166908          & 3166908         & 3166923         & 3166923         & 3166923          & 3166923         & 3166923         & 3166923         \\ \hline
+\# of postings     & 23962824         & 24056868        & 30404013        & 30500134        & 24950967         & 25031789        & 30521084        & 30602491        \\ \hline
+\# of tokens      & 24382723         & 24382723        & 31271109        & 31271109        & 25336226         & 25336226        & 31271109        & 31271109        \\ \hline
+index time (s)          & 137.4            & 131.9           & 137.9           & 134.8           & 135.8            & 123.8           & 135.4           & 117.9           \\ \hline
+\end{tabular}
+\end{table*}
+
+It is worth noting that theoretically indexing and searching can apply different case-sensitivity, stemming approach, and different stopword list. However, in our experiments, unless explicitly mentioned, we always use the same options.
+
+\subsubsection{Evaluation of Query Results}
+
+{\SS} provides a ranking score for each matched document. For example, the query \verb|authors:"David Brumley" title:"timing attack"| means that the authors should include "David Brumley" \textit{or} title includes "timing attack". It matches 83 documents, but those that match \textit{both} conditions are given higher scores than others In effect, We can see that the first 4 matches satisfy \textit{both} conditions and are given a score of $2.997782$ for a classic similarity.
+
+We use precision, recall and $F$-measure ($\beta=1$) to measure {\SS}'s search capability. However we tend not to list examples of search queries and check these metrics, due to the fact that DBLP collection contains \emph{too many} records and it is impossible to check the results manually. On the other hand, we find that these results are actually \textit{quite good} (thanks to the fabulous Lucene library) that there is no need to justify the results. We use the following case as an example.
+
+The query for \verb|authors:"aixin sun"| (case insensitive, no stemming, Lucene stopwords) matches 118 records while the ``grep'' result for ``aixin sun'' (case insensitive) returns 122 results; among these, there are two ``editor'' records and one is about the author's homepage, so they are out of the scope. While by checking the author attribute of a publication records (programmatically), it is confirmed that there are exact 118 of this name (case insensitive) occurred in the document (limited to \textsf{article} and \textsf{inproceedings}). So it is suggesting that the 118 matches are exactly relevant and only these relevant are retrieved. Therefore the precision and recall are both 100\%, consequently the $F_1$ measure is also 100\% by apply Equation~\ref{eq:p_r} and Equation~\ref{eq:F}.
+
+Dozens of other similar searches suggest that our search engine is really  effective.
+
+Additionally, all matched results are retrieved instantly (mostly less than 15ms); therefore the searching is also efficient.

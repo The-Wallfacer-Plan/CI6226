@@ -25,25 +25,20 @@ Overview
 
 ### Setup  
 
-The source code of the system is available on GitHub from https://github.com/HongxuChen/ci6226,  a demo is currently available on http://155.69.145.146:9001 (NTU access only). 
+The latest source code of LSearcher is available on GitHub (https://github.com/HongxuChen/ci6226), a demo is currently available on http://155.69.145.146:9001 (NTU access only). Oracle Java 8 is required and should be pre-installed; if you have multiple JREs, please ensure `JAVA_HOME` is correctly pointed to the Java 8 directory.
 
-  - Requirement:
-    1. Oracle Java 8 is required and should be pre-installed; if you have multiple JREs, please ensure `JAVA_HOME` is correctly pointed to the Java 8 directory
-    1. `LSearcher` is based on [Scala](http://www.scala-lang.org/) and [Play!](https://www.playframework.com/), you can use [activator](https://www.lightbend.com/activator/download) (embedded in our project) to get them if `bash` is available
-  - Deployment  
-
-      git clone https://github.com/HongxuChen/ci6226.git
-      cd ci6226/
-      # put downloaded dblp.xml file to "public/resources"
-      # change "rootDir" value in app/models/common/Config.scala and point to "public/resources"
-      ./activator # for Linux/Mac OS X
-      # On Windows, you download activator and run executable `activator` in project directory
-      run -Dhttp.port=9001 # (inside activator shell)
-      open http://localhost:9001 in your favorite web browser
+    git clone https://github.com/HongxuChen/ci6226.git
+    cd ci6226/
+    # put downloaded dblp.xml file to "public/resources"
+    # change "rootDir" value in app/models/common/Config.scala and point to "public/resources"
+    ./activator # for Linux/Mac OS X
+    # On Windows, download activator and run executable `activator` in project directory
+    run -Dhttp.port=9001 # (inside activator shell)
+    open http://localhost:9001 in your favorite web browser
 
 
 Functionalities and Results
--------------------------
+---------------------------
 
 There are three tags at the top of the interface. Tag "Home" is the basic search engine, and Tags "App1" and "App2" are the first and second applications in Project 2.
 

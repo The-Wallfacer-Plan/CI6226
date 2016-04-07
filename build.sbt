@@ -12,6 +12,10 @@ lazy val `ci6226` = project.in(file(".")).enablePlugins(PlayScala)
 libraryDependencies += filters
 
 libraryDependencies ++= Seq(
+  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % "test"
+)
+
+libraryDependencies ++= Seq(
   "org.apache.lucene" % "lucene-analyzers-common" % "5.5.0",
   "org.apache.lucene" % "lucene-benchmark" % "5.5.0",
   "org.apache.lucene" % "lucene-queryparser" % "5.5.0"

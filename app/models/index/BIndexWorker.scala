@@ -49,7 +49,7 @@ class BIndexWorker(writer: IndexWriter) extends LIndexWorker(writer) {
       addTokenizedField(I_ALL, fieldValue, document)
     } else {
       addStringField(fieldName, fieldValue, document)
-      addStringField(fieldName, fieldValue, document)
+      addStringField(I_ALL, fieldValue, document)
     }
   }
 

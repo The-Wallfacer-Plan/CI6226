@@ -80,11 +80,7 @@ class A1Mallet(instances: Array[Instance]) {
         val ngrams = s.split("\\s+")
         if (ngrams.length >= 2) {
           val ngram = ngrams(1)
-          if (map.contains(ngram)) {
-            map += ngram -> (map(ngram) + 1)
-          } else {
-            map += ngram -> 1
-          }
+          map += ngram -> (map.getOrElse(ngram, 0L) + 1)
         }
       }
     }
